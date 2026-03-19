@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Unicorn Race — Canada's High-Growth Company Comparison</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #ffffff;
+            color: #333333;
+            line-height: 1.6;
+        }
+
+        body {
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .header {
+            margin-bottom: 4rem;
+            padding: 3rem 0;
+            text-align: center;
+            opacity: 0;
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        .header h1 {
+            font-size: clamp(2.5rem, 8vw, 3.5rem);
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+            font-weight: 400;
+        }
+
+        /* Section Styling */
+        section {
+            margin-bottom: 5rem;
+            padding: 3rem 0;
+            opacity: 0;
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        section.fade-in {
+            animation-play-state: paused;
+            animation-name: fadeInStatic;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInStatic {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        section:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        section:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        section:nth-child(4) {
+            animation-delay: 0.6s;
+        }
+
+        section:nth-child(5) {
+            animation-delay: 0.8s;
+        }
+
+        section:nth-child(6) {
+            animation-delay: 1s;
+        }
+
+        section:nth-child(7) {
+            animation-delay: 1.2s;
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            color: #000;
+        }
+
+        /* Per-Capita Unicorn Density Section */
+        .bar-chart {
+            margin-top: 2rem;
+        }
+
+        .bar-item {
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .bar-label {
+            width: 120px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #000;
+        }
+
+        .bar-container {
+            flex: 1;
+            position: relative;
+            height: 40px;
+            background: #f5f5f5;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .bar {
+            height: 100%;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: white;
+            position: relative;
+        }
+
+        .bar.blue {
+            background: #3b82f6;
+        }
+
+        .bar.coral {
+            background: #e05264;
+            border: 2px solid #c5283d;
+        }
+
+        .bar.gray {
+            background: #9ca3af;
+        }
+
+        .bar-value {
+            margin-left: auto;
+            font-weight: 700;
+        }
+
+        .bar-note {
+            color: #666;
+            font-size: 0.95rem;
+            margin-top: 1rem;
+            font-style: italic;
+        }
+
+        /* Retention Crisis Section */
+        .retention-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-box {
+            padding: 2rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .metric-teal {
+            background: #f0fdf9;
+            border-left: 4px solid #0d9488;
+        }
+
+        .metric-coral {
+            background: #fef2f2;
+            border-left: 4px solid #e05264;
+        }
+
+        .metric-number {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-teal .metric-number {
+            color: #0d9488;
+        }
+
+        .metric-coral .metric-number {
+            color: #e05264;
+        }
+
+        .metric-label {
+            color: #333;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .retention-collapse {
+            background: #faf9f8;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+        }
+
+        .collapse-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .collapse-numbers {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .collapse-pct {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #e05264;
+        }
+
+        .collapse-arrow {
+            color: #ccc;
+            font-size: 1.5rem;
+        }
+
+        .collapse-label {
+            color: #666;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        /* Founder Flywheel Section */
+        .flywheel-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .flywheel-card {
+            background: #f9fafb;
+            padding: 2rem;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .flywheel-card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #000;
+        }
+
+        .flywheel-stat {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .flywheel-stat:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .flywheel-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #3b82f6;
+            line-height: 1;
+            margin-bottom: 0.25rem;
+        }
+
+        .flywheel-text {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .flywheel-note {
+            color: #999;
+            font-size: 0.85rem;
+            font-style: italic;
+            margin-top: 0.5rem;
+        }
+
+        /* Outperformers Section */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .comparison-column {
+            padding: 2rem;
+            border-radius: 8px;
+        }
+
+        .comparison-column h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #000;
+        }
+
+        .comparison-outperformers {
+            background: #f0f9ff;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .comparison-canada {
+            background: #fef2f2;
+            border-left: 4px solid #e05264;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            color: #333;
+            font-size: 0.95rem;
+        }
+
+        .checklist-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .check-icon {
+            flex-shrink: 0;
+            width: 1.2rem;
+            height: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-top: 2px;
+        }
+
+        .check-icon.yes {
+            color: #0d9488;
+        }
+
+        .check-icon.no {
+            color: #9ca3af;
+        }
+
+        .check-icon.partial {
+            color: #f59e0b;
+        }
+
+        .checklist-text {
+            flex: 1;
+        }
+
+        /* Sweden Tax Section */
+        .tax-comparison {
+            background: linear-gradient(135deg, #f0f9ff 0%, #f0fdf9 100%);
+            padding: 3rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .tax-item {
+            margin-bottom: 2rem;
+        }
+
+        .tax-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .tax-label {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .tax-before {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #9ca3af;
+            margin-bottom: 0.5rem;
+        }
+
+        .tax-after {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #3b82f6;
+        }
+
+        .tax-arrow {
+            color: #0d9488;
+            font-size: 1.2rem;
+            margin: 0.5rem 0;
+            font-weight: 700;
+        }
+
+        .tax-result {
+            color: #333;
+            font-size: 0.95rem;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 4px;
+            border-left: 3px solid #0d9488;
+        }
+
+        .tax-note {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            font-style: italic;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 5rem;
+            padding-top: 3rem;
+            border-top: 1px solid #e5e7eb;
+            text-align: center;
+            color: #999;
+            font-size: 0.85rem;
+        }
+
+        footer p {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+
+            .header {
+                margin-bottom: 2rem;
+                padding: 2rem 0;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .header p {
+                font-size: 1rem;
+            }
+
+            section {
+                margin-bottom: 3rem;
+                padding: 2rem 0;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .retention-metrics {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .flywheel-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .bar-label {
+                width: 100px;
+                font-size: 0.85rem;
+            }
+
+            .metric-number {
+                font-size: 2.5rem;
+            }
+
+            .collapse-pct {
+                font-size: 2rem;
+            }
+
+            .tax-comparison {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .header p {
+                font-size: 0.9rem;
+            }
+
+            h2 {
+                font-size: 1.2rem;
+            }
+
+            .bar-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .bar-label {
+                width: 100%;
+            }
+
+            .bar-container {
+                width: 100%;
+            }
+
+            .metric-number {
+                font-size: 2rem;
+            }
+
+            .collapse-pct {
+                font-size: 1.5rem;
+            }
+
+            .collapse-numbers {
+                flex-wrap: wrap;
+            }
+
+            .flywheel-number {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>The Unicorn Race</h1>
+            <p>How Canada's high-growth company production compares to peer nations — and why retention matters more than creation</p>
+        </header>
+
+        <!-- Section 1: Per-Capita Unicorn Density -->
+        <section id="section-1">
+            <h2>Per-Capita Unicorn Density</h2>
+            <p style="color: #666; margin-bottom: 2rem;">Unicorns per million population, ranked</p>
+
+            <div class="bar-chart">
+                <div class="bar-item">
+                    <div class="bar-label">Israel</div>
+                    <div class="bar-container">
+                        <div class="bar blue" style="width: 100%;">
+                            <span class="bar-value">19.0/M</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bar-item">
+                    <div class="bar-label">Denmark</div>
+                    <div class="bar-container">
+                        <div class="bar blue" style="width: 40.5%;">
+                            <span class="bar-value">7.7/M</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bar-item">
+                    <div class="bar-label">Sweden</div>
+                    <div class="bar-container">
+                        <div class="bar blue" style="width: 37.4%;">
+                            <span class="bar-value">7.1/M</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bar-item">
+                    <div class="bar-label">Singapore</div>
+                    <div class="bar-container">
+                        <div class="bar blue" style="width: 31.6%;">
+                            <span class="bar-value">6.0/M</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bar-item">
+                    <div class="bar-label"><strong>Canada</strong></div>
+                    <div class="bar-container">
+                        <div class="bar coral" style="width: 22.1%;">
+                            <span class="bar-value">4.2/M</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bar-item">
+                    <div class="bar-label">UK</div>
+                    <div class="bar-container">
+                        <div class="bar gray" style="width: 20%;">
+                            <span class="bar-value">3.8/M</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p class="bar-note">Canada ranks mid-pack on creation. The real gap is retention.</p>
+        </section>
+
+        <!-- Section 2: The Retention Crisis -->
+        <section id="section-2">
+            <h2>The Retention Crisis</h2>
+
+            <div class="retention-metrics">
+                <div class="metric-box metric-teal">
+                    <div class="metric-number">67%</div>
+                    <div class="metric-label">of Canadian-led startups HQ'd in Canada (2015–2019)</div>
+                </div>
+                <div class="metric-box metric-coral">
+                    <div class="metric-number">32.4%</div>
+                    <div class="metric-label">HQ'd in Canada (2024)</div>
+                </div>
+            </div>
+
+            <div class="retention-collapse">
+                <div class="collapse-title">Canada's Global Share of High-Potential Startups</div>
+                <div class="collapse-numbers">
+                    <div>
+                        <div class="collapse-pct">4.8%</div>
+                        <div style="color: #666; font-size: 0.85rem;">2018</div>
+                    </div>
+                    <div class="collapse-arrow">→</div>
+                    <div>
+                        <div class="collapse-pct">1.5%</div>
+                        <div style="color: #666; font-size: 0.85rem;">2024</div>
+                    </div>
+                </div>
+                <div class="collapse-label">A 69% collapse in six years</div>
+            </div>
+        </section>
+
+        <!-- Section 3: Founder Flywheel Effect -->
+        <section id="section-3">
+            <h2>The Founder Flywheel Effect</h2>
+            <p style="color: #666; margin-bottom: 2rem;">How successful exits seed new ecosystems</p>
+
+            <div class="flywheel-cards">
+                <div class="flywheel-card">
+                    <h3>Sweden</h3>
+                    <div class="flywheel-stat">
+                        <div class="flywheel-number">124+</div>
+                        <div class="flywheel-text">VC-backed startups founded by Spotify alumni</div>
+                    </div>
+                    <div class="flywheel-stat">
+                        <div class="flywheel-number">62+</div>
+                        <div class="flywheel-text">startups from Klarna alumni</div>
+                    </div>
+                    <div class="flywheel-stat">
+                        <div class="flywheel-number">39+</div>
+                        <div class="flywheel-text">startups from King (Candy Crush) alumni</div>
+                    </div>
+                    <div class="flywheel-note">Cascading ecosystem effects from mega-exits</div>
+                </div>
+
+                <div class="flywheel-card">
+                    <h3>Israel</h3>
+                    <div class="flywheel-stat">
+                        <div class="flywheel-number">$100M</div>
+                        <div class="flywheel-text">Yozma Program government investment (1993)</div>
+                    </div>
+                    <div class="flywheel-stat">
+                        <div class="flywheel-number">60×</div>
+                        <div class="flywheel-text">growth in VC industry by 2000</div>
+                    </div>
+                    <div class="flywheel-stat">
+                        <div class="flywheel-number">Self-sustaining</div>
+                        <div class="flywheel-text">ecosystem created within 7 years</div>
+                    </div>
+                    <div class="flywheel-note">Strategic government seeding unlocked private capital</div>
+                </div>
+
+                <div class="flywheel-card">
+                    <h3>Canada</h3>
+                    <div class="flywheel-stat">
+                        <div class="flywheel-number">Growing</div>
+                        <div class="flywheel-text">Shopify alumni ecosystem emerging</div>
+                    </div>
+                    <div class="flywheel-stat">
+                        <div class="flywheel-number">Limited</div>
+                        <div class="flywheel-text">mega-outcomes to date</div>
+                    </div>
+                    <div class="flywheel-stat">
+                        <div class="flywheel-number">Early stage</div>
+                        <div class="flywheel-text">building critical mass</div>
+                    </div>
+                    <div class="flywheel-note">Potential exists but requires more flagship exits</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: What Outperformers Share -->
+        <section id="section-4">
+            <h2>What the Outperformers Share</h2>
+
+            <div class="comparison-grid">
+                <div class="comparison-column comparison-outperformers">
+                    <h3>Israel, Sweden, Singapore</h3>
+
+                    <div class="checklist-item">
+                        <div class="check-icon yes">✓</div>
+                        <div class="checklist-text"><strong>Investor-side tax incentives</strong> — EIS/SEIS (UK), Angel Tax Credit (Israel), R&D deductions (Sweden)</div>
+                    </div>
+
+                    <div class="checklist-item">
+                        <div class="check-icon yes">✓</div>
+                        <div class="checklist-text"><strong>Government co-investment at scale</strong> — Yozma (Israel), Temasek (Singapore), Almi (Sweden)</div>
+                    </div>
+
+                    <div class="checklist-item">
+                        <div class="check-icon yes">✓</div>
+                        <div class="checklist-text"><strong>Founder flywheel effect</strong> — Alumni networks creating serial entrepreneurs</div>
+                    </div>
+
+                    <div class="checklist-item">
+                        <div class="check-icon yes">✓</div>
+                        <div class="checklist-text"><strong>Small domestic market</strong> → forced global orientation from day one</div>
+                    </div>
+
+                    <div class="checklist-item">
+                        <div class="check-icon yes">✓</div>
+                        <div class="checklist-text"><strong>Talent retention policy</strong> — Competitive visas, quality of life, talent clusters</div>
+                    </div>
+                </div>
+
+                <div class="comparison-column comparison-canada">
+                    <h3>Canada</h3>
+
+                    <div class="checklist-item">
+                        <div class="check-icon no">✗</div>
+                        <div class="checklist-text"><strong>Investor-side tax incentives</strong> — Limited to mining sector; absent for venture/tech</div>
+                    </div>
+
+                    <div class="checklist-item">
+                        <div class="check-icon yes">✓</div>
+                        <div class="checklist-text"><strong>Government co-investment</strong> — VCCI, Canada Growth Fund, but modest scale (~$1B)</div>
+                    </div>
+
+                    <div class="checklist-item">
+                        <div class="check-icon partial">~</div>
+                        <div class="checklist-text"><strong>Founder flywheel</strong> — Emerging via Shopify, but early stage; need more mega-exits</div>
+                    </div>
+
+                    <div class="checklist-item">
+                        <div class="check-icon yes">✓</div>
+                        <div class="checklist-text"><strong>Global orientation</strong> — Large domestic market reduces urgency; retention challenge dominates</div>
+                    </div>
+
+                    <div class="checklist-item">
+                        <div class="check-icon no">✗</div>
+                        <div class="checklist-text"><strong>Talent retention</strong> — Losing top founders & talent to US; visa accessibility lag vs peers</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Sweden's Tax Revolution -->
+        <section id="section-5">
+            <h2>Sweden's Tax Revolution</h2>
+            <p style="color: #666; margin-bottom: 2rem;">How structural incentives reshape ecosystems</p>
+
+            <div class="tax-comparison">
+                <div class="tax-item">
+                    <div class="tax-label">Corporate Tax Rate</div>
+                    <div class="tax-before">52%</div>
+                    <div class="tax-label" style="font-size: 0.85rem; color: #999;">1990</div>
+                </div>
+
+                <div style="text-align: center; margin: 1rem 0;">
+                    <div class="tax-arrow">↓</div>
+                </div>
+
+                <div class="tax-item">
+                    <div class="tax-label">Corporate Tax Rate</div>
+                    <div class="tax-after">20.6%</div>
+                    <div class="tax-label" style="font-size: 0.85rem; color: #999;">Today</div>
+                </div>
+
+                <div class="tax-result">
+                    <strong>Result:</strong> 41 unicorns | 7.1 per million population | A self-sustaining innovation ecosystem
+                </div>
+
+                <p class="tax-note">Sweden didn't just cut taxes — it rebuilt its entire incentive structure to favor entrepreneurship and innovation.</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <p><strong>Sources:</strong> Leaders Fund, Dealroom, Beauhurst, Tracxn, OECD, World Bank</p>
+            <p>Part of the Ontario Growth Sectors Research series</p>
+        </footer>
+    </div>
+
+    <script>
+        // Scroll-triggered fade-in via IntersectionObserver
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        // Observe all sections except header
+        document.querySelectorAll('section').forEach(section => {
+            section.style.opacity = '0';
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>

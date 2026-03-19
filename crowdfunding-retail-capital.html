@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Retail Capital Gap | Canada's Crowdfunding Opportunity</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --coral: #e05264;
+            --teal: #0d9488;
+            --blue: #3b82f6;
+            --purple: #8b5cf6;
+            --amber: #f59e0b;
+            --gray: #6b7280;
+            --light-bg: #fafaf9;
+            --white: #ffffff;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+            background: var(--white);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* Typography */
+        h1 {
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 0.5rem;
+        }
+
+        h2 {
+            font-size: clamp(1.75rem, 5vw, 2.5rem);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        p {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        .subtitle {
+            font-size: clamp(1.25rem, 3vw, 1.75rem);
+            color: var(--text-light);
+            font-weight: 400;
+            line-height: 1.4;
+        }
+
+        /* Layout */
+        section {
+            padding: clamp(3rem, 10vw, 5rem) clamp(1.5rem, 5vw, 3rem);
+            max-width: 1200px;
+            margin: 0 auto;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Header Section */
+        .hero {
+            text-align: center;
+            padding: clamp(4rem, 15vw, 8rem) clamp(1.5rem, 5vw, 3rem);
+            background: linear-gradient(135deg, #fafaf9 0%, #f5f5f4 100%);
+        }
+
+        .hero h1 {
+            color: var(--coral);
+            margin-bottom: 1rem;
+        }
+
+        .hero .subtitle {
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        /* Grid Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid #e5e7eb;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-stat {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+
+        .card-label {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        /* Number Cards - Participation Paradox */
+        .number-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            text-align: center;
+            border: 2px solid;
+        }
+
+        .number-card.teal {
+            border-color: var(--teal);
+            background: rgba(13, 148, 136, 0.02);
+        }
+
+        .number-card.coral {
+            border-color: var(--coral);
+            background: rgba(224, 82, 100, 0.02);
+        }
+
+        .number-card .value {
+            font-size: clamp(2.5rem, 10vw, 4.5rem);
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 1rem;
+        }
+
+        .number-card.teal .value {
+            color: var(--teal);
+        }
+
+        .number-card.coral .value {
+            color: var(--coral);
+        }
+
+        .number-card .label {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        /* Ratio Callout */
+        .ratio-callout {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(245, 158, 11, 0.1));
+            border-left: 4px solid var(--amber);
+            padding: 2rem;
+            border-radius: 8px;
+            margin: 3rem 0;
+            text-align: center;
+        }
+
+        .ratio-callout .ratio {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--amber);
+            margin-bottom: 0.5rem;
+        }
+
+        .ratio-callout p {
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        /* Note Box */
+        .note {
+            background: #f9fafb;
+            border-left: 4px solid var(--blue);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        /* Comparison Table */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .comparison-column {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 2rem;
+            border: 2px solid;
+        }
+
+        .comparison-column.canada {
+            border-color: var(--coral);
+        }
+
+        .comparison-column.uk {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            transform: scale(1.05);
+        }
+
+        .comparison-column.us {
+            border-color: var(--gray);
+        }
+
+        .comparison-column h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid;
+        }
+
+        .comparison-column.canada h3 {
+            color: var(--coral);
+            border-bottom-color: var(--coral);
+        }
+
+        .comparison-column.uk h3 {
+            color: var(--blue);
+            border-bottom-color: var(--blue);
+        }
+
+        .comparison-column.us h3 {
+            color: var(--gray);
+            border-bottom-color: var(--gray);
+        }
+
+        .comparison-item {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .comparison-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .comparison-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .comparison-label {
+            font-size: 0.95rem;
+            color: var(--text-light);
+        }
+
+        /* Tax Relief Section */
+        .tax-relief-container {
+            margin: 2rem 0;
+        }
+
+        .tax-relief-bars {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .tax-bar {
+            text-align: center;
+        }
+
+        .tax-bar-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .tax-bar-label {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+
+        .bar-visual {
+            height: 200px;
+            background: #e5e7eb;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .bar-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--teal);
+            border-radius: 8px;
+            transition: width 0.8s ease;
+        }
+
+        .bar-fill.without-tax {
+            background: var(--teal);
+        }
+
+        .bar-fill.with-tax {
+            background: var(--blue);
+        }
+
+        .delta {
+            background: rgba(245, 158, 11, 0.1);
+            border: 2px solid var(--amber);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .delta .value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--amber);
+            margin-bottom: 0.5rem;
+        }
+
+        .delta .label {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+        }
+
+        /* Success Stories */
+        .success-stories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .story {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(59, 130, 246, 0.05));
+            border-radius: 12px;
+            padding: 2rem;
+            border-left: 4px solid var(--purple);
+        }
+
+        .story-return {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--purple);
+            margin-bottom: 0.5rem;
+        }
+
+        .story-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .story-detail {
+            font-size: 0.95rem;
+            color: var(--text-light);
+        }
+
+        /* Gap Checklist */
+        .checklist {
+            margin: 2rem 0;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            border-left: 4px solid var(--coral);
+        }
+
+        .checklist-icon {
+            font-size: 1.5rem;
+            margin-right: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .checklist-text {
+            flex: 1;
+            font-size: 1rem;
+        }
+
+        /* Opportunity Section */
+        .opportunity-box {
+            background: linear-gradient(135deg, rgba(13, 148, 136, 0.1), rgba(59, 130, 246, 0.1));
+            border-radius: 12px;
+            padding: clamp(2rem, 5vw, 3rem);
+            text-align: center;
+            border: 2px solid var(--teal);
+            margin: 2rem 0;
+        }
+
+        .opportunity-amount {
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            font-weight: 700;
+            color: var(--teal);
+            margin-bottom: 0.5rem;
+        }
+
+        .opportunity-label {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Footer */
+        footer {
+            background: #f9fafb;
+            padding: 3rem clamp(1.5rem, 5vw, 3rem);
+            text-align: center;
+            border-top: 1px solid #e5e7eb;
+            margin-top: 3rem;
+        }
+
+        footer p {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .series-note {
+            font-style: italic;
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-top: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .number-card .value {
+                font-size: 2rem;
+            }
+
+            .comparison-column.uk {
+                transform: scale(1);
+            }
+
+            .grid-2,
+            .grid-3,
+            .comparison-grid,
+            .tax-relief-bars,
+            .success-stories {
+                grid-template-columns: 1fr;
+            }
+
+            .ratio-callout .ratio {
+                font-size: 2rem;
+            }
+
+            section {
+                padding: 2rem 1.5rem;
+            }
+
+            .hero {
+                padding: 3rem 1.5rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Animation trigger */
+        @media (prefers-reduced-motion: reduce) {
+            section {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>The Retail Capital Gap</h1>
+        <p class="subtitle">Millions of Canadians back projects on Kickstarter. Almost none invest in startups.</p>
+    </section>
+
+    <!-- Section 1: The Participation Paradox -->
+    <section>
+        <h2>The Participation Paradox</h2>
+        <p>Canadians clearly have appetite for backing innovative companies. The infrastructure to channel this into equity investment barely exists.</p>
+
+        <div class="grid-2">
+            <div class="number-card teal">
+                <div class="value">2-3M</div>
+                <div class="label">Estimated Canadians who have backed a Kickstarter project</div>
+            </div>
+            <div class="number-card coral">
+                <div class="value">~28,000</div>
+                <div class="label">Canadians who have made an equity crowdfunding investment</div>
+            </div>
+        </div>
+
+        <div class="ratio-callout">
+            <div class="ratio">100:1</div>
+            <p>For every Canadian equity crowdfunder, 100 have backed a Kickstarter</p>
+        </div>
+    </section>
+
+    <!-- Section 2: FrontFundr -->
+    <section>
+        <h2>FrontFundr: Canada's Platform</h2>
+        <p>Canada's leading equity crowdfunding platform demonstrates both the opportunity and the constraints.</p>
+
+        <div class="grid-3">
+            <div class="card">
+                <div class="card-stat" style="color: var(--teal);">$68.3M</div>
+                <div class="card-label">Raised in 2024</div>
+                <p style="font-size: 0.95rem; color: var(--text-light); margin: 0;">86% year-over-year growth</p>
+            </div>
+            <div class="card">
+                <div class="card-stat" style="color: var(--blue);">$258M</div>
+                <div class="card-label">Cumulative since 2015</div>
+            </div>
+            <div class="card">
+                <div class="card-stat" style="color: var(--purple);">66</div>
+                <div class="card-label">Campaigns in 2024</div>
+            </div>
+            <div class="card">
+                <div class="card-stat" style="color: var(--amber);">97%</div>
+                <div class="card-label">Increase in new investors (2024)</div>
+            </div>
+            <div class="card">
+                <div class="card-stat" style="color: var(--teal);">87%</div>
+                <div class="card-label">Of funded companies still active</div>
+            </div>
+            <div class="card">
+                <div class="card-stat" style="color: var(--gray);">93%</div>
+                <div class="card-label">Market share under NI 45-110</div>
+            </div>
+        </div>
+
+        <div class="note">
+            <strong>Record Campaign:</strong> Blossom Social raised $1.93M in under 6 hours (2025 record)
+        </div>
+    </section>
+
+    <!-- Section 3: Canada vs UK vs US -->
+    <section>
+        <h2>Canada vs UK vs US: The Tax Incentive Effect</h2>
+        <p>The UK's crowdfunding market is 7× larger. The difference? Tax policy.</p>
+
+        <div class="comparison-grid">
+            <div class="comparison-column canada">
+                <h3>🍁 Canada</h3>
+                <div class="comparison-item">
+                    <div class="comparison-value">$68.3M</div>
+                    <div class="comparison-label">2024 equity crowdfunding (FrontFundr)</div>
+                </div>
+                <div class="comparison-item">
+                    <div class="comparison-value">66</div>
+                    <div class="comparison-label">Campaigns in 2024</div>
+                </div>
+                <div class="comparison-item">
+                    <div class="comparison-label">✗ No tax incentive for investors</div>
+                </div>
+            </div>
+
+            <div class="comparison-column uk">
+                <h3>🇬🇧 United Kingdom</h3>
+                <div class="comparison-item">
+                    <div class="comparison-value">£500M+</div>
+                    <div class="comparison-label">2024 equity crowdfunding (Seedrs + Crowdcube)</div>
+                </div>
+                <div class="comparison-item">
+                    <div class="comparison-value">266+</div>
+                    <div class="comparison-label">Campaigns (Seedrs alone)</div>
+                </div>
+                <div class="comparison-item">
+                    <div class="comparison-value">30-50%</div>
+                    <div class="comparison-label">EIS/SEIS tax relief</div>
+                </div>
+            </div>
+
+            <div class="comparison-column us">
+                <h3>🇺🇸 United States</h3>
+                <div class="comparison-item">
+                    <div class="comparison-value">$343.6M</div>
+                    <div class="comparison-label">2024 Reg CF offerings</div>
+                </div>
+                <div class="comparison-item">
+                    <div class="comparison-value">1,408</div>
+                    <div class="comparison-label">Offerings in 2024</div>
+                </div>
+                <div class="comparison-item">
+                    <div class="comparison-label">✗ No specific tax incentive</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4: UK Tax Incentive Effect -->
+    <section>
+        <h2>The UK Tax Incentive Effect</h2>
+        <p>How tax relief transforms the risk-return profile of early-stage investing:</p>
+
+        <div class="tax-relief-bars">
+            <div class="tax-bar">
+                <div class="tax-bar-value" style="color: var(--teal);">12.9%</div>
+                <div class="tax-bar-label">Platform IRR without tax relief</div>
+                <div class="bar-visual">
+                    <div class="bar-fill without-tax" style="width: 129px; width: calc((129/183) * 100%);"></div>
+                </div>
+            </div>
+            <div class="tax-bar">
+                <div class="tax-bar-value" style="color: var(--blue);">18.3%</div>
+                <div class="tax-bar-label">Platform IRR with EIS/SEIS relief</div>
+                <div class="bar-visual">
+                    <div class="bar-fill with-tax" style="width: 183px; width: 100%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="delta">
+            <div class="value">+5.4%</div>
+            <div class="label">Tax incentives don't just attract capital — they improve risk-adjusted returns</div>
+        </div>
+
+        <h3 style="margin-top: 2.5rem; margin-bottom: 1.5rem;">Notable UK Crowdfunding Successes</h3>
+        <div class="success-stories">
+            <div class="story">
+                <div class="story-return">5,000%+</div>
+                <div class="story-name">Revolut</div>
+                <div class="story-detail">Paper return for early Seedrs investors</div>
+            </div>
+            <div class="story">
+                <div class="story-return">3×</div>
+                <div class="story-name">FreeAgent</div>
+                <div class="story-detail">Return on acquisition by RBS</div>
+            </div>
+            <div class="story">
+                <div class="story-return">332×</div>
+                <div class="story-name">Senta</div>
+                <div class="story-detail">Return for first-round investors</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 5: What's Missing -->
+    <section>
+        <h2>What's Missing</h2>
+        <p>Canada has built platforms but not the ecosystem incentives that drive participation:</p>
+
+        <div class="checklist">
+            <div class="checklist-item">
+                <div class="checklist-icon">✗</div>
+                <div class="checklist-text">Tax incentive for equity crowdfunding investors</div>
+            </div>
+            <div class="checklist-item">
+                <div class="checklist-icon">✗</div>
+                <div class="checklist-text">Nominee structure for simplified share management</div>
+            </div>
+            <div class="checklist-item">
+                <div class="checklist-icon">✗</div>
+                <div class="checklist-text">Secondary market for trading crowdfunded shares</div>
+            </div>
+            <div class="checklist-item">
+                <div class="checklist-icon">✗</div>
+                <div class="checklist-text">Integration with investment tax schemes</div>
+            </div>
+            <div class="checklist-item">
+                <div class="checklist-icon">✗</div>
+                <div class="checklist-text">Platform-managed SEIS/EIS-style compliance</div>
+            </div>
+        </div>
+
+        <div class="note">
+            <strong>The Virtuous Cycle:</strong> The UK built a system where tax incentives → more investors → more companies → better returns → more investors. Canada has the platforms but not the incentives.
+        </div>
+    </section>
+
+    <!-- Section 6: The Opportunity -->
+    <section>
+        <h2>The Opportunity</h2>
+        <p>What could change with coordinated policy:</p>
+
+        <div class="opportunity-box">
+            <div class="opportunity-amount">$500M+</div>
+            <div class="opportunity-label">Estimated annual new startup investment if Canada adopted an EIS-equivalent</div>
+            <p style="font-size: 1rem; margin: 0; color: var(--text-dark);">Combined with NI 45-111 (self-certified investor exemption), tax incentives could democratize early-stage investing in Canada</p>
+        </div>
+
+        <div class="note">
+            <strong>Policy Path:</strong> Introduce a modest tax credit (20-30%) for equity crowdfunding investments up to $50K annually, modeled on the UK's EIS structure but adapted for Canada's regulatory framework. This would attract retail capital from the 2-3M Canadians already comfortable backing projects on Kickstarter.
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p><strong>Sources:</strong> FrontFundr, Seedrs, Crowdcube, Republic Europe, Beauhurst, SEC, HMRC, C.D. Howe Institute</p>
+        <p class="series-note">Part of the Ontario Growth Sectors Research series</p>
+    </footer>
+
+    <script>
+        // Scroll-triggered fade-in with IntersectionObserver
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Animate bars when visible
+        const barObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const bars = entry.target.querySelectorAll('.bar-fill');
+                    bars.forEach(bar => {
+                        setTimeout(() => {
+                            if (bar.classList.contains('without-tax')) {
+                                bar.style.width = 'calc((129/183) * 100%)';
+                            } else if (bar.classList.contains('with-tax')) {
+                                bar.style.width = '100%';
+                            }
+                        }, 200);
+                    });
+                    barObserver.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.3
+        });
+
+        const taxSection = document.querySelector('.tax-relief-bars');
+        if (taxSection) {
+            barObserver.observe(taxSection);
+        }
+    </script>
+</body>
+</html>

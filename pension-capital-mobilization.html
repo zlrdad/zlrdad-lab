@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unlocking Pension Capital</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+            background-color: #f9fafb;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+
+        header {
+            background: white;
+            padding: 60px 20px;
+            text-align: center;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .header-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 16px;
+            color: #1f2937;
+        }
+
+        .subtitle {
+            font-size: 1.25rem;
+            color: #6b7280;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        main {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        section {
+            background: white;
+            margin: 60px 0;
+            padding: 60px 40px;
+            border-radius: 8px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            section {
+                padding: 40px 24px;
+                margin: 40px 0;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+        }
+
+        h2 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+            color: #1f2937;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #1f2937;
+        }
+
+        .gap-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+            align-items: center;
+        }
+
+        .gap-item {
+            text-align: center;
+        }
+
+        .gap-number {
+            font-size: 5rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 16px;
+        }
+
+        .gap-label {
+            font-size: 1.1rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .callout {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 24px;
+            margin: 40px 0;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        .callout-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #f59e0b;
+            display: inline-block;
+            margin-right: 12px;
+        }
+
+        .card-grid {
+            display: grid;
+            gap: 24px;
+            margin-top: 40px;
+        }
+
+        .card {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            padding: 32px;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .card.coral {
+            border-left-color: #e05264;
+        }
+
+        .card.teal {
+            border-left-color: #0d9488;
+        }
+
+        .card.indigo {
+            border-left-color: #6366f1;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 16px;
+        }
+
+        .card-stat {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: #3b82f6;
+            margin-bottom: 8px;
+        }
+
+        .card.coral .card-stat {
+            color: #e05264;
+        }
+
+        .card.teal .card-stat {
+            color: #0d9488;
+        }
+
+        .card.indigo .card-stat {
+            color: #6366f1;
+        }
+
+        .card-detail {
+            font-size: 0.95rem;
+            color: #6b7280;
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        .bar-chart {
+            margin: 40px 0;
+        }
+
+        .bar-item {
+            margin-bottom: 32px;
+        }
+
+        .bar-label {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .bar-value {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .bar {
+            height: 32px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: #3b82f6;
+            display: flex;
+            align-items: center;
+            padding-left: 16px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: width 0.8s ease;
+        }
+
+        .bar-fill.coral {
+            background: #e05264;
+        }
+
+        .bar-fill.teal {
+            background: #0d9488;
+        }
+
+        .bar-fill.indigo {
+            background: #6366f1;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin: 40px 0;
+            align-items: center;
+        }
+
+        .stat-box {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 16px;
+            color: #3b82f6;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .note {
+            font-style: italic;
+            color: #6b7280;
+            margin-top: 24px;
+            padding: 20px;
+            background: #f3f4f6;
+            border-radius: 4px;
+            border-left: 3px solid #f59e0b;
+        }
+
+        .policy-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 40px;
+        }
+
+        .policy-card {
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+            border: 1px solid #e5e7eb;
+            padding: 32px;
+            border-radius: 8px;
+            border-top: 3px solid #f59e0b;
+        }
+
+        .policy-number {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: #f59e0b;
+            color: white;
+            font-weight: 700;
+            font-size: 1.25rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .policy-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 12px;
+        }
+
+        .policy-text {
+            font-size: 0.95rem;
+            color: #6b7280;
+            line-height: 1.7;
+        }
+
+        footer {
+            background: white;
+            padding: 40px 20px;
+            text-align: center;
+            border-top: 1px solid #e5e7eb;
+            margin-top: 80px;
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        footer p {
+            max-width: 900px;
+            margin: 0 auto 8px;
+            line-height: 1.6;
+        }
+
+        .credit {
+            font-size: 0.85rem;
+            color: #9ca3af;
+            margin-top: 16px;
+        }
+
+        .highlight-coral {
+            color: #e05264;
+            font-weight: 600;
+        }
+
+        .highlight-teal {
+            color: #0d9488;
+            font-weight: 600;
+        }
+
+        .highlight-blue {
+            color: #3b82f6;
+            font-weight: 600;
+        }
+
+        .highlight-amber {
+            color: #f59e0b;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .gap-container {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .gap-number {
+                font-size: 3.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .stat-value {
+                font-size: 2.5rem;
+            }
+
+            .policy-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h2 {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>Unlocking Pension Capital</h1>
+            <p class="subtitle">European pensions allocate 100× less to venture capital than American ones. Every major economy is racing to close the gap.</p>
+        </div>
+    </header>
+
+    <main>
+        <!-- Section 1: The Allocation Gap -->
+        <section>
+            <h2>The Allocation Gap</h2>
+            <div class="gap-container">
+                <div class="gap-item">
+                    <div class="gap-number" style="color: #3b82f6;">2.0%</div>
+                    <p class="gap-label">US pension allocation to venture capital</p>
+                </div>
+                <div class="gap-item">
+                    <div class="gap-number" style="color: #e05264;">0.02–0.12%</div>
+                    <p class="gap-label">European pension allocation to venture capital</p>
+                </div>
+            </div>
+
+            <div class="callout">
+                <span class="callout-number">100×</span>
+                <span>gap between US and European pension VC allocation</span>
+            </div>
+
+            <p style="font-size: 1.05rem; line-height: 1.8; color: #374151;">
+                If European pensions shifted just <span class="highlight-blue">1% of assets</span> to venture capital, it would unlock <span class="highlight-amber">€37.5–87 billion annually</span>. That capital would supercharge growth across European tech ecosystems, create jobs, and accelerate innovation across sectors from biotech to climate tech.
+            </p>
+        </section>
+
+        <!-- Section 2: The Global Race -->
+        <section>
+            <h2>The Global Race</h2>
+            <p style="color: #6b7280; margin-bottom: 40px; font-size: 1.05rem;">Five major government programs, ranked by committed capital (in Canadian dollars)</p>
+
+            <div class="bar-chart">
+                <div class="bar-item">
+                    <div class="bar-label">UK Mansion House Compact (2023)</div>
+                    <div class="bar-value">C$90.0B committed • 10% pension target (currently 3.5%)</div>
+                    <div class="bar">
+                        <div class="bar-fill" style="width: 100%;">C$90.0B</div>
+                    </div>
+                </div>
+
+                <div class="bar-item">
+                    <div class="bar-label">Germany WIN Initiative (2024)</div>
+                    <div class="bar-value">C$18.0B committed • Wachstumsfonds: C$1.5B deployed across 41 VC funds (360 startups)</div>
+                    <div class="bar">
+                        <div class="bar-fill" style="width: 20%;">C$18.0B</div>
+                    </div>
+                </div>
+
+                <div class="bar-item">
+                    <div class="bar-label">France Tibi (2019/2023)</div>
+                    <div class="bar-value">C$9.6B deployed (Phase 1) • Phase 2 running ahead of schedule</div>
+                    <div class="bar">
+                        <div class="bar-fill teal" style="width: 10.7%;">C$9.6B</div>
+                    </div>
+                </div>
+
+                <div class="bar-item">
+                    <div class="bar-label">Israel Yozma 2.0 (2024)</div>
+                    <div class="bar-value">C$648M deployed in 18 months • 0.3:1 government match (massively oversubscribed)</div>
+                    <div class="bar">
+                        <div class="bar-fill indigo" style="width: 0.72%;">C$648M</div>
+                    </div>
+                </div>
+
+                <div class="bar-item">
+                    <div class="bar-label">Canada VCCI 4.0 (2021)</div>
+                    <div class="bar-value">C$1.0B committed • Smallest peer program</div>
+                    <div class="bar">
+                        <div class="bar-fill coral" style="width: 1.1%;">C$1.0B</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="note">
+                <strong>The visible gap:</strong> Canada's VCCI is dwarfed by UK, Germany, France, and Israel. European governments are mobilizing 10–90× more capital than Canada's entire venture capital stimulus program.
+            </div>
+        </section>
+
+        <!-- Section 3: The Multiplier Effect -->
+        <section>
+            <h2>The Multiplier Effect</h2>
+            <p style="color: #6b7280; margin-bottom: 40px; font-size: 1.05rem;">How small, well-designed government programs unlock massive private capital formation</p>
+
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-title">Israel Yozma (1993)</div>
+                    <div class="card-stat">$100M</div>
+                    <div class="card-detail">Government co-investment</div>
+                    <div class="card-detail" style="margin-top: 16px; font-size: 0.85rem; color: #9ca3af;">↓</div>
+                    <div class="card-stat" style="margin-top: 16px; font-size: 2.5rem; color: #0d9488;">60×</div>
+                    <div class="card-detail">Growth in VC industry by 2000</div>
+                    <div class="card-detail" style="margin-top: 16px; font-weight: 500;">Result: Israeli VC became a global powerhouse</div>
+                </div>
+
+                <div class="card teal">
+                    <div class="card-title">Israel Yozma 2.0 (2024)</div>
+                    <div class="card-stat">$450M</div>
+                    <div class="card-detail">Government budget</div>
+                    <div class="card-detail" style="margin-top: 16px; font-size: 0.85rem; color: #9ca3af;">↓</div>
+                    <div class="card-stat" style="margin-top: 16px; font-size: 2rem; color: #0d9488;">0.3:1</div>
+                    <div class="card-detail">Government-to-private match ratio</div>
+                    <div class="card-detail" style="margin-top: 16px; font-weight: 500;">Status: Already oversubscribed</div>
+                </div>
+
+                <div class="card indigo">
+                    <div class="card-title">US ERISA (1979)</div>
+                    <div class="card-detail" style="margin-top: 0; margin-bottom: 16px;">Rule change allowing pension investment in venture capital</div>
+                    <div class="card-stat" style="font-size: 2rem;">50%</div>
+                    <div class="card-detail">of US pensions allocated to VC within 8 years</div>
+                    <div class="card-detail" style="margin-top: 16px; font-weight: 500;">The regulation that changed everything</div>
+                </div>
+            </div>
+
+            <div class="note" style="margin-top: 40px;">
+                <strong>The lesson:</strong> Small, well-designed government co-investment with attractive terms (not mandates) can catalyze massive private capital formation and create self-sustaining venture ecosystems.
+            </div>
+        </section>
+
+        <!-- Section 4: European VC Returns -->
+        <section>
+            <h2>European VC Returns</h2>
+            <p style="color: #6b7280; margin-bottom: 40px; font-size: 1.05rem;">VC outperforms the asset classes pensions already invest in</p>
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-value" style="color: #3b82f6;">20.77%</div>
+                    <p class="stat-label">European VC 10-year net IRR</p>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" style="color: #6366f1;">14.97%</div>
+                    <p class="stat-label">European buyouts 10-year net IRR</p>
+                </div>
+            </div>
+
+            <div class="callout">
+                <span class="callout-number">+5.8</span>
+                <span>percentage point spread: VC outperformance over buyouts</span>
+            </div>
+
+            <p style="font-size: 1.05rem; line-height: 1.8; color: #374151; margin-top: 32px;">
+                <span class="highlight-teal">Venture capital dramatically outperforms buyouts</span> — the asset class European pensions already invest in heavily. The barrier to pension VC allocation isn't returns. It's <span class="highlight-blue">regulation, risk perception, and inertia</span>. Pension funds know the returns justify the allocation. They're held back by legal constraints and outdated mental models about what constitutes a "prudent" investment.
+            </p>
+        </section>
+
+        <!-- Section 5: Canada's Position -->
+        <section>
+            <h2>Canada's Position</h2>
+            <div class="card-grid">
+                <div class="card coral">
+                    <div class="card-title">The Scale Problem</div>
+                    <div class="card-detail">VCCI 4.0 at C$1B is the smallest peer program by a large margin. Germany commits 18× more. The UK commits 90× more.</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">World-Class Managers, Misaligned Capital</div>
+                    <div class="card-detail">Canadian pension funds (CPP, OTPP, CDPQ, OMERS) are among the world's most sophisticated institutional investors — but they deploy billions into US and global VC, not Canadian startups.</div>
+                </div>
+
+                <div class="card teal">
+                    <div class="card-title">The Paradox</div>
+                    <div class="card-detail">Canada has world-class pension fund managers investing billions in US venture capital while Canadian startups struggle to raise Series A rounds and compete for capital against US companies.</div>
+                </div>
+            </div>
+
+            <p style="font-size: 1.05rem; line-height: 1.8; color: #374151; margin-top: 40px;">
+                This isn't a talent problem. Canada has exceptional founders, strong research institutions, and deep technical expertise across sectors from software to biotech. It's a <span class="highlight-blue">capital allocation problem</span>. The ecosystem lacks sufficient early-stage capital at the scale required to compete globally.
+            </p>
+        </section>
+
+        <!-- Section 6: What's Needed -->
+        <section>
+            <h2>What's Needed</h2>
+            <div class="policy-grid">
+                <div class="policy-card">
+                    <div class="policy-number">1</div>
+                    <div class="policy-title">Scale Up</div>
+                    <p class="policy-text">VCCI needs to expand 5–10× to match peer programs. C$5–10B would position Canada alongside France and Germany.</p>
+                </div>
+
+                <div class="policy-card">
+                    <div class="policy-number">2</div>
+                    <div class="policy-title">Match Structure</div>
+                    <p class="policy-text">Adopt Israel's 0.3:1 co-investment model. Government capital as leverage attracts private capital without distorting markets or creating dependency.</p>
+                </div>
+
+                <div class="policy-card">
+                    <div class="policy-number">3</div>
+                    <div class="policy-title">Domestic Allocation Incentive</div>
+                    <p class="policy-text">Encourage (don't mandate) Canadian pension funds to allocate a meaningful share to Canadian VC. Tax incentives or priority access to co-investment could align capital with domestic opportunity.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p><strong>Sources:</strong> HMRC, Invest Europe, HM Treasury, France Tibi Commission, KfW / German Federal Government, Israel Innovation Authority, BDC, CVCA</p>
+        <p class="credit">Part of the Ontario Growth Sectors Research series</p>
+    </footer>
+
+    <script>
+        // Scroll-triggered fade-in using IntersectionObserver
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Animate bar widths on scroll
+        const barObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const bars = entry.target.querySelectorAll('.bar-fill');
+                    bars.forEach(bar => {
+                        const width = bar.style.width;
+                        bar.style.width = '0';
+                        setTimeout(() => {
+                            bar.style.width = width;
+                        }, 100);
+                    });
+                    barObserver.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.3
+        });
+
+        document.querySelectorAll('.bar-chart').forEach(chart => {
+            barObserver.observe(chart);
+        });
+    </script>
+</body>
+</html>

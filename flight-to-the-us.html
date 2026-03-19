@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Brain Drain: Canada's Startup Exodus</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #fafaf8;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            margin-bottom: 80px;
+            opacity: 0;
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        h1 {
+            font-size: clamp(3rem, 8vw, 4.5rem);
+            font-weight: 800;
+            color: #e05264;
+            margin-bottom: 16px;
+            letter-spacing: -2px;
+        }
+
+        .subtitle {
+            font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+            color: #6b7280;
+            max-width: 700px;
+            margin: 0 auto;
+            font-weight: 400;
+        }
+
+        /* Section Styling */
+        section {
+            margin-bottom: 100px;
+            opacity: 0;
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        section:nth-child(2) { animation-delay: 0.1s; }
+        section:nth-child(3) { animation-delay: 0.2s; }
+        section:nth-child(4) { animation-delay: 0.3s; }
+        section:nth-child(5) { animation-delay: 0.4s; }
+        section:nth-child(6) { animation-delay: 0.5s; }
+        section:nth-child(7) { animation-delay: 0.6s; }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Intersection Observer Animation */
+        section.in-view {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        h2 {
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 40px;
+            position: relative;
+            padding-bottom: 16px;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 4px;
+            background: #e05264;
+            border-radius: 2px;
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: #9ca3af;
+            margin-bottom: 30px;
+            font-weight: 400;
+        }
+
+        /* Section 1: The Headline */
+        .headline-number {
+            font-size: clamp(4rem, 12vw, 7rem);
+            font-weight: 900;
+            color: #e05264;
+            line-height: 1;
+            margin-bottom: 20px;
+        }
+
+        .headline-context {
+            font-size: 1.2rem;
+            color: #6b7280;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .decline-indicator {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-top: 30px;
+            padding: 24px;
+            background: #fef2f2;
+            border-radius: 8px;
+        }
+
+        .decline-box {
+            flex: 1;
+            text-align: center;
+        }
+
+        .decline-label {
+            font-size: 0.9rem;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .decline-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #1f2937;
+        }
+
+        .decline-year {
+            font-size: 0.8rem;
+            color: #d1d5db;
+            margin-top: 4px;
+        }
+
+        .arrow-down {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #e05264;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        /* Section 2: Timeline */
+        .timeline-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .timeline-year {
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .timeline-year-label {
+            font-weight: 600;
+            color: #6b7280;
+            font-size: 0.95rem;
+        }
+
+        .timeline-bars {
+            display: flex;
+            height: 40px;
+            border-radius: 4px;
+            overflow: hidden;
+            background: #e5e7eb;
+        }
+
+        .bar-retained {
+            background: #0d9488;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            position: relative;
+        }
+
+        .bar-abroad {
+            background: #e05264;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding-left: 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* Section 3: Talent Pipeline */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 32px 24px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            border-top: 4px solid #3b82f6;
+        }
+
+        .stat-card:nth-child(1) {
+            border-top-color: #e05264;
+        }
+
+        .stat-card:nth-child(2) {
+            border-top-color: #0d9488;
+        }
+
+        .stat-card:nth-child(3) {
+            border-top-color: #e05264;
+        }
+
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 12px;
+            color: #1f2937;
+        }
+
+        .stat-label {
+            font-size: 0.95rem;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
+        .talent-punchline {
+            background: #fef2f2;
+            padding: 28px 32px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.2rem;
+            color: #6b7280;
+            font-weight: 500;
+            border-left: 4px solid #e05264;
+        }
+
+        /* Section 4: Funding Gap */
+        .funding-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .funding-item {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .funding-label {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .funding-detail {
+            font-size: 0.9rem;
+            color: #9ca3af;
+            margin-bottom: 8px;
+        }
+
+        .funding-bar-container {
+            background: #e5e7eb;
+            height: 50px;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .funding-bar {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            color: white;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .bar-canada {
+            background: #0d9488;
+        }
+
+        .bar-us {
+            background: #3b82f6;
+        }
+
+        .funding-note {
+            background: #eff6ff;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: #1e40af;
+            border-left: 4px solid #3b82f6;
+            line-height: 1.6;
+        }
+
+        /* Section 5: Visa Paradox */
+        .visa-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .visa-item {
+            background: white;
+            padding: 28px 24px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .visa-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 16px;
+        }
+
+        .visa-time {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #e05264;
+            margin-bottom: 8px;
+        }
+
+        .visa-label {
+            font-size: 0.85rem;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .visa-opportunity {
+            background: #f0fdf4;
+            padding: 24px;
+            border-radius: 8px;
+            border-left: 4px solid #0d9488;
+            font-size: 0.95rem;
+            color: #166534;
+            line-height: 1.6;
+        }
+
+        /* Section 6: Founders */
+        .founders-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .founder-item {
+            display: grid;
+            grid-template-columns: 1fr 120px;
+            gap: 20px;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .founder-item:last-child {
+            border-bottom: none;
+        }
+
+        .founder-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .founder-company {
+            font-weight: 700;
+            color: #1f2937;
+            font-size: 1rem;
+        }
+
+        .founder-education {
+            font-size: 0.9rem;
+            color: #9ca3af;
+        }
+
+        .founder-bar {
+            background: #e5e7eb;
+            height: 32px;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .founder-value-bar {
+            background: #3b82f6;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 12px;
+            color: white;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .founders-total {
+            background: #fef2f2;
+            padding: 24px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 30px;
+            border: 2px solid #e05264;
+        }
+
+        .founders-total-number {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #e05264;
+            margin-bottom: 8px;
+        }
+
+        .founders-total-label {
+            font-size: 1rem;
+            color: #6b7280;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding-top: 60px;
+            border-top: 1px solid #e5e7eb;
+            margin-top: 80px;
+        }
+
+        .footer-sources {
+            font-size: 0.85rem;
+            color: #9ca3af;
+            margin-bottom: 12px;
+            line-height: 1.6;
+        }
+
+        .footer-note {
+            font-size: 0.8rem;
+            color: #d1d5db;
+            font-style: italic;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 16px;
+            }
+
+            h1 {
+                margin-bottom: 12px;
+            }
+
+            section {
+                margin-bottom: 60px;
+            }
+
+            h2 {
+                margin-bottom: 24px;
+            }
+
+            .decline-indicator {
+                flex-direction: column;
+            }
+
+            .arrow-down {
+                transform: rotate(90deg);
+                margin: 10px 0;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .funding-comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .visa-comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline-year {
+                grid-template-columns: 60px 1fr;
+                gap: 12px;
+            }
+
+            .bar-retained,
+            .bar-abroad {
+                font-size: 0.8rem;
+            }
+
+            .founder-item {
+                grid-template-columns: 1fr 100px;
+            }
+
+            .headline-number {
+                font-size: 3.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 12px;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            .stats-grid {
+                gap: 16px;
+            }
+
+            .stat-number {
+                font-size: 2.5rem;
+            }
+
+            .timeline-year {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .timeline-year-label {
+                order: -1;
+            }
+
+            .section-subtitle {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>The Brain Drain</h1>
+            <p class="subtitle">How Canada is losing its startups, talent, and competitive edge to the United States</p>
+        </header>
+
+        <!-- Section 1: The Headline -->
+        <section id="section-1">
+            <h2>The Headline</h2>
+            <div class="headline-number">32.4%</div>
+            <p class="headline-context">of Canadian-led startups are still headquartered in Canada (2024)</p>
+
+            <div class="decline-indicator">
+                <div class="decline-box">
+                    <div class="decline-label">2015–2019</div>
+                    <div class="decline-value">67%</div>
+                    <div class="decline-year">Retained</div>
+                </div>
+                <div class="arrow-down">↓</div>
+                <div class="decline-box">
+                    <div class="decline-label">2024</div>
+                    <div class="decline-value">32.4%</div>
+                    <div class="decline-year">Retained</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: The Retention Collapse -->
+        <section id="section-2">
+            <h2>The Retention Collapse</h2>
+            <p class="section-subtitle">Canadian startup headquarters 2015–2024</p>
+            <div class="timeline-container">
+                <div class="timeline-year">
+                    <div class="timeline-year-label">2015</div>
+                    <div class="timeline-bars">
+                        <div class="bar-retained" style="width: 67%;">67%</div>
+                        <div class="bar-abroad" style="width: 33%;">33%</div>
+                    </div>
+                </div>
+                <div class="timeline-year">
+                    <div class="timeline-year-label">2016</div>
+                    <div class="timeline-bars">
+                        <div class="bar-retained" style="width: 64%;">64%</div>
+                        <div class="bar-abroad" style="width: 36%;">36%</div>
+                    </div>
+                </div>
+                <div class="timeline-year">
+                    <div class="timeline-year-label">2017</div>
+                    <div class="timeline-bars">
+                        <div class="bar-retained" style="width: 60%;">60%</div>
+                        <div class="bar-abroad" style="width: 40%;">40%</div>
+                    </div>
+                </div>
+                <div class="timeline-year">
+                    <div class="timeline-year-label">2018</div>
+                    <div class="timeline-bars">
+                        <div class="bar-retained" style="width: 56%;">56%</div>
+                        <div class="bar-abroad" style="width: 44%;">44%</div>
+                    </div>
+                </div>
+                <div class="timeline-year">
+                    <div class="timeline-year-label">2019</div>
+                    <div class="timeline-bars">
+                        <div class="bar-retained" style="width: 52%;">52%</div>
+                        <div class="bar-abroad" style="width: 48%;">48%</div>
+                    </div>
+                </div>
+                <div class="timeline-year">
+                    <div class="timeline-year-label">2020</div>
+                    <div class="timeline-bars">
+                        <div class="bar-retained" style="width: 48%;">48%</div>
+                        <div class="bar-abroad" style="width: 52%;">52%</div>
+                    </div>
+                </div>
+                <div class="timeline-year">
+                    <div class="timeline-year-label">2021</div>
+                    <div class="timeline-bars">
+                        <div class="bar-retained" style="width: 44%;">44%</div>
+                        <div class="bar-abroad" style="width: 56%;">56%</div>
+                    </div>
+                </div>
+                <div class="timeline-year">
+                    <div class="timeline-year-label">2022</div>
+                    <div class="timeline-bars">
+                        <div class="bar-retained" style="width: 40%;">40%</div>
+                        <div class="bar-abroad" style="width: 60%;">60%</div>
+                    </div>
+                </div>
+                <div class="timeline-year">
+                    <div class="timeline-year-label">2023</div>
+                    <div class="timeline-bars">
+                        <div class="bar-retained" style="width: 36%;">36%</div>
+                        <div class="bar-abroad" style="width: 64%;">64%</div>
+                    </div>
+                </div>
+                <div class="timeline-year">
+                    <div class="timeline-year-label">2024</div>
+                    <div class="timeline-bars">
+                        <div class="bar-retained" style="width: 32.4%;">32.4%</div>
+                        <div class="bar-abroad" style="width: 67.6%;">67.6%</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: The Talent Pipeline -->
+        <section id="section-3">
+            <h2>The Talent Pipeline</h2>
+            <p class="section-subtitle">Canada trains the world. But who captures the value?</p>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">66%</div>
+                    <div class="stat-label">Software engineering grads working in the US</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">10%</div>
+                    <div class="stat-label">Share of world's top AI researchers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">&lt;2%</div>
+                    <div class="stat-label">Share of global AI venture capital captured</div>
+                </div>
+            </div>
+            <div class="talent-punchline">
+                Canada trains the talent. The US captures the value.
+            </div>
+        </section>
+
+        <!-- Section 4: The Funding Gap -->
+        <section id="section-4">
+            <h2>The Funding Gap</h2>
+            <p class="section-subtitle">Capital flight from North to South</p>
+            <div class="funding-comparison">
+                <div class="funding-item">
+                    <div class="funding-label">Series A Funding</div>
+                    <div class="funding-detail">Canadian Series A</div>
+                    <div class="funding-bar-container">
+                        <div class="funding-bar bar-canada" style="width: 25%;">C$10M</div>
+                    </div>
+                </div>
+                <div class="funding-item">
+                    <div class="funding-label"></div>
+                    <div class="funding-detail">US Series A</div>
+                    <div class="funding-bar-container">
+                        <div class="funding-bar bar-us" style="width: 100%;">US$30M</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="funding-comparison">
+                <div class="funding-item">
+                    <div class="funding-label">AI Venture Capital</div>
+                    <div class="funding-detail">Canadian AI VC (2024)</div>
+                    <div class="funding-bar-container">
+                        <div class="funding-bar bar-canada" style="width: 2%;">C$2B</div>
+                    </div>
+                </div>
+                <div class="funding-item">
+                    <div class="funding-label"></div>
+                    <div class="funding-detail">US AI VC (H1 2025)</div>
+                    <div class="funding-bar-container">
+                        <div class="funding-bar bar-us" style="width: 100%;">US$100B</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="funding-note">
+                <strong>The gap:</strong> US Series A is 3× larger than Canada. US AI venture capital is 50× larger. This disparity forces Canadian founders to choose: stay small, or move south.
+            </div>
+        </section>
+
+        <!-- Section 5: The Visa Paradox -->
+        <section id="section-5">
+            <h2>The Visa Paradox</h2>
+            <p class="section-subtitle">Speed kills. And Canada is slow.</p>
+            <div class="visa-comparison">
+                <div class="visa-item">
+                    <div class="visa-title">🇺🇸 US O-1 Visa</div>
+                    <div class="visa-time">13 days</div>
+                    <div class="visa-label">Processing time for extraordinary ability</div>
+                </div>
+                <div class="visa-item">
+                    <div class="visa-title">🇨🇦 Canada Startup Visa</div>
+                    <div class="visa-time">3+ yrs</div>
+                    <div class="visa-label">Processing time</div>
+                </div>
+            </div>
+
+            <div class="visa-opportunity">
+                <strong>A Window Opens:</strong> US H-1B visa fees increased to $100,000 in 2025. Canadian scientist and tech worker applications to Canada are already up 41%. But this window closes quickly if Canada doesn't act—immigration processing must match visa processing speed.
+            </div>
+        </section>
+
+        <!-- Section 6: The Founders Who Left -->
+        <section id="section-6">
+            <h2>The Founders Who Left</h2>
+            <p class="section-subtitle">Canadian talent, American valuations. Over $620B in market cap abroad.</p>
+            <div class="founders-list">
+                <div class="founder-item">
+                    <div class="founder-info">
+                        <div class="founder-company">OpenAI</div>
+                        <div class="founder-education">Ilya Sutskever • University of Toronto</div>
+                    </div>
+                    <div class="founder-bar">
+                        <div class="founder-value-bar" style="width: 100%;">$300B</div>
+                    </div>
+                </div>
+                <div class="founder-item">
+                    <div class="founder-info">
+                        <div class="founder-company">Uber</div>
+                        <div class="founder-education">Garrett Camp • University of Calgary</div>
+                    </div>
+                    <div class="founder-bar">
+                        <div class="founder-value-bar" style="width: 50%;">$150B</div>
+                    </div>
+                </div>
+                <div class="founder-item">
+                    <div class="founder-info">
+                        <div class="founder-company">Databricks</div>
+                        <div class="founder-education">Ali Ghodsi • University of Toronto</div>
+                    </div>
+                    <div class="founder-bar">
+                        <div class="founder-value-bar" style="width: 44.7%;">$134B</div>
+                    </div>
+                </div>
+                <div class="founder-item">
+                    <div class="founder-info">
+                        <div class="founder-company">Cloudflare</div>
+                        <div class="founder-education">Matthew Zatlyn • McGill University</div>
+                    </div>
+                    <div class="founder-bar">
+                        <div class="founder-value-bar" style="width: 13.3%;">$40B</div>
+                    </div>
+                </div>
+                <div class="founder-item">
+                    <div class="founder-info">
+                        <div class="founder-company">Safe Superintelligence Inc. (SSI)</div>
+                        <div class="founder-education">Ilya Sutskever • University of Toronto</div>
+                    </div>
+                    <div class="founder-bar">
+                        <div class="founder-value-bar" style="width: 10.7%;">$32B</div>
+                    </div>
+                </div>
+                <div class="founder-item">
+                    <div class="founder-info">
+                        <div class="founder-company">Slack</div>
+                        <div class="founder-education">Stewart Butterfield • University of Victoria</div>
+                    </div>
+                    <div class="founder-bar">
+                        <div class="founder-value-bar" style="width: 9.2%;">$27.7B</div>
+                    </div>
+                </div>
+            </div>
+            <div class="founders-total">
+                <div class="founders-total-number">>$620B</div>
+                <div class="founders-total-label">Total market cap of Canadian-origin founders' companies, headquartered in the US</div>
+            </div>
+        </section>
+
+        <footer>
+            <div class="footer-sources">
+                <strong>Sources:</strong> Leaders Fund, CVCA (Canadian Venture Capital Association), Tracxn, OECD, Budget 2025, OpenAI, Databricks, Cloudflare, Slack public filings
+            </div>
+            <div class="footer-note">
+                Part of the Ontario Growth Sectors Research series
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Intersection Observer for scroll-triggered animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('in-view');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>

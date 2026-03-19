@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Scale Problem: Canada's Market Size Disadvantage</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(180deg, #f9fafb 0%, #ffffff 50%, #f9fafb 100%);
+            color: #1f2937;
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 4rem 2rem;
+            margin-bottom: 3rem;
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 1rem;
+            color: #111827;
+        }
+
+        .subtitle {
+            font-size: clamp(1.1rem, 3vw, 1.4rem);
+            color: #6b7280;
+            font-weight: 400;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        /* Section */
+        section {
+            margin-bottom: 6rem;
+            padding: 3rem 2rem;
+            background: white;
+            border-radius: 12px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        section:nth-child(2) { animation-delay: 0.1s; }
+        section:nth-child(3) { animation-delay: 0.2s; }
+        section:nth-child(4) { animation-delay: 0.3s; }
+        section:nth-child(5) { animation-delay: 0.4s; }
+        section:nth-child(6) { animation-delay: 0.5s; }
+        section:nth-child(7) { animation-delay: 0.6s; }
+
+        section.intersecting {
+            animation: fadeInUp 0.8s ease-out forwards !important;
+        }
+
+        h2 {
+            font-size: clamp(1.8rem, 5vw, 2.8rem);
+            font-weight: 700;
+            margin-bottom: 2.5rem;
+            color: #111827;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Section 1: Market Gap */
+        .market-gap {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .gap-category {
+            padding: 2rem;
+            background: #f3f4f6;
+            border-radius: 8px;
+        }
+
+        .gap-category h3 {
+            font-size: 1.1rem;
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .gap-pair {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .number-block {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .label {
+            font-size: 0.9rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .us-number {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: #3b82f6;
+            line-height: 1;
+            letter-spacing: -1px;
+        }
+
+        .ca-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #e05264;
+            line-height: 1;
+            letter-spacing: -0.5px;
+        }
+
+        .ratio {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: #e05264;
+            margin-top: 1rem;
+            line-height: 1;
+        }
+
+        .ratio-label {
+            font-size: 0.85rem;
+            color: #9ca3af;
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .market-gap {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .us-number {
+                font-size: 2.5rem;
+            }
+
+            .ca-number {
+                font-size: 1.5rem;
+            }
+
+            .ratio {
+                font-size: 2rem;
+            }
+        }
+
+        /* Section 2: Size in Context */
+        .context-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .bar-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .bar-label {
+            font-size: 1rem;
+            color: #374151;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .bar-amount {
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .bar {
+            height: 50px;
+            background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 100%);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            padding-left: 2rem;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            position: relative;
+        }
+
+        .bar.secondary {
+            background: linear-gradient(90deg, #e05264 0%, #c73a52 100%);
+        }
+
+        .bar.tertiary {
+            background: linear-gradient(90deg, #0d9488 0%, #0a7c65 100%);
+        }
+
+        .bar-text {
+            position: relative;
+            z-index: 2;
+        }
+
+        .context-note {
+            background: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border-radius: 4px;
+            font-size: 1rem;
+            color: #1e40af;
+        }
+
+        /* Section 3: R&D Gap */
+        .rd-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .rd-stat {
+            padding: 2rem;
+            background: #f3f4f6;
+            border-radius: 8px;
+        }
+
+        .rd-stat h3 {
+            font-size: 0.9rem;
+            color: #6b7280;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 1.5rem;
+        }
+
+        .rd-main {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: #e05264;
+            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+
+        .rd-label {
+            font-size: 0.85rem;
+            color: #9ca3af;
+            margin-bottom: 1.5rem;
+        }
+
+        .rd-secondary {
+            background: white;
+            border: 2px solid #f3f4f6;
+            padding: 1rem;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: #374151;
+        }
+
+        .rd-secondary strong {
+            color: #111827;
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .rd-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Section 4: Adoption Gap */
+        .adoption-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .adoption-stat {
+            padding: 1.5rem;
+            background: #f3f4f6;
+            border-radius: 8px;
+        }
+
+        .adoption-stat h3 {
+            font-size: 0.9rem;
+            color: #6b7280;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 1.5rem;
+        }
+
+        .adoption-metric {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .adoption-metric:last-child {
+            margin-bottom: 0;
+        }
+
+        .adoption-label {
+            flex: 1;
+            font-size: 0.95rem;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .adoption-value {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #e05264;
+            min-width: 80px;
+            text-align: right;
+        }
+
+        .adoption-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .adoption-bar-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .adoption-bar-label {
+            font-size: 0.95rem;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .adoption-bar-container {
+            background: #e5e7eb;
+            height: 28px;
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .adoption-bar-fill {
+            background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 0.5rem;
+            color: white;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            .adoption-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .adoption-metric {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .adoption-value {
+                min-width: unset;
+                text-align: left;
+            }
+        }
+
+        /* Section 5: Trade Agreement Offset */
+        .trade-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .trade-bar {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .trade-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+
+        .trade-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .trade-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #0d9488;
+        }
+
+        .trade-bar-container {
+            background: #e5e7eb;
+            height: 45px;
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .trade-bar-fill {
+            background: linear-gradient(90deg, #0d9488 0%, #0a7c65 100%);
+            height: 100%;
+            display: flex;
+            align-items: center;
+            padding-left: 1.5rem;
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .trade-note {
+            background: #d1fae5;
+            border-left: 4px solid #0d9488;
+            padding: 1.5rem;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            color: #065f46;
+            margin-top: 1rem;
+        }
+
+        .trade-note strong {
+            color: #047857;
+        }
+
+        .trade-results {
+            background: #f0fdfa;
+            border: 2px solid #ccfbf1;
+            padding: 1.5rem;
+            border-radius: 6px;
+            margin-top: 2rem;
+        }
+
+        .trade-results h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #0a7c65;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 1rem;
+        }
+
+        .trade-result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid #ccfbf1;
+            font-size: 0.95rem;
+            color: #065f46;
+        }
+
+        .trade-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .trade-result-label {
+            font-weight: 500;
+        }
+
+        .trade-result-value {
+            font-weight: 700;
+            color: #047857;
+        }
+
+        /* Section 6: SBIR Contrast */
+        .sbir-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .sbir-block {
+            padding: 2rem;
+            background: #f3f4f6;
+            border-radius: 8px;
+        }
+
+        .sbir-block h3 {
+            font-size: 0.9rem;
+            color: #6b7280;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 1.5rem;
+        }
+
+        .sbir-amount {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: #3b82f6;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .sbir-note {
+            font-size: 0.85rem;
+            color: #9ca3af;
+            margin-bottom: 1.5rem;
+        }
+
+        .sbir-insight {
+            background: white;
+            border: 2px solid #f3f4f6;
+            padding: 1rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: #374151;
+            font-style: italic;
+        }
+
+        .sbir-key-insight {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 1.5rem;
+            border-radius: 4px;
+            margin-top: 2rem;
+            font-size: 1rem;
+            color: #92400e;
+        }
+
+        .sbir-key-insight strong {
+            color: #78350f;
+        }
+
+        @media (max-width: 768px) {
+            .sbir-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            border-top: 1px solid #e5e7eb;
+            color: #9ca3af;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-top: 3rem;
+        }
+
+        footer strong {
+            color: #6b7280;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .container {
+                padding: 1rem;
+            }
+
+            header {
+                padding: 2rem 1rem;
+                margin-bottom: 2rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.6rem;
+            }
+
+            section {
+                padding: 2rem 1rem;
+                margin-bottom: 3rem;
+            }
+
+            .gap-pair {
+                gap: 1rem;
+            }
+
+            .us-number {
+                font-size: 2rem;
+            }
+
+            .ca-number {
+                font-size: 1.3rem;
+            }
+
+            .ratio {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>The Scale Problem</h1>
+        <p class="subtitle">Why Canadian startups face a fundamental market size disadvantage — and what offsets exist</p>
+    </header>
+
+    <div class="container">
+        <!-- Section 1: Market Gap -->
+        <section>
+            <h2>The Market Gap</h2>
+            <div class="market-gap">
+                <div class="gap-category">
+                    <h3>Consumer Market</h3>
+                    <div class="gap-pair">
+                        <div class="number-block">
+                            <span class="label">United States</span>
+                            <div class="us-number">$19.8T</div>
+                        </div>
+                        <div class="number-block">
+                            <span class="label">Canada</span>
+                            <div class="ca-number">$1.2T</div>
+                        </div>
+                        <div>
+                            <div class="ratio">1 : 17</div>
+                            <div class="ratio-label">Ratio</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gap-category">
+                    <h3>Enterprise IT Market</h3>
+                    <div class="gap-pair">
+                        <div class="number-block">
+                            <span class="label">United States</span>
+                            <div class="us-number">$1.65T</div>
+                        </div>
+                        <div class="number-block">
+                            <span class="label">Canada</span>
+                            <div class="ca-number">$20.4B</div>
+                        </div>
+                        <div>
+                            <div class="ratio">1 : 80</div>
+                            <div class="ratio-label">Ratio</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Size in Context -->
+        <section>
+            <h2>Size in Context</h2>
+            <div class="context-bars">
+                <div class="bar-group">
+                    <div class="bar-label">
+                        <span>US Consumer Market</span>
+                        <span class="bar-amount">$19.8T</span>
+                    </div>
+                    <div class="bar" style="width: 100%;"></div>
+                </div>
+
+                <div class="bar-group">
+                    <div class="bar-label">
+                        <span>China + EU Combined</span>
+                        <span class="bar-amount">$16.7T</span>
+                    </div>
+                    <div class="bar secondary" style="width: 84%;"></div>
+                </div>
+
+                <div class="bar-group">
+                    <div class="bar-label">
+                        <span>Global SaaS Market</span>
+                        <span class="bar-amount">~$225B of $497B</span>
+                    </div>
+                    <div class="bar tertiary" style="width: 45%;"></div>
+                </div>
+
+                <div class="context-note">
+                    <strong>The US market alone is 19% larger than China and the EU combined.</strong> The US dominates SaaS globally, capturing approximately 45% of the world market.
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: R&D Gap -->
+        <section>
+            <h2>The R&D Gap</h2>
+            <div class="rd-grid">
+                <div class="rd-stat">
+                    <h3>Business R&D Spending</h3>
+                    <div class="rd-main">100 : 1</div>
+                    <div class="rd-label">US vs Canada ratio</div>
+                    <div class="rd-secondary">
+                        <strong>US:</strong> $529B<br>
+                        <strong>Canada:</strong> $5.2B
+                    </div>
+                </div>
+
+                <div class="rd-stat">
+                    <h3>R&D as % of GDP</h3>
+                    <div class="rd-main">1.0%</div>
+                    <div class="rd-label">Canada's R&D intensity</div>
+                    <div class="rd-secondary">
+                        <strong>OECD Average:</strong> 2.0%<br>
+                        Canada lags by <strong>50%</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 1.5rem; border-radius: 4px; color: #92400e;">
+                <strong style="color: #78350f;">Global Innovation Index:</strong> Canada fell from 14th place (2024) to 17th place (2025)
+            </div>
+        </section>
+
+        <!-- Section 4: Adoption Gap -->
+        <section>
+            <h2>The Adoption Gap</h2>
+            <div class="adoption-grid">
+                <div class="adoption-stat">
+                    <h3>Technology Adoption</h3>
+                    <div class="adoption-bars">
+                        <div class="adoption-bar-item">
+                            <div class="adoption-bar-label">AI Adoption</div>
+                            <div class="adoption-bar-container">
+                                <div class="adoption-bar-fill" style="width: 12.2%;">12.2%</div>
+                            </div>
+                            <div style="font-size: 0.8rem; color: #9ca3af;">Canada</div>
+                        </div>
+                        <div style="height: 0.5rem;"></div>
+                        <div class="adoption-bar-item">
+                            <div class="adoption-bar-label">AI Adoption</div>
+                            <div class="adoption-bar-container">
+                                <div class="adoption-bar-fill" style="width: 25%; background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 100%);">25%+</div>
+                            </div>
+                            <div style="font-size: 0.8rem; color: #9ca3af;">United States</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="adoption-stat">
+                    <h3>Digital Maturity</h3>
+                    <div class="adoption-metric">
+                        <div class="adoption-label">High maturity businesses</div>
+                        <div class="adoption-value">1 in 5</div>
+                    </div>
+                    <div class="adoption-metric">
+                        <div class="adoption-label">Low maturity businesses</div>
+                        <div class="adoption-value">50%+</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem;">
+                <div style="padding: 1.5rem; background: #f3f4f6; border-radius: 8px;">
+                    <h3 style="font-size: 0.9rem; color: #6b7280; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1rem;">Robotics Adoption</h3>
+                    <div style="font-size: 1.5rem; font-weight: 800; color: #e05264; margin-bottom: 0.5rem;">13th</div>
+                    <div style="font-size: 0.85rem; color: #9ca3af; margin-bottom: 1rem;">Canada globally</div>
+                    <div style="font-size: 0.9rem; color: #374151;">Outside automotive sector, adoption is sparse</div>
+                </div>
+
+                <div style="padding: 1.5rem; background: #f3f4f6; border-radius: 8px;">
+                    <h3 style="font-size: 0.9rem; color: #6b7280; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1rem;">Government Procurement</h3>
+                    <div style="font-size: 1.5rem; font-weight: 800; color: #e05264; margin-bottom: 0.5rem;">22 months</div>
+                    <div style="font-size: 0.85rem; color: #9ca3af; margin-bottom: 1rem;">Canada cycle time</div>
+                    <div style="font-size: 0.9rem; color: #374151;">Private sector: 6-7 months</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Trade Agreement Offset -->
+        <section>
+            <h2>The Trade Agreement Offset</h2>
+            <p style="color: #6b7280; margin-bottom: 2rem;">Trade agreements partially compensate for Canada's small domestic market by expanding effective market access:</p>
+
+            <div class="trade-bars">
+                <div class="trade-bar">
+                    <div class="trade-label">
+                        <span class="trade-name">CPTPP (Trans-Pacific)</span>
+                        <span class="trade-value">$12.1T GDP</span>
+                    </div>
+                    <div class="trade-bar-container">
+                        <div class="trade-bar-fill" style="width: 61%;">61% of US market</div>
+                    </div>
+                </div>
+
+                <div class="trade-bar">
+                    <div class="trade-label">
+                        <span class="trade-name">CETA (EU + Canada)</span>
+                        <span class="trade-value">$21.7T GDP</span>
+                    </div>
+                    <div class="trade-bar-container">
+                        <div class="trade-bar-fill" style="width: 110%;">110% of US market</div>
+                    </div>
+                </div>
+
+                <div class="trade-note">
+                    <strong>Strategic advantage:</strong> Combined CPTPP + CETA access represents ~$33.8T in market opportunity—far exceeding the $19.8T US consumer market.
+                </div>
+            </div>
+
+            <div class="trade-results">
+                <h4>CETA Impact (2017-2025)</h4>
+                <div class="trade-result-item">
+                    <span class="trade-result-label">Bilateral trade volume</span>
+                    <span class="trade-result-value">$134B (2025)</span>
+                </div>
+                <div class="trade-result-item">
+                    <span class="trade-result-label">Goods trade growth</span>
+                    <span class="trade-result-value">+75%</span>
+                </div>
+                <div class="trade-result-item">
+                    <span class="trade-result-label">Services trade growth</span>
+                    <span class="trade-result-value">+97%</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 6: SBIR Contrast -->
+        <section>
+            <h2>The US SBIR Contrast</h2>
+            <div class="sbir-container">
+                <div class="sbir-block">
+                    <h3>US SBIR/STTR Program</h3>
+                    <div class="sbir-amount">$4B</div>
+                    <div class="sbir-note">Annual funding for startup scaling</div>
+                    <div class="sbir-insight">Government procurement as deliberate startup scaling engine</div>
+                </div>
+
+                <div class="sbir-block">
+                    <h3>Canada ISC Program</h3>
+                    <div class="sbir-amount">Orders of Magnitude Smaller</div>
+                    <div class="sbir-note">Industrial R&D investment support</div>
+                    <div class="sbir-insight">Utilization declined from 4.2-7% to 1.9-2.2%</div>
+                </div>
+            </div>
+
+            <div class="sbir-key-insight">
+                <strong>The Gap:</strong> The US uses government procurement as a deliberate startup scaling engine. Canada does not systematically deploy this lever, missing a crucial growth channel for early-stage technology companies.
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p><strong>Sources:</strong> World Bank, OECD, Statistics Canada, CPTPP Secretariat, European Commission, Budget 2025.</p>
+        <p style="margin-top: 1rem;">Part of the Ontario Growth Sectors Research series.</p>
+    </footer>
+
+    <script>
+        // Intersection Observer for scroll-triggered fade-in
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('intersecting');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Observe all sections
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>

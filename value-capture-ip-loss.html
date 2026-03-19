@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Where Canadian Value Goes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif;
+            background: #ffffff;
+            color: #374151;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Header */
+        header {
+            padding: 4rem 0;
+            text-align: center;
+            margin-bottom: 3rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-size: 1.25rem;
+            color: #6b7280;
+            font-weight: 400;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Sections */
+        section {
+            margin-bottom: 6rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        /* Section 1: Talent-Value Gap */
+        .talent-gap {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .stat-block {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .stat-number {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 1.25rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .teal { color: #0d9488; }
+        .coral { color: #e05264; }
+        .blue { color: #3b82f6; }
+        .purple { color: #8b5cf6; }
+        .amber { color: #f59e0b; }
+
+        .punchline {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #111827;
+            margin-top: 2rem;
+            padding: 2rem;
+            background: #f9fafb;
+            border-left: 4px solid #0d9488;
+        }
+
+        /* Section 2: Founders Chart */
+        .founders-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .founder-item {
+            display: grid;
+            grid-template-columns: 200px 1fr 120px 100px;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .founder-name {
+            font-weight: 600;
+            color: #111827;
+            font-size: 1rem;
+        }
+
+        .founder-bar-wrapper {
+            position: relative;
+            height: 40px;
+            background: #f3f4f6;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .founder-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #0d9488);
+            display: flex;
+            align-items: center;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .founder-bar-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            white-space: nowrap;
+        }
+
+        .founder-value {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #111827;
+            text-align: right;
+        }
+
+        .founder-uni {
+            font-size: 0.875rem;
+            color: #9ca3af;
+            text-align: right;
+        }
+
+        .total-callout {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #e05264;
+            padding: 2rem;
+            background: #fef2f2;
+            border-radius: 8px;
+            margin-top: 2rem;
+        }
+
+        /* Section 3: UWaterloo Pipeline */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            padding: 2rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            text-align: center;
+            border-top: 4px solid #0d9488;
+        }
+
+        .stat-card-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #0d9488;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card-label {
+            font-size: 1rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .note-text {
+            text-align: center;
+            font-size: 1rem;
+            color: #6b7280;
+            margin-top: 1.5rem;
+            font-style: italic;
+        }
+
+        /* Section 4: Acquisition Treemap */
+        .acquisition-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .acquisition-box {
+            padding: 1.5rem;
+            border-radius: 6px;
+            color: white;
+            font-weight: 500;
+            position: relative;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .acquisition-box.us {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+
+        .acquisition-box.uk {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        }
+
+        .acquisition-box.swiss {
+            background: linear-gradient(135deg, #0d9488, #059669);
+        }
+
+        .acquisition-box.other {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .acq-company {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .acq-details {
+            font-size: 0.875rem;
+            opacity: 0.95;
+        }
+
+        .acq-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .acq-acquirer {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        .acq-year {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        .acq-breakdown {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #f9fafb;
+            border-radius: 6px;
+        }
+
+        .breakdown-title {
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 1rem;
+        }
+
+        .breakdown-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .breakdown-item {
+            text-align: center;
+        }
+
+        .breakdown-pct {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .breakdown-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        /* Section 5: Privatization */
+        .privatization-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .priv-card {
+            padding: 2.5rem;
+            background: linear-gradient(135deg, #fef2f2, #fce7f3);
+            border-radius: 8px;
+            border-left: 4px solid #e05264;
+        }
+
+        .priv-number {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #e05264;
+            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+
+        .priv-label {
+            font-size: 1rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        /* Section 6: Value Leakage */
+        .leakage-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .leakage-flow {
+            padding: 2rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .leakage-title {
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .leakage-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #e05264;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid #e5e7eb;
+            padding: 3rem 0;
+            text-align: center;
+            color: #9ca3af;
+            font-size: 0.875rem;
+        }
+
+        .sources {
+            margin-bottom: 1rem;
+        }
+
+        .credit {
+            color: #d1d5db;
+            margin-top: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            .talent-gap {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .founder-item {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+
+            .stat-number {
+                font-size: 2.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .acquisition-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+
+            .privatization-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Where Canadian Value Goes</h1>
+            <p class="subtitle">Over $620 billion in founder-created market cap now resides outside Canada</p>
+        </header>
+
+        <!-- Section 1: Talent-Value Gap -->
+        <section id="section1">
+            <h2>The Talent-Value Gap</h2>
+            <div class="talent-gap">
+                <div class="stat-block">
+                    <div class="stat-number teal">10%</div>
+                    <div class="stat-label">of the world's top<br>AI researchers are<br>Canadian-trained</div>
+                </div>
+                <div class="stat-block">
+                    <div class="stat-number coral">&lt;2%</div>
+                    <div class="stat-label">of global AI venture<br>capital is captured<br>by Canada</div>
+                </div>
+            </div>
+            <div class="punchline">
+                Canada produces the talent. Others capture the value.
+            </div>
+        </section>
+
+        <!-- Section 2: Founders Who Left -->
+        <section id="section2">
+            <h2>Founders Who Left</h2>
+            <div class="founders-grid">
+                <div class="founder-item">
+                    <div class="founder-name">OpenAI (Sutskever)</div>
+                    <div class="founder-bar-wrapper">
+                        <div class="founder-bar" style="width: 100%;"></div>
+                    </div>
+                    <div class="founder-value">$300B</div>
+                    <div class="founder-uni">U of Toronto</div>
+                </div>
+
+                <div class="founder-item">
+                    <div class="founder-name">Uber (Camp)</div>
+                    <div class="founder-bar-wrapper">
+                        <div class="founder-bar" style="width: 50%;"></div>
+                    </div>
+                    <div class="founder-value">$150B</div>
+                    <div class="founder-uni">U of Calgary</div>
+                </div>
+
+                <div class="founder-item">
+                    <div class="founder-name">Databricks</div>
+                    <div class="founder-bar-wrapper">
+                        <div class="founder-bar" style="width: 44.67%;"></div>
+                    </div>
+                    <div class="founder-value">$134B</div>
+                    <div class="founder-uni">U of Toronto</div>
+                </div>
+
+                <div class="founder-item">
+                    <div class="founder-name">Cloudflare (Zatlyn)</div>
+                    <div class="founder-bar-wrapper">
+                        <div class="founder-bar" style="width: 13.33%;"></div>
+                    </div>
+                    <div class="founder-value">$40B</div>
+                    <div class="founder-uni">McGill</div>
+                </div>
+
+                <div class="founder-item">
+                    <div class="founder-name">SSI (Sutskever)</div>
+                    <div class="founder-bar-wrapper">
+                        <div class="founder-bar" style="width: 10.67%;"></div>
+                    </div>
+                    <div class="founder-value">$32B</div>
+                    <div class="founder-uni">U of Toronto</div>
+                </div>
+
+                <div class="founder-item">
+                    <div class="founder-name">Slack (Butterfield)</div>
+                    <div class="founder-bar-wrapper">
+                        <div class="founder-bar" style="width: 9.23%;"></div>
+                    </div>
+                    <div class="founder-value">$27.7B</div>
+                    <div class="founder-uni">UVic</div>
+                </div>
+
+                <div class="founder-item">
+                    <div class="founder-name">Faire</div>
+                    <div class="founder-bar-wrapper">
+                        <div class="founder-bar" style="width: 4.13%;"></div>
+                    </div>
+                    <div class="founder-value">$12.4B</div>
+                    <div class="founder-uni">UWaterloo</div>
+                </div>
+
+                <div class="founder-item">
+                    <div class="founder-name">Instacart (Mehta)</div>
+                    <div class="founder-bar-wrapper">
+                        <div class="founder-bar" style="width: 3.33%;"></div>
+                    </div>
+                    <div class="founder-value">$10B</div>
+                    <div class="founder-uni">UWaterloo</div>
+                </div>
+
+                <div class="founder-item">
+                    <div class="founder-name">Netskope (Beri)</div>
+                    <div class="founder-bar-wrapper">
+                        <div class="founder-bar" style="width: 2.5%;"></div>
+                    </div>
+                    <div class="founder-value">$7.5B</div>
+                    <div class="founder-uni">SFU</div>
+                </div>
+            </div>
+            <div class="total-callout">
+                $620B+ in combined market cap
+            </div>
+        </section>
+
+        <!-- Section 3: UWaterloo Pipeline -->
+        <section id="section3">
+            <h2>The UWaterloo Pipeline</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-card-number">1,292</div>
+                    <div class="stat-card-label">companies founded by UWaterloo alumni</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-number">$14B+</div>
+                    <div class="stat-card-label">capital raised</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-number">14</div>
+                    <div class="stat-card-label">unicorns produced</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-number">34%</div>
+                    <div class="stat-card-label">headquartered in the US</div>
+                </div>
+            </div>
+            <p class="note-text">2nd highest startup ROI of any university in North America, after Stanford</p>
+        </section>
+
+        <!-- Section 4: Acquired and Gone -->
+        <section id="section4">
+            <h2>Acquired and Gone</h2>
+            <p style="text-align: center; color: #6b7280; margin-bottom: 2rem;">The 15 largest foreign acquisitions of Canadian companies</p>
+            <div class="acquisition-grid">
+                <div class="acquisition-box us">
+                    <div class="acq-company">Dayforce</div>
+                    <div class="acq-value">$17.7B</div>
+                    <div class="acq-details">
+                        <div class="acq-acquirer">Ceridian (US)</div>
+                        <div class="acq-year">2018</div>
+                    </div>
+                </div>
+
+                <div class="acquisition-box other">
+                    <div class="acq-company">Nuvei</div>
+                    <div class="acq-value">$9.1B</div>
+                    <div class="acq-details">
+                        <div class="acq-acquirer">Global Payments (US)</div>
+                        <div class="acq-year">2024</div>
+                    </div>
+                </div>
+
+                <div class="acquisition-box us">
+                    <div class="acq-company">D+H</div>
+                    <div class="acq-value">$6.9B</div>
+                    <div class="acq-details">
+                        <div class="acq-acquirer">Torchmark (US)</div>
+                        <div class="acq-year">2020</div>
+                    </div>
+                </div>
+
+                <div class="acquisition-box swiss">
+                    <div class="acq-company">Chinook</div>
+                    <div class="acq-value">$4.6B</div>
+                    <div class="acq-details">
+                        <div class="acq-acquirer">Roche (Swiss)</div>
+                        <div class="acq-year">2018</div>
+                    </div>
+                </div>
+
+                <div class="acquisition-box uk">
+                    <div class="acq-company">Fusion</div>
+                    <div class="acq-value">$3.5B</div>
+                    <div class="acq-details">
+                        <div class="acq-acquirer">Smith & Nephew (UK)</div>
+                        <div class="acq-year">2022</div>
+                    </div>
+                </div>
+
+                <div class="acquisition-box us">
+                    <div class="acq-company">Verafin</div>
+                    <div class="acq-value">$4.0B</div>
+                    <div class="acq-details">
+                        <div class="acq-acquirer">Nasdaq (US)</div>
+                        <div class="acq-year">2020</div>
+                    </div>
+                </div>
+
+                <div class="acquisition-box uk">
+                    <div class="acq-company">Bellus</div>
+                    <div class="acq-value">$2.9B</div>
+                    <div class="acq-details">
+                        <div class="acq-acquirer">Universal Display (US)</div>
+                        <div class="acq-year">2021</div>
+                    </div>
+                </div>
+
+                <div class="acquisition-box uk">
+                    <div class="acq-company">Sierra Oncology</div>
+                    <div class="acq-value">$2.7B</div>
+                    <div class="acq-details">
+                        <div class="acq-acquirer">GSK (UK)</div>
+                        <div class="acq-year">2020</div>
+                    </div>
+                </div>
+
+                <div class="acquisition-box us">
+                    <div class="acq-company">Trillium</div>
+                    <div class="acq-value">$3.3B</div>
+                    <div class="acq-details">
+                        <div class="acq-acquirer">Talend (US)</div>
+                        <div class="acq-year">2021</div>
+                    </div>
+                </div>
+
+                <div class="acquisition-box us">
+                    <div class="acq-company">Baylis</div>
+                    <div class="acq-value">$2.5B</div>
+                    <div class="acq-details">
+                        <div class="acq-acquirer">Boston Scientific (US)</div>
+                        <div class="acq-year">2021</div>
+                    </div>
+                </div>
+
+                <div class="acquisition-box other">
+                    <div class="acq-company">Clementia</div>
+                    <div class="acq-value">$1.9B</div>
+                    <div class="acq-details">
+                        <div class="acq-acquirer">Pfizer (US)</div>
+                        <div class="acq-year">2019</div>
+                    </div>
+                </div>
+
+                <div class="acquisition-box us">
+                    <div class="acq-company">Ecobee</div>
+                    <div class="acq-value">$1.1B</div>
+                    <div class="acq-details">
+                        <div class="acq-acquirer">Generac (US)</div>
+                        <div class="acq-year">2023</div>
+                    </div>
+                </div>
+
+                <div class="acquisition-box other">
+                    <div class="acq-company">Copperleaf</div>
+                    <div class="acq-value">$1.4B</div>
+                    <div class="acq-details">
+                        <div class="acq-acquirer">Hexagon (Sweden)</div>
+                        <div class="acq-year">2021</div>
+                    </div>
+                </div>
+
+                <div class="acquisition-box us">
+                    <div class="acq-company">PoF</div>
+                    <div class="acq-value">$0.8B</div>
+                    <div class="acq-details">
+                        <div class="acq-acquirer">Visa (US)</div>
+                        <div class="acq-year">2021</div>
+                    </div>
+                </div>
+
+                <div class="acquisition-box other">
+                    <div class="acq-company">Wattpad</div>
+                    <div class="acq-value">$0.9B</div>
+                    <div class="acq-details">
+                        <div class="acq-acquirer">Naver (S. Korea)</div>
+                        <div class="acq-year">2021</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="acq-breakdown">
+                <div class="breakdown-title">Acquirer Nationality Breakdown</div>
+                <div class="breakdown-items">
+                    <div class="breakdown-item">
+                        <div class="breakdown-pct blue">74%</div>
+                        <div class="breakdown-label">US Acquirers</div>
+                    </div>
+                    <div class="breakdown-item">
+                        <div class="breakdown-pct purple">11%</div>
+                        <div class="breakdown-label">UK Acquirers</div>
+                    </div>
+                    <div class="breakdown-item">
+                        <div class="breakdown-pct amber">15%</div>
+                        <div class="breakdown-label">Other</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="total-callout" style="margin-top: 2rem;">
+                C$50B+ in company value acquired by foreign buyers
+            </div>
+        </section>
+
+        <!-- Section 5: Privatization Wave -->
+        <section id="section5">
+            <h2>The Privatization Wave</h2>
+            <div class="privatization-cards">
+                <div class="priv-card">
+                    <div class="priv-number">54</div>
+                    <div class="priv-label">companies taken private in 2025</div>
+                </div>
+                <div class="priv-card">
+                    <div class="priv-number">$15.4B</div>
+                    <div class="priv-label">record privatization value in 2024</div>
+                </div>
+                <div class="priv-card">
+                    <div class="priv-number">40+</div>
+                    <div class="priv-label">companies taken private in 2024</div>
+                </div>
+            </div>
+            <p class="note-text">Companies are leaving public markets entirely — taking growth out of reach for retail investors</p>
+        </section>
+
+        <!-- Section 6: Value Leakage Channels -->
+        <section id="section6">
+            <h2>Three Channels of Value Leakage</h2>
+            <div class="leakage-container">
+                <div class="leakage-flow">
+                    <div class="leakage-title">1. Talent Departure</div>
+                    <div class="leakage-value">$620B+</div>
+                    <p style="margin-top: 0.5rem; color: #6b7280;">in founder value created abroad by Canadian-educated talent</p>
+                </div>
+
+                <div class="leakage-flow" style="border-left-color: #e05264;">
+                    <div class="leakage-title">2. Foreign Acquisition</div>
+                    <div class="leakage-value">$50B+</div>
+                    <p style="margin-top: 0.5rem; color: #6b7280;">in company value sold to international buyers</p>
+                </div>
+
+                <div class="leakage-flow" style="border-left-color: #f59e0b;">
+                    <div class="leakage-title">3. Privatization</div>
+                    <div class="leakage-value">$15.4B+</div>
+                    <p style="margin-top: 0.5rem; color: #6b7280;">in growth companies leaving public markets annually</p>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div class="sources">
+                <strong>Sources:</strong> Leaders Fund, CVCA, TMX Group, Tracxn, OECD
+            </div>
+            <div>Part of the Ontario Growth Sectors Research series</div>
+            <div class="credit">Information is Beautiful style visualization</div>
+        </footer>
+    </div>
+
+    <script>
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all sections
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>
