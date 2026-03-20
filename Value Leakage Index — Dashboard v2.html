@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Value Leakage Index — Dashboard v2</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --loss: #e05264; --retain: #34d399; --warn: #fbbf24;
+  --accent: #818cf8;
+  --biotech: #a78bfa; --fintech: #60a5fa; --saas: #34d399;
+  --medtech: #94a3b8; --other: #6b7280;
+  --ease: cubic-bezier(.4,0,.2,1); --dur: .25s;
+}
+[data-theme="dark"] {
+  --bg:#0c1222; --bg2:#111827; --surface:#1a2332; --surfaceH:#1f2b3d;
+  --brd:rgba(255,255,255,.06); --brdH:rgba(255,255,255,.12);
+  --tx:#e2e8f0; --tx2:#94a3b8; --tx3:#4b5563;
+  --glow:rgba(129,140,248,.08);
+}
+[data-theme="light"] {
+  --bg:#f8fafc; --bg2:#f1f5f9; --surface:#ffffff; --surfaceH:#f8fafc;
+  --brd:rgba(0,0,0,.07); --brdH:rgba(0,0,0,.14);
+  --tx:#1e293b; --tx2:#64748b; --tx3:#94a3b8;
+  --glow:rgba(99,102,241,.06);
+  --loss:#dc2626; --retain:#16a34a; --warn:#d97706; --accent:#6366f1;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;line-height:1.55;transition:background var(--dur) var(--ease),color var(--dur) var(--ease)}
+::selection{background:var(--accent);color:#fff}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px 80px}
+.nav{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--brd);padding:0 24px;opacity:.97}
+@supports (backdrop-filter:blur(1px)){.nav{background:transparent;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}}
+.nav-inner{max-width:1120px;margin:0 auto;display:flex;align-items:center;height:48px;gap:6px}
+.nav-item{background:none;border:none;color:var(--tx2);font-size:12px;font-weight:600;padding:6px 14px;border-radius:6px;cursor:pointer;transition:all var(--dur) var(--ease);letter-spacing:.3px}
+.nav-item:hover{color:var(--tx);background:var(--glow)}
+.nav-item.active{color:var(--accent);background:var(--glow)}
+.nav-sep{width:1px;height:20px;background:var(--brd);margin:0 6px}
+.nav-time{font-size:11px;font-weight:500;color:var(--tx3);padding:4px 10px;border:1px solid var(--brd);border-radius:5px;background:none;cursor:pointer;transition:all var(--dur) var(--ease)}
+.nav-time:hover{border-color:var(--brdH);color:var(--tx2)}
+.nav-time.active{color:var(--accent);border-color:var(--accent)}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.theme-toggle{background:none;border:1px solid var(--brd);color:var(--tx2);width:32px;height:32px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all var(--dur) var(--ease)}
+.theme-toggle:hover{border-color:var(--brdH);color:var(--tx)}
+.hero{text-align:center;padding:48px 0 12px}
+.hero h1{font-size:36px;font-weight:800;letter-spacing:-1.5px;color:var(--tx)}
+.hero h1 span{background:linear-gradient(135deg,var(--loss),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.narrative{color:var(--tx2);font-size:15px;line-height:1.7;max-width:760px;margin:16px auto 0}
+.narrative b{color:var(--tx);font-weight:600}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:28px 0 0}
+.kpi{background:var(--surface);border:1px solid var(--brd);border-radius:14px;padding:18px 20px;cursor:pointer;transition:background var(--dur) var(--ease),border-color var(--dur) var(--ease),box-shadow var(--dur) var(--ease)}
+.kpi:hover{border-color:var(--brdH);box-shadow:0 0 20px var(--glow)}
+.kpi-label{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--tx3)}
+.kpi-row{display:flex;align-items:flex-end;justify-content:space-between;margin-top:8px}
+.kpi-val{font-size:28px;font-weight:800;letter-spacing:-.5px}
+.kpi-spark{width:72px;height:28px;opacity:.7}
+.kpi-meta{font-size:11px;color:var(--tx2);margin-top:6px}
+.section{padding-top:56px}
+.sec-head{margin-bottom:20px}
+.sec-head h2{font-size:22px;font-weight:700;letter-spacing:-.3px;display:flex;align-items:center;gap:10px}
+.sec-head h2 .ico{font-size:18px;color:var(--accent)}
+.sec-sub{font-size:13px;color:var(--tx2);margin-top:2px}
+.card{background:var(--surface);border:1px solid var(--brd);border-radius:14px;padding:24px;margin-bottom:16px;transition:background var(--dur) var(--ease),border-color var(--dur) var(--ease),box-shadow var(--dur) var(--ease),opacity var(--dur) var(--ease),transform var(--dur) var(--ease);opacity:0;transform:translateY(10px)}
+.card.vis{opacity:1;transform:translateY(0)}
+.card:hover{border-color:var(--brdH)}
+.card-head{font-size:14px;font-weight:600;color:var(--tx);margin-bottom:4px}
+.card-note{font-size:11px;color:var(--tx3);margin-top:10px;line-height:1.5}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.toolbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.toolbar-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--tx3);margin-right:2px}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--brd);background:none;color:var(--tx2);transition:all .15s var(--ease);user-select:none}
+.chip:hover{border-color:var(--brdH)}
+.chip .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;transition:opacity .15s}
+.chip.off .dot{opacity:.3}
+.chip.off{opacity:.45}
+.chip.on{color:var(--tx)}
+.tbtn{background:none;border:1px solid var(--brd);color:var(--tx2);padding:4px 11px;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s var(--ease)}
+.tbtn:hover{border-color:var(--brdH);color:var(--tx)}
+.tbtn.on{color:var(--accent);border-color:var(--accent)}
+.badge{font-size:11.5px;font-weight:700;color:var(--accent);margin-left:auto}
+.detail{display:none;background:var(--bg2);border:1px solid var(--brd);border-radius:10px;padding:14px 18px;margin-top:10px;font-size:12px;line-height:1.6}
+.detail.show{display:block}
+.detail span{color:var(--tx2)}
+.detail strong{color:var(--tx);font-weight:600}
+.footer{text-align:center;padding:28px 0;border-top:1px solid var(--brd);margin-top:56px;color:var(--tx3);font-size:11px;line-height:1.9}
+.chart-wrap{position:relative}
+@media(max-width:768px){.kpi-grid{grid-template-columns:1fr 1fr}.grid-2{grid-template-columns:1fr}.hero h1{font-size:26px}.kpi-spark{display:none}.nav-time{display:none}}
+@media(max-width:480px){.kpi-grid{grid-template-columns:1fr}.toolbar{gap:4px}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="nav-inner">
+  <button class="nav-item active" data-s="company">Company</button>
+  <button class="nav-item" data-s="talent">Talent</button>
+  <button class="nav-item" data-s="capital">Capital</button>
+  <button class="nav-item" data-s="composite">Composite</button>
+  <div class="nav-sep"></div>
+  <button class="nav-time active" data-start="2015" data-end="2024">2015-24</button>
+  <button class="nav-time" data-start="2018" data-end="2024">2018-24</button>
+  <button class="nav-time" data-start="2020" data-end="2024">2020-24</button>
+  <div class="nav-right">
+    <button class="theme-toggle" id="themeBtn" title="Toggle theme">&#9789;</button>
+  </div>
+</div></nav>
+<div class="wrap">
+<div class="hero">
+  <h1>Value <span>Leakage</span> Index</h1>
+  <p class="narrative" id="narrative"></p>
+</div>
+<div class="kpi-grid">
+  <div class="kpi" data-scroll="company"><div class="kpi-label">Startup HQs Abroad</div><div class="kpi-row"><span class="kpi-val" style="color:var(--loss)">67.6%</span><canvas class="kpi-spark" id="sp1"></canvas></div><div class="kpi-meta">&#9650; 107% since 2015</div></div>
+  <div class="kpi" data-scroll="company"><div class="kpi-label">Foreign Acquisitions</div><div class="kpi-row"><span class="kpi-val" style="color:var(--loss)">C$50B+</span><canvas class="kpi-spark" id="sp2"></canvas></div><div class="kpi-meta">since 2015</div></div>
+  <div class="kpi" data-scroll="talent"><div class="kpi-label">Founder Value Abroad</div><div class="kpi-row"><span class="kpi-val" style="color:var(--accent)">US$620B+</span><canvas class="kpi-spark" id="sp3"></canvas></div><div class="kpi-meta">Canadian-educated founders</div></div>
+  <div class="kpi" data-scroll="company"><div class="kpi-label">TSX Listings</div><div class="kpi-row"><span class="kpi-val" style="color:var(--warn)">678</span><canvas class="kpi-spark" id="sp4"></canvas></div><div class="kpi-meta">&#9660; 45% from 1,232 (2008)</div></div>
+</div>
+<div class="section" id="company">
+  <div class="sec-head"><h2><span class="ico">&#9670;</span> Company Leakage</h2><p class="sec-sub">HQ migration, foreign acquisitions, exchange decline</p></div>
+  <div class="card"><div class="card-head">Startup HQ Retention Rate (%)</div><div class="chart-wrap" style="height:260px"><canvas id="cRet"></canvas></div><div class="card-note">Source: Leaders Fund. Retained rate halved from 67% to 32.4% in nine years.</div></div>
+  <div class="card"><div class="card-head">Foreign Acquisitions of Canadian Companies (C$ Billions)</div>
+    <div class="toolbar">
+      <span class="toolbar-label">Sector</span>
+      <button class="chip on" data-sector="Biotech"><span class="dot" style="background:var(--biotech)"></span>Biotech</button>
+      <button class="chip on" data-sector="Fintech"><span class="dot" style="background:var(--fintech)"></span>Fintech</button>
+      <button class="chip on" data-sector="SaaS"><span class="dot" style="background:var(--saas)"></span>SaaS</button>
+      <button class="chip on" data-sector="MedTech"><span class="dot" style="background:var(--medtech)"></span>MedTech</button>
+      <button class="chip on" data-sector="Other"><span class="dot" style="background:var(--other)"></span>Other</button>
+      <div class="nav-sep"></div>
+      <span class="toolbar-label">Sort</span>
+      <button class="tbtn on" data-sort="value">Value</button>
+      <button class="tbtn" data-sort="year">Year</button>
+      <span class="badge" id="acqBadge"></span>
+    </div>
+    <div class="chart-wrap" style="height:360px"><canvas id="cAcq"></canvas></div>
+    <div class="detail" id="acqDet"></div>
+    <div class="card-note">Click any bar for details.</div></div>
+  <div class="grid-2">
+    <div class="card"><div class="card-head">TSX Issuers vs Avg Market Cap</div><div class="chart-wrap" style="height:220px"><canvas id="cTsx"></canvas></div><div class="card-note">Fewer, bigger companies.</div></div>
+    <div class="card"><div class="card-head">TSX IPOs Per Year</div><div class="chart-wrap" style="height:220px"><canvas id="cIpo"></canvas></div><div class="card-note">2022 spike = SPAC wave.</div></div>
+  </div>
+  <div class="card"><div class="card-head">Acquirer Nationality by Deal Count</div>
+    <div class="grid-2"><div class="chart-wrap" style="height:240px"><canvas id="cNat"></canvas></div><div id="natLeg" style="display:flex;flex-direction:column;justify-content:center;gap:10px;padding:16px"></div></div></div>
+</div>
+<div class="section" id="talent">
+  <div class="sec-head"><h2><span class="ico">&#9671;</span> Talent Leakage</h2><p class="sec-sub">Brain drain &mdash; education invested in Canada, value captured abroad</p></div>
+  <div class="card"><div class="card-head">Leakage Indicators vs Healthy Benchmark</div><div class="chart-wrap" style="height:300px"><canvas id="cTal"></canvas></div><div class="card-note">Coloured = actual. Gray = healthy benchmark. Gap = leakage.</div></div>
+  <div class="card"><div class="card-head">Founder Value Leakage (US$ Billions)</div>
+    <div class="toolbar">
+      <span class="toolbar-label">Valuation</span>
+      <button class="chip on" data-band="100">$100B+</button>
+      <button class="chip on" data-band="10">$10-100B</button>
+      <button class="chip on" data-band="1">$1-10B</button>
+      <span class="badge" id="fBadge"></span>
+    </div>
+    <div class="chart-wrap" style="height:300px"><canvas id="cFnd"></canvas></div>
+    <div class="detail" id="fDet"></div>
+    <div class="card-note">Click bar for details.</div></div>
+</div>
+<div class="section" id="capital">
+  <div class="sec-head"><h2><span class="ico">&#9675;</span> Capital Leakage</h2><p class="sec-sub">Foreign capital dependence, private market growth, pension fund gap</p></div>
+  <div class="card"><div class="card-head">Private Equity vs VC Investment (C$ Billions)</div><div class="chart-wrap" style="height:260px"><canvas id="cPevc"></canvas></div><div class="card-note">PE grew 7x while VC stagnated. 54 companies taken private in 2025.</div></div>
+  <div class="grid-2">
+    <div class="card"><div class="card-head">Mega-Deal Syndicate Composition</div><div class="chart-wrap" style="max-width:260px;margin:0 auto;height:260px"><canvas id="cSynd"></canvas></div><div class="card-note">Only 13.9% of $50M+ deal dollars are Canadian-only.</div></div>
+    <div class="card"><div class="card-head">Pension Fund VC Allocation (%)</div><div class="chart-wrap" style="height:240px"><canvas id="cPen"></canvas></div><div class="card-note">US 2% vs Europe 0.02-0.12%. Canada sits between.</div></div>
+  </div>
+  <div class="card"><div class="card-head">Government Capital Mobilization (C$ Billions)</div>
+    <div class="toolbar">
+      <button class="tbtn on" data-gov="abs">Absolute</button>
+      <button class="tbtn" data-gov="pc">Per Capita</button>
+    </div>
+    <div class="chart-wrap" style="height:240px"><canvas id="cGov"></canvas></div>
+    <div class="card-note" id="govNote">Canada's VCCI (C$1B) dwarfed by peer programmes.</div></div>
+</div>
+<div class="section" id="composite">
+  <div class="sec-head"><h2><span class="ico">&#9672;</span> Composite Value Leakage Index</h2><p class="sec-sub">Normalised index (2015 = 60 baseline). Higher = more leakage.</p></div>
+  <div class="card"><div class="card-head">Combined Index</div>
+    <div class="toolbar">
+      <span class="toolbar-label">Dimensions</span>
+      <button class="chip on" data-dim="company"><span class="dot" style="background:var(--warn)"></span>Company</button>
+      <button class="chip on" data-dim="talent"><span class="dot" style="background:var(--accent)"></span>Talent</button>
+      <button class="chip on" data-dim="capital"><span class="dot" style="background:var(--retain)"></span>Capital</button>
+    </div>
+    <div class="chart-wrap" style="height:320px"><canvas id="cComp"></canvas></div>
+    <div class="card-note">Dashed = projection at current trend (2025-27).</div></div>
+</div>
+<div class="footer">
+  Ontario Growth Sectors Research — Value Leakage Index v2.0<br>
+  Data: Leaders Fund, CVCA, TMX Group, OECD, Tracxn.<br>
+  All figures Canadian dollars unless noted.
+</div>
+</div>
+<script>
+var D={ret:[{y:2015,r:67,l:33},{y:2016,r:64,l:36},{y:2017,r:60,l:40},{y:2018,r:56,l:44},{y:2019,r:52,l:48},{y:2020,r:48,l:52},{y:2021,r:44,l:56},{y:2022,r:40,l:60},{y:2023,r:36,l:64},{y:2024,r:32.4,l:67.6}],acq:[{n:"Dayforce",v:17.7,a:"Thoma Bravo (US)",y:2025,s:"SaaS",note:"HR/payroll SaaS, formerly Ceridian"},{n:"Nuvei",v:9.1,a:"Advent International (US)",y:2024,s:"Fintech",note:"Payment technology, taken private"},{n:"D+H Corp",v:6.9,a:"Vista Equity (US)",y:2017,s:"Fintech",note:"Banking software, merged into Finastra"},{n:"Chinook",v:4.6,a:"Novartis (Switzerland)",y:2023,s:"Biotech",note:"Kidney disease therapeutics"},{n:"Verafin",v:4.0,a:"Nasdaq (US)",y:2021,s:"Fintech",note:"Anti-money laundering AI"},{n:"Fusion Pharma",v:3.5,a:"AstraZeneca (UK)",y:2024,s:"Biotech",note:"Radiopharmaceuticals"},{n:"Trillium",v:3.3,a:"Pfizer (US)",y:2021,s:"Biotech",note:"Immuno-oncology"},{n:"Bellus Health",v:2.9,a:"GSK (UK)",y:2023,s:"Biotech",note:"Chronic cough therapy"},{n:"Sierra Oncology",v:2.7,a:"GSK (UK)",y:2022,s:"Biotech",note:"Blood cancer treatment"},{n:"Baylis Medical",v:2.5,a:"Boston Scientific (US)",y:2022,s:"MedTech",note:"Cardiac access devices"},{n:"Clementia",v:1.9,a:"Ipsen (France)",y:2019,s:"Biotech",note:"Rare bone disorder drug"},{n:"Copperleaf",v:1.4,a:"IFS (Sweden)",y:2024,s:"SaaS",note:"Asset investment planning"},{n:"Ecobee",v:1.1,a:"Generac (US)",y:2021,s:"Other",note:"Smart thermostat / IoT"},{n:"Wattpad",v:0.9,a:"Naver (South Korea)",y:2021,s:"Other",note:"Storytelling platform"},{n:"Plenty of Fish",v:0.8,a:"Match Group (US)",y:2015,s:"Other",note:"Dating platform"}],nat:[{n:"United States",v:28,c:"#e05264"},{n:"United Kingdom",v:4,c:"#60a5fa"},{n:"Switzerland",v:1,c:"#34d399"},{n:"Sweden",v:1,c:"#fbbf24"},{n:"France",v:1,c:"#a78bfa"},{n:"South Korea",v:1,c:"#818cf8"},{n:"Other",v:2,c:"#6b7280"}],tsx:[{y:2008,l:1232,c:1.0},{y:2010,l:1100,c:1.4},{y:2012,l:1020,c:1.8},{y:2014,l:950,c:2.2},{y:2016,l:880,c:2.8},{y:2018,l:820,c:3.4},{y:2020,l:770,c:4.0},{y:2022,l:730,c:4.8},{y:2024,l:709,c:5.6},{y:2025,l:678,c:6.0}],ipo:[{y:2008,v:52},{y:2009,v:38},{y:2010,v:64},{y:2011,v:55},{y:2012,v:42},{y:2013,v:32},{y:2014,v:24},{y:2015,v:18},{y:2016,v:14},{y:2017,v:20},{y:2018,v:16},{y:2019,v:12},{y:2020,v:10},{y:2021,v:22},{y:2022,v:114},{y:2023,v:8},{y:2024,v:5},{y:2025,v:19}],tal:[{m:"SW Eng Grads in US",v:66,b:20},{m:"UWaterloo Cos in US",v:34,b:15},{m:"Startup HQs Abroad",v:67.6,b:30},{m:"STEM Grads Leaving",v:25,b:10},{m:"AI Researchers",v:10,b:10},{m:"AI VC Captured",v:2,b:10}],founders:[{n:"OpenAI (Sutskever)",v:300,u:"U of Toronto",s:"AI",d:2012},{n:"Uber (Camp)",v:150,u:"U of Calgary",s:"Transport",d:2009},{n:"Databricks",v:134,u:"U of Toronto",s:"Data/AI",d:2013},{n:"Cloudflare (Zatlyn)",v:40,u:"McGill",s:"Infrastructure",d:2009},{n:"SSI (Sutskever)",v:32,u:"U of Toronto",s:"AI Safety",d:2024},{n:"Slack (Butterfield)",v:27.7,u:"UVic",s:"SaaS",d:2004},{n:"Faire",v:12.4,u:"UWaterloo",s:"Marketplace",d:2017},{n:"Instacart (Mehta)",v:10,u:"UWaterloo",s:"Delivery",d:2012},{n:"Netskope (Beri)",v:7.5,u:"SFU",s:"Security",d:2012}],cap:[{y:2008,pe:12.8,vc:2.1,p:5},{y:2010,pe:18.5,vc:2.8,p:8},{y:2012,pe:25.2,vc:3.2,p:12},{y:2014,pe:35,vc:3.8,p:15},{y:2016,pe:42,vc:4.5,p:20},{y:2018,pe:55,vc:5.8,p:28},{y:2020,pe:68,vc:6.2,p:35},{y:2022,pe:80,vc:8.5,p:42},{y:2024,pe:93.2,vc:7.9,p:40},{y:2025,pe:100,vc:7.5,p:54}],synd:[{n:"Canadian-Only",v:13.9,c:"#34d399"},{n:"Canada-US",v:66,c:"#fbbf24"},{n:"Other Foreign",v:20.1,c:"#e05264"}],pen:[{n:"United States",v:2.0},{n:"Canada (est.)",v:0.4},{n:"Australia",v:0.3},{n:"Israel",v:0.25},{n:"Singapore",v:0.2},{n:"UK",v:0.15},{n:"France",v:0.12},{n:"Germany",v:0.05}],gov:[{n:"UK Mansion House",v:90,pop:67.7,yr:2023},{n:"France Tibi 2",v:19.5,pop:68.2,yr:2023},{n:"Germany WIN",v:18,pop:84.5,yr:2024},{n:"Israel Yozma 2.0",v:2.9,pop:9.9,yr:2024},{n:"Canada VCCI",v:1,pop:41,yr:2021}],comp:[{y:2015,co:25,ta:20,ca:15,t:60},{y:2016,co:30,ta:22,ca:18,t:70},{y:2017,co:35,ta:25,ca:22,t:82},{y:2018,co:38,ta:28,ca:25,t:91},{y:2019,co:42,ta:32,ca:30,t:104},{y:2020,co:48,ta:36,ca:35,t:119},{y:2021,co:55,ta:40,ca:42,t:137},{y:2022,co:62,ta:45,ca:48,t:155},{y:2023,co:70,ta:50,ca:55,t:175},{y:2024,co:78,ta:56,ca:60,t:194}]};
+var S={ts:2015,te:2024,sectors:{Biotech:true,Fintech:true,SaaS:true,MedTech:true,Other:true},sort:'value',bands:{'100':true,'10':true,'1':true},dims:{company:true,talent:true,capital:true},gov:'abs'};
+var CH={};
+var SEC_COL={Biotech:'#a78bfa',Fintech:'#60a5fa',SaaS:'#34d399',MedTech:'#94a3b8',Other:'#6b7280'};
+var ACQF=[];var FNDF=[];var GOV_ABS=true;
+function v(prop){return getComputedStyle(document.documentElement).getPropertyValue(prop).trim();}
+function tF(arr){return arr.filter(function(d){return d.y>=S.ts&&d.y<=S.te;});}
+/* Safely create a chart: always destroy any existing chart on the canvas first */
+function safeCreate(id,config){
+  var el=document.getElementById(id);if(!el)return null;
+  var ex=Chart.getChart(el);if(ex){try{ex.destroy();}catch(e){}}
+  return new Chart(el,config);
+}
+function setDefaults(){
+  Chart.defaults.color=v('--tx2');Chart.defaults.borderColor=v('--brd');
+  Chart.defaults.font.family="Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif";
+  Chart.defaults.font.size=11;
+  Chart.defaults.plugins.legend.labels.usePointStyle=true;
+  Chart.defaults.plugins.legend.labels.pointStyle='circle';
+  Chart.defaults.plugins.legend.labels.padding=14;
+  Chart.defaults.plugins.tooltip.backgroundColor=v('--surface');
+  Chart.defaults.plugins.tooltip.titleColor=v('--tx');
+  Chart.defaults.plugins.tooltip.bodyColor=v('--tx2');
+  Chart.defaults.plugins.tooltip.borderColor=v('--brd');
+  Chart.defaults.plugins.tooltip.borderWidth=1;
+  Chart.defaults.plugins.tooltip.cornerRadius=10;
+  Chart.defaults.plugins.tooltip.padding=12;
+  Chart.defaults.plugins.tooltip.titleFont={weight:'700',size:12};
+  Chart.defaults.plugins.tooltip.bodyFont={size:11};
+  Chart.defaults.plugins.tooltip.boxPadding=4;
+  Chart.defaults.animation={duration:450,easing:'easeOutQuart'};
+}
+function narrate(){
+  var rs=D.ret.find(function(d){return d.y===S.ts});var re=D.ret.find(function(d){return d.y===S.te});
+  var r0=rs?rs.r:D.ret[0].r;var r1=re?re.r:D.ret[D.ret.length-1].r;
+  var at=D.acq.filter(function(d){return d.y>=S.ts&&d.y<=S.te}).reduce(function(s,d){return s+d.v},0);
+  document.getElementById('narrative').innerHTML='Between <b>'+S.ts+'</b> and <b>'+S.te+'</b>, Canada lost an estimated <b>C$'+at.toFixed(1)+'B</b> in company value to foreign acquisitions, saw startup HQ retention fall from <b>'+r0+'%</b> to <b>'+r1+'%</b>, and over <b>US$620B</b> in founder-created market cap now resides abroad.';
+}
+function mkSpark(id,data,color){
+  CH[id]=safeCreate(id,{type:'line',data:{labels:data.map(function(_,i){return i}),datasets:[{data:data,borderColor:color,borderWidth:1.5,pointRadius:0,fill:true,backgroundColor:color+'18',tension:.4}]},options:{responsive:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}},animation:{duration:0}}});
+}
+function mkRet(){
+  var d=tF(D.ret);
+  CH.ret=safeCreate('cRet',{type:'line',data:{labels:d.map(function(r){return r.y}),datasets:[{label:'Retained in Canada',data:d.map(function(r){return r.r}),borderColor:v('--retain'),backgroundColor:v('--retain')+'18',fill:true,tension:.35,borderWidth:2.5,pointRadius:4,pointBackgroundColor:v('--retain'),pointHoverRadius:6},{label:"HQ'd Abroad",data:d.map(function(r){return r.l}),borderColor:v('--loss'),backgroundColor:v('--loss')+'18',fill:true,tension:.35,borderWidth:2.5,pointRadius:4,pointBackgroundColor:v('--loss'),pointHoverRadius:6}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},scales:{y:{min:0,max:100,ticks:{callback:function(val){return val+'%'}}}},plugins:{tooltip:{callbacks:{label:function(c){return c.dataset.label+': '+c.parsed.y+'%'}}}}}});
+}
+function mkAcq(){
+  ACQF=D.acq.filter(function(d){return S.sectors[d.s];});
+  if(S.sort==='value')ACQF.sort(function(a,b){return b.v-a.v});
+  else ACQF.sort(function(a,b){return b.y-a.y||b.v-a.v});
+  var total=ACQF.reduce(function(s,d){return s+d.v},0);
+  document.getElementById('acqBadge').textContent='Total: C$'+total.toFixed(1)+'B ('+ACQF.length+')';
+  var labs=ACQF.map(function(d){return d.n});var vals=ACQF.map(function(d){return d.v});var cols=ACQF.map(function(d){return SEC_COL[d.s]||'#6b7280'});
+  CH.acq=safeCreate('cAcq',{type:'bar',data:{labels:labs,datasets:[{data:vals,backgroundColor:cols,borderRadius:5,borderSkipped:false}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{title:function(ctx){var dd=ACQF[ctx[0].dataIndex];return dd?dd.n+' ('+dd.y+')':''},label:function(ctx){var dd=ACQF[ctx.dataIndex];return dd?['C$'+dd.v+'B — '+dd.s,'Acquirer: '+dd.a]:''}}}},scales:{x:{ticks:{callback:function(val){return'$'+val+'B'}},grid:{color:v('--brd')}},y:{ticks:{font:{size:11}},grid:{display:false}}},onClick:function(e,els){if(!els.length)return;var dd=ACQF[els[0].index];if(!dd)return;var el=document.getElementById('acqDet');el.className='detail show';el.innerHTML='<div><strong>'+dd.n+'</strong> — acquired by <strong>'+dd.a+'</strong> for <strong>C$'+dd.v+'B</strong> in <strong>'+dd.y+'</strong> ('+dd.s+')</div><div style="margin-top:4px;color:var(--tx2)">'+dd.note+'</div>';}}});
+}
+function mkTsx(){
+  var d=D.tsx;
+  CH.tsx=safeCreate('cTsx',{type:'bar',data:{labels:d.map(function(r){return r.y}),datasets:[{label:'Issuers',data:d.map(function(r){return r.l}),backgroundColor:v('--fintech')+'88',borderRadius:4,yAxisID:'y',order:2},{label:'Avg Cap (C$B)',data:d.map(function(r){return r.c}),type:'line',borderColor:v('--warn'),borderWidth:2.5,pointRadius:3,pointBackgroundColor:v('--warn'),yAxisID:'y1',order:1}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},scales:{y:{position:'left',ticks:{color:v('--fintech')}},y1:{position:'right',grid:{drawOnChartArea:false},ticks:{color:v('--warn'),callback:function(val){return val+'B'}}}}}});
+}
+function mkIpo(){
+  var d=D.ipo;var loss=v('--loss'),warn=v('--warn'),retain=v('--retain');
+  CH.ipo=safeCreate('cIpo',{type:'bar',data:{labels:d.map(function(r){return r.y}),datasets:[{data:d.map(function(r){return r.v}),backgroundColor:d.map(function(r){return r.v<15?loss:r.v<30?warn:retain}),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.parsed.y+' IPOs'}}}},scales:{x:{ticks:{maxRotation:45,font:{size:10}}}}}});
+}
+function mkNat(){
+  CH.nat=safeCreate('cNat',{type:'doughnut',data:{labels:D.nat.map(function(r){return r.n}),datasets:[{data:D.nat.map(function(r){return r.v}),backgroundColor:D.nat.map(function(r){return r.c}),borderWidth:2,borderColor:v('--surface'),hoverOffset:8}]},options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.label+': '+c.parsed+' deals'}}}}}});
+  document.getElementById('natLeg').innerHTML=D.nat.map(function(r){return'<div style="display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;border-radius:3px;background:'+r.c+';flex-shrink:0"></span><span style="font-size:13px;font-weight:600;color:var(--tx)">'+r.n+'</span><span style="color:var(--tx2);font-size:12px;margin-left:auto">'+r.v+'</span></div>'}).join('');
+}
+function mkTal(){
+  CH.tal=safeCreate('cTal',{type:'bar',data:{labels:D.tal.map(function(r){return r.m}),datasets:[{label:'Actual (Canada)',data:D.tal.map(function(r){return r.v}),backgroundColor:v('--loss')+'bb',borderRadius:4},{label:'Healthy Benchmark',data:D.tal.map(function(r){return r.b}),backgroundColor:v('--tx3')+'55',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{max:80,ticks:{callback:function(val){return val+'%'}}}},plugins:{tooltip:{callbacks:{afterLabel:function(c){if(c.datasetIndex===0){return'Gap: '+(D.tal[c.dataIndex].v-D.tal[c.dataIndex].b).toFixed(1)+' pp'}return''}}}}}});
+}
+function mkFnd(){
+  FNDF=D.founders.filter(function(d){if(d.v>=100&&S.bands['100'])return true;if(d.v>=10&&d.v<100&&S.bands['10'])return true;if(d.v<10&&S.bands['1'])return true;return false;}).sort(function(a,b){return b.v-a.v});
+  var total=FNDF.reduce(function(s,d){return s+d.v},0);
+  document.getElementById('fBadge').textContent='Total: US$'+total.toFixed(1)+'B';
+  var labs=FNDF.map(function(d){return d.n});var vals=FNDF.map(function(d){return d.v});var cols=FNDF.map(function(_,i){return'hsl('+(250+i*12)+',65%,'+(65-i*2.5)+'%)'});
+  CH.fnd=safeCreate('cFnd',{type:'bar',data:{labels:labs,datasets:[{data:vals,backgroundColor:cols,borderRadius:5,borderSkipped:false}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{title:function(ctx){var dd=FNDF[ctx[0].dataIndex];return dd?dd.n:''},label:function(ctx){var dd=FNDF[ctx.dataIndex];return dd?['US$'+dd.v+'B',dd.u+' → '+dd.s,'Departed: ~'+dd.d]:''}}}},scales:{x:{ticks:{callback:function(val){return'$'+val+'B'}},grid:{color:v('--brd')}},y:{ticks:{font:{size:11}},grid:{display:false}}},onClick:function(e,els){if(!els.length)return;var dd=FNDF[els[0].index];if(!dd)return;var el=document.getElementById('fDet');el.className='detail show';el.innerHTML='<div><strong>'+dd.n+'</strong> — <strong>'+dd.u+'</strong> graduate, departed ~<strong>'+dd.d+'</strong>, valued at <strong>US$'+dd.v+'B</strong> ('+dd.s+')</div>';}}});
+}
+function mkPevc(){
+  var d=tF(D.cap);var labs=d.map(function(r){return r.y});
+  CH.pevc=safeCreate('cPevc',{type:'bar',data:{labels:labs,datasets:[{label:'PE (C$B)',data:d.map(function(r){return r.pe}),type:'line',borderColor:v('--accent'),backgroundColor:v('--accent')+'15',fill:true,tension:.35,borderWidth:2.5,pointRadius:3,pointBackgroundColor:v('--accent'),yAxisID:'y',order:1},{label:'VC (C$B)',data:d.map(function(r){return r.vc}),type:'line',borderColor:v('--fintech'),borderWidth:2.5,pointRadius:4,pointBackgroundColor:v('--fintech'),yAxisID:'y',order:2},{label:'Taken Private',data:d.map(function(r){return r.p}),backgroundColor:v('--loss')+'55',borderRadius:4,yAxisID:'y1',order:3}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},scales:{y:{position:'left'},y1:{position:'right',grid:{drawOnChartArea:false},title:{display:true,text:'Companies',color:v('--tx3')}}},plugins:{tooltip:{callbacks:{label:function(c){if(c.datasetIndex<2)return c.dataset.label+': C$'+c.parsed.y+'B';return c.parsed.y+' companies taken private'}}}}}});
+}
+function mkSynd(){
+  CH.synd=safeCreate('cSynd',{type:'doughnut',data:{labels:D.synd.map(function(r){return r.n}),datasets:[{data:D.synd.map(function(r){return r.v}),backgroundColor:D.synd.map(function(r){return r.c}),borderWidth:3,borderColor:v('--surface'),hoverOffset:6}]},options:{responsive:true,cutout:'65%',plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:function(c){return c.label+': '+c.parsed+'%'}}}}},plugins:[{id:'centerText',afterDraw:function(chart){var ctx=chart.ctx,w=chart.width,h=chart.height;ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle=v('--tx');ctx.font='800 24px Inter,-apple-system,sans-serif';ctx.fillText('13.9%',w/2,h/2-8);ctx.fillStyle=v('--tx2');ctx.font='500 11px Inter,-apple-system,sans-serif';ctx.fillText('Canadian-only',w/2,h/2+14);ctx.restore();}}]});
+}
+function mkPen(){
+  CH.pen=safeCreate('cPen',{type:'bar',data:{labels:D.pen.map(function(r){return r.n}),datasets:[{data:D.pen.map(function(r){return r.v}),backgroundColor:D.pen.map(function(r){return r.n==='United States'?v('--retain'):r.n.indexOf('Canada')>=0?v('--warn'):v('--tx3')+'55'}),borderRadius:4,borderSkipped:false}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.parsed.x+'% of AUM'}}}},scales:{x:{max:2.5,ticks:{callback:function(val){return val+'%'}},grid:{color:v('--brd')}},y:{ticks:{font:{size:11}},grid:{display:false}}}}});
+}
+function mkGov(){
+  GOV_ABS=S.gov==='abs';
+  var vals=GOV_ABS?D.gov.map(function(r){return r.v}):D.gov.map(function(r){return Math.round(r.v*1000/r.pop)});
+  var labs=D.gov.map(function(r){return r.n+' ('+r.yr+')'});
+  var cols=D.gov.map(function(r){return r.n.indexOf('Canada')>=0?v('--loss'):v('--accent')});
+  CH.gov=safeCreate('cGov',{type:'bar',data:{labels:labs,datasets:[{data:vals,backgroundColor:cols,borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return GOV_ABS?'C$'+c.parsed.y+'B':'C$'+c.parsed.y+'/capita'}}}},scales:{y:{ticks:{callback:function(val){return GOV_ABS?'$'+val+'B':'$'+val}},grid:{color:v('--brd')}},x:{grid:{display:false}}}}});
+  document.getElementById('govNote').textContent=GOV_ABS?"Canada's VCCI (C$1B) dwarfed by peer programmes. UK Mansion House targets C$90B.":'Per capita: Israel leads (C$293/person), Canada last (C$24/person).';
+}
+function mkComp(){
+  var d=tF(D.comp);if(d.length<2)return;
+  var last=d[d.length-1],prev=d[d.length-2];
+  var proj=[2025,2026,2027].map(function(yr,i){return{y:yr,co:last.co+(last.co-prev.co)*(i+1),ta:last.ta+(last.ta-prev.ta)*(i+1),ca:last.ca+(last.ca-prev.ca)*(i+1),t:last.t+(last.t-prev.t)*(i+1)};});
+  var all=d.concat(proj);var labels=all.map(function(r){return r.y});var sets=[];
+  sets.push({label:'Total Index',data:all.map(function(r,i){return i<d.length?r.t:null}),borderColor:v('--loss'),backgroundColor:v('--loss')+'18',fill:true,tension:.35,borderWidth:3,pointRadius:4,pointBackgroundColor:v('--loss')});
+  sets.push({label:'Total (proj)',data:all.map(function(r,i){return i>=d.length-1?r.t:null}),borderColor:v('--loss'),borderDash:[6,4],borderWidth:2,pointRadius:2,fill:false,tension:.35});
+  if(S.dims.company){sets.push({label:'Company',data:all.map(function(r,i){return i<d.length?r.co:null}),borderColor:v('--warn'),backgroundColor:v('--warn')+'12',fill:true,tension:.35,borderWidth:2,pointRadius:3});sets.push({label:'Company (proj)',data:all.map(function(r,i){return i>=d.length-1?r.co:null}),borderColor:v('--warn'),borderDash:[6,4],borderWidth:1.5,pointRadius:2,fill:false,tension:.35});}
+  if(S.dims.talent){sets.push({label:'Talent',data:all.map(function(r,i){return i<d.length?r.ta:null}),borderColor:v('--accent'),backgroundColor:v('--accent')+'12',fill:true,tension:.35,borderWidth:2,pointRadius:3});sets.push({label:'Talent (proj)',data:all.map(function(r,i){return i>=d.length-1?r.ta:null}),borderColor:v('--accent'),borderDash:[6,4],borderWidth:1.5,pointRadius:2,fill:false,tension:.35});}
+  if(S.dims.capital){sets.push({label:'Capital',data:all.map(function(r,i){return i<d.length?r.ca:null}),borderColor:v('--retain'),backgroundColor:v('--retain')+'12',fill:true,tension:.35,borderWidth:2,pointRadius:3});sets.push({label:'Capital (proj)',data:all.map(function(r,i){return i>=d.length-1?r.ca:null}),borderColor:v('--retain'),borderDash:[6,4],borderWidth:1.5,pointRadius:2,fill:false,tension:.35});}
+  CH.comp=safeCreate('cComp',{type:'line',data:{labels:labels,datasets:sets},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{labels:{filter:function(item){return item.text.indexOf('proj')<0}}}}}});
+}
+function buildAll(){
+  setDefaults();narrate();
+  mkSpark('sp1',[67,60,52,44,36,32.4],v('--loss'));
+  mkSpark('sp2',[2,8,15,25,38,50],v('--loss'));
+  mkSpark('sp3',[200,350,450,520,580,620],v('--accent'));
+  mkSpark('sp4',[1232,1020,880,770,709,678],v('--warn'));
+  mkRet();mkAcq();mkTsx();mkIpo();mkNat();mkTal();mkFnd();mkPevc();mkSynd();mkPen();mkGov();mkComp();
+}
+document.querySelectorAll('.nav-item').forEach(function(b){b.addEventListener('click',function(){document.getElementById(b.dataset.s).scrollIntoView({behavior:'smooth',block:'start'});});});
+document.querySelectorAll('.nav-time').forEach(function(b){b.addEventListener('click',function(){S.ts=+b.dataset.start;S.te=+b.dataset.end;document.querySelectorAll('.nav-time').forEach(function(x){x.classList.remove('active')});b.classList.add('active');narrate();mkRet();mkPevc();mkComp();});});
+document.querySelectorAll('[data-sector]').forEach(function(b){b.addEventListener('click',function(){var key=b.dataset.sector;S.sectors[key]=!S.sectors[key];b.className=S.sectors[key]?'chip on':'chip off';mkAcq();});});
+document.querySelectorAll('[data-sort]').forEach(function(b){b.addEventListener('click',function(){S.sort=b.dataset.sort;document.querySelectorAll('[data-sort]').forEach(function(x){x.classList.remove('on')});b.classList.add('on');mkAcq();});});
+document.querySelectorAll('[data-band]').forEach(function(b){b.addEventListener('click',function(){var key=b.dataset.band;S.bands[key]=!S.bands[key];b.className=S.bands[key]?'chip on':'chip off';mkFnd();});});
+document.querySelectorAll('[data-gov]').forEach(function(b){b.addEventListener('click',function(){S.gov=b.dataset.gov;document.querySelectorAll('[data-gov]').forEach(function(x){x.classList.remove('on')});b.classList.add('on');mkGov();});});
+document.querySelectorAll('[data-dim]').forEach(function(b){b.addEventListener('click',function(){var key=b.dataset.dim;S.dims[key]=!S.dims[key];b.className=S.dims[key]?'chip on':'chip off';mkComp();});});
+document.querySelectorAll('.kpi[data-scroll]').forEach(function(k){k.addEventListener('click',function(){document.getElementById(k.dataset.scroll).scrollIntoView({behavior:'smooth',block:'start'});});});
+document.getElementById('themeBtn').addEventListener('click',function(){var html=document.documentElement;var next=html.getAttribute('data-theme')==='dark'?'light':'dark';html.setAttribute('data-theme',next);this.textContent=next==='dark'?'\u263D':'\u2600';getComputedStyle(html).getPropertyValue('--bg');buildAll();});
+var obs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('vis');obs.unobserve(e.target);}});},{threshold:0.06});
+document.querySelectorAll('.card').forEach(function(c){obs.observe(c);});
+var secObs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){var id=e.target.id;document.querySelectorAll('.nav-item').forEach(function(b){b.classList.toggle('active',b.dataset.s===id);});}});},{threshold:0.12,rootMargin:'-80px 0px -60% 0px'});
+['company','talent','capital','composite'].forEach(function(id){secObs.observe(document.getElementById(id));});
+buildAll();
+</script>
+</body>
+</html>
