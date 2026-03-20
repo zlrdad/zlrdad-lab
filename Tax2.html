@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Investment Incentive Gap | Canada vs UK vs US</title>
+    <style>
+        :root {
+            --canada: #e05264;
+            --uk: #3b82f6;
+            --us: #8b5cf6;
+            --accent: #0d9488;
+            --light-gray: #f3f4f6;
+            --mid-gray: #9ca3af;
+            --dark-gray: #374151;
+            --text-black: #111827;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: #ffffff;
+            color: var(--text-black);
+            line-height: 1.6;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 6vw, 3.5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin: 0 0 1rem 0;
+        }
+
+        h2 {
+            font-size: clamp(1.75rem, 4vw, 2.25rem);
+            font-weight: 700;
+            margin: 0 0 2rem 0;
+            color: var(--text-black);
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-black);
+        }
+
+        p, li {
+            font-size: 1rem;
+            color: var(--dark-gray);
+            margin: 0 0 1rem 0;
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        a:hover {
+            border-bottom-color: var(--accent);
+        }
+
+        .subtitle {
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            color: var(--mid-gray);
+            font-weight: 400;
+            margin-bottom: 3rem;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        section {
+            padding: 4rem 2rem;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        section:last-of-type {
+            border-bottom: none;
+        }
+
+        /* Hero */
+        .hero {
+            padding: 5rem 2rem;
+            text-align: center;
+            background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+        }
+
+        .hero .subtitle {
+            max-width: 750px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .updated-tag {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 1rem;
+        }
+
+        /* Fade-in animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in { animation: fadeIn 0.8s ease-out forwards; }
+        section { opacity: 0; }
+        section.is-visible { animation: fadeIn 0.8s ease-out; opacity: 1; }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .kpi-card {
+            background: var(--light-gray);
+            padding: 1.75rem;
+            border-radius: 0;
+            text-align: center;
+            border-top: 4px solid var(--mid-gray);
+        }
+
+        .kpi-card.canada { border-top-color: var(--canada); }
+        .kpi-card.uk { border-top-color: var(--uk); }
+        .kpi-card.us { border-top-color: var(--us); }
+        .kpi-card.gap { border-top-color: var(--accent); }
+
+        .kpi-value {
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 700;
+            line-height: 1.2;
+            margin: 0.75rem 0;
+            color: var(--text-black);
+        }
+
+        .kpi-label {
+            font-size: 0.85rem;
+            color: var(--mid-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .kpi-subtitle {
+            font-size: 0.85rem;
+            color: var(--dark-gray);
+            margin-top: 0.5rem;
+        }
+
+        .cite {
+            font-size: 0.75rem;
+            color: var(--mid-gray);
+            margin-top: 0.5rem;
+        }
+
+        .cite a {
+            color: var(--mid-gray);
+            border-bottom: 1px dotted var(--mid-gray);
+        }
+
+        .cite a:hover {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        /* Flow containers */
+        .flow-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        @media (max-width: 900px) {
+            .flow-container { grid-template-columns: 1fr; }
+        }
+
+        .flow-column {
+            padding: 2rem;
+            background: var(--light-gray);
+            border-left: 4px solid;
+        }
+
+        .flow-column.canada { border-left-color: var(--canada); }
+        .flow-column.uk { border-left-color: var(--uk); }
+        .flow-column.us { border-left-color: var(--us); }
+
+        .flow-column h3 {
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .flow-column h3::before {
+            content: '';
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: currentColor;
+            flex-shrink: 0;
+        }
+
+        .flow-column.canada h3 { color: var(--canada); }
+        .flow-column.uk h3 { color: var(--uk); }
+        .flow-column.us h3 { color: var(--us); }
+
+        .flow-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .flow-step {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+        }
+
+        .flow-step-number {
+            min-width: 28px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid currentColor;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+
+        .flow-column.canada .flow-step-number { color: var(--canada); border-color: var(--canada); }
+        .flow-column.uk .flow-step-number { color: var(--uk); border-color: var(--uk); }
+        .flow-column.us .flow-step-number { color: var(--us); border-color: var(--us); }
+
+        .flow-step-text { padding-top: 0.15rem; }
+        .flow-step-text p { margin: 0; font-size: 0.9rem; }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            padding: 0.6rem 1.25rem;
+            border: 2px solid var(--light-gray);
+            background: white;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border-radius: 0;
+            transition: all 0.3s ease;
+            color: var(--mid-gray);
+        }
+
+        .tab-button:hover { border-color: var(--accent); color: var(--accent); }
+        .tab-button.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .scenario-label {
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-black);
+        }
+
+        .bar-chart-row { margin-bottom: 1.75rem; }
+
+        .bar-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark-gray);
+        }
+
+        .bar-container {
+            height: 52px;
+            background: var(--light-gray);
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            border-radius: 4px;
+        }
+
+        .bar-segment {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.8rem;
+            padding: 0 0.5rem;
+            transition: flex-basis 0.3s ease;
+        }
+
+        .bar-segment.benefit { background: var(--accent); }
+        .bar-segment.cost { background: #ef4444; }
+        .bar-segment.gain { background: #10b981; }
+        .bar-segment.us-gain { background: var(--us); }
+
+        .bar-total {
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-top: 0.4rem;
+            color: var(--text-black);
+        }
+
+        .bar-total.positive { color: #059669; }
+        .bar-total.negative { color: #dc2626; }
+
+        /* Sector gap */
+        .sector-visual {
+            margin: 2rem 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .sector-visual { grid-template-columns: 1fr; }
+        }
+
+        .sector-bar { display: flex; flex-direction: column; }
+
+        .sector-bar-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--dark-gray);
+        }
+
+        .sector-bar-visual {
+            height: 70px;
+            display: flex;
+            gap: 2px;
+            align-items: stretch;
+            margin-bottom: 0.75rem;
+        }
+
+        .sector-bar-visual.narrow { gap: 0; }
+
+        .sector-segment {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.7rem;
+            text-align: center;
+            padding: 0.4rem;
+        }
+
+        .sector-segment.mining { background: var(--canada); flex: 0 0 100%; }
+        .sector-segment.tech { background: #6366f1; }
+        .sector-segment.lifesci { background: #8b5cf6; }
+        .sector-segment.cleantech { background: #06b6d4; }
+        .sector-segment.manufacturing { background: #ec4899; }
+        .sector-segment.services { background: #f59e0b; }
+        .sector-segment.ai { background: var(--uk); }
+
+        .sector-gap-text {
+            text-align: center;
+            font-size: clamp(1.25rem, 3vw, 1.75rem);
+            font-weight: 700;
+            color: var(--text-black);
+            line-height: 1.4;
+        }
+
+        /* Holding structures section */
+        .holding-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .holding-card {
+            padding: 1.75rem;
+            background: var(--light-gray);
+            border-top: 4px solid var(--canada);
+        }
+
+        .holding-card h3 {
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+
+        .holding-card .hold-period {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--canada);
+            margin-bottom: 0.5rem;
+        }
+
+        .holding-card p {
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .holding-card.highlight {
+            border-top-color: var(--accent);
+            background: #f0fdfa;
+        }
+
+        .holding-card.highlight .hold-period {
+            color: var(--accent);
+        }
+
+        /* Models */
+        .models-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+            margin: 2rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .models-container { grid-template-columns: 1fr; }
+        }
+
+        .model-card {
+            padding: 2rem;
+            background: var(--light-gray);
+            border-left: 4px solid;
+        }
+
+        .model-card.fts { border-left-color: var(--canada); }
+        .model-card.eis { border-left-color: var(--uk); }
+
+        .model-card h3 { margin-bottom: 1.5rem; }
+
+        .timeline { position: relative; padding: 1rem 0; }
+
+        .timeline-item {
+            display: flex;
+            gap: 1.25rem;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 28px;
+            width: 2px;
+            height: calc(100% + 0.5rem);
+            background: var(--light-gray);
+        }
+
+        .timeline-item:last-child::before { display: none; }
+
+        .timeline-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            margin-top: 4px;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .model-card.fts .timeline-dot { background: var(--canada); }
+        .model-card.eis .timeline-dot { background: var(--uk); }
+
+        .timeline-text { padding-top: 0; font-size: 0.9rem; }
+        .timeline-text strong { display: block; margin-bottom: 0.15rem; }
+
+        .model-stat {
+            background: white;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .model-stat strong { color: var(--text-black); }
+
+        /* Gap analysis */
+        .gap-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+            margin: 2rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .gap-grid { grid-template-columns: 1fr; }
+        }
+
+        .gap-column { padding: 2rem; background: var(--light-gray); }
+
+        .gap-column h3 {
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .gap-column.uk h3 { color: var(--uk); }
+        .gap-column.missing h3 { color: var(--canada); }
+
+        .gap-column h3::before { font-size: 1.5rem; font-weight: 700; }
+        .gap-column.uk h3::before { content: '\2713'; color: var(--uk); }
+        .gap-column.missing h3::before { content: '\2717'; color: #ef4444; }
+
+        .gap-list { list-style: none; }
+
+        .gap-list li {
+            padding: 0.6rem 0;
+            font-size: 0.9rem;
+            padding-left: 1.75rem;
+            position: relative;
+            color: var(--dark-gray);
+        }
+
+        .gap-list li::before {
+            content: '\2713';
+            position: absolute;
+            left: 0;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .gap-column.uk .gap-list li::before { color: var(--uk); }
+        .gap-column.missing .gap-list li::before { content: '\2717'; color: #ef4444; }
+
+        /* Path forward */
+        .path-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .path-card {
+            padding: 1.75rem;
+            background: var(--light-gray);
+            border-left: 4px solid var(--accent);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .path-card h3 { margin-bottom: 0.75rem; }
+
+        .path-step-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .path-card p { flex: 1; font-size: 0.9rem; }
+
+        /* CEI callout */
+        .callout {
+            background: #fef2f2;
+            border-left: 4px solid #ef4444;
+            padding: 1.5rem 2rem;
+            margin: 2rem 0;
+        }
+
+        .callout h3 {
+            color: #dc2626;
+            margin-bottom: 0.75rem;
+        }
+
+        .callout p {
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        /* QSBS callout */
+        .callout-us {
+            background: #f5f3ff;
+            border-left: 4px solid var(--us);
+            padding: 1.5rem 2rem;
+            margin: 2rem 0;
+        }
+
+        .callout-us h3 {
+            color: var(--us);
+            margin-bottom: 0.75rem;
+        }
+
+        .callout-us p {
+            font-size: 0.95rem;
+            margin: 0 0 0.5rem 0;
+        }
+
+        /* Footer */
+        footer {
+            padding: 3rem 2rem;
+            background: var(--light-gray);
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .sources-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .sources-grid { grid-template-columns: 1fr; }
+        }
+
+        .sources-column h4 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--dark-gray);
+            margin-bottom: 0.75rem;
+        }
+
+        .sources-column ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sources-column li {
+            font-size: 0.8rem;
+            color: var(--mid-gray);
+            line-height: 1.6;
+            margin-bottom: 0.25rem;
+        }
+
+        .sources-column li a {
+            color: var(--mid-gray);
+            border-bottom: 1px dotted var(--mid-gray);
+        }
+
+        .sources-column li a:hover {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        .footer-note {
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--mid-gray);
+            margin-top: 2rem;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .container { padding: 1rem; }
+            section { padding: 2.5rem 1rem; }
+            .hero { padding: 3rem 1rem; }
+            .kpi-grid { grid-template-columns: 1fr; gap: 1rem; }
+            h2 { margin-bottom: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <div class="hero">
+        <div class="container">
+            <span class="updated-tag">Updated March 2026</span>
+            <h1>The Investment Incentive Gap</h1>
+            <p class="subtitle">How Canada's flow-through shares compare to the UK's EIS/SEIS and the US QSBS exclusion &mdash; and why Canada has no innovation investor incentive</p>
+        </div>
+    </div>
+
+    <!-- Section 1: Big Picture -->
+    <section id="section-1">
+        <div class="container">
+            <h2>The Big Picture</h2>
+            <div class="kpi-grid">
+                <div class="kpi-card uk">
+                    <div class="kpi-label">UK EIS/SEIS Annual Raise</div>
+                    <div class="kpi-value">&pound;1.82B</div>
+                    <div class="kpi-subtitle">~C$3.2B across 6,070 companies</div>
+                    <div class="cite"><a href="https://www.gov.uk/government/statistics/enterprise-investment-scheme-seed-enterprise-investment-scheme-and-social-investment-tax-relief-may-2025/enterprise-investment-scheme-seed-enterprise-investment-scheme-and-social-investment-tax-relief-statistics-2025">HMRC 2025</a></div>
+                </div>
+                <div class="kpi-card canada">
+                    <div class="kpi-label">Canada FTS Annual Raise</div>
+                    <div class="kpi-value">~C$1.0B</div>
+                    <div class="kpi-subtitle">~670 companies &mdash; mining &amp; energy only</div>
+                    <div class="cite"><a href="https://www.mining.com/canadas-flow-through-shares-surge-despite-capital-gains/">Mining.com 2024</a></div>
+                </div>
+                <div class="kpi-card us">
+                    <div class="kpi-label">US QSBS Gains Excluded</div>
+                    <div class="kpi-value">$152B</div>
+                    <div class="kpi-subtitle">2012&ndash;2022 cumulative; 100% federal CGT exclusion</div>
+                    <div class="cite"><a href="https://home.treasury.gov/system/files/131/WP-127.pdf">US Treasury WP 127</a></div>
+                </div>
+                <div class="kpi-card gap">
+                    <div class="kpi-label">Canada Innovation Incentive</div>
+                    <div class="kpi-value">$0</div>
+                    <div class="kpi-subtitle">No EIS, no QSBS, CEI eliminated in Budget 2025</div>
+                    <div class="cite"><a href="https://www.cbc.ca/news/politics/2026-tax-measures-changes-new-9.7022831">CBC Jan 2026</a></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: How It Works -->
+    <section id="section-2">
+        <div class="container">
+            <h2>How Each Scheme Works</h2>
+            <div class="flow-container">
+                <div class="flow-column canada">
+                    <h3>Canada FTS</h3>
+                    <div class="flow-steps">
+                        <div class="flow-step">
+                            <div class="flow-step-number">1</div>
+                            <div class="flow-step-text">
+                                <p><strong>Company issues shares at 20&ndash;30% premium</strong></p>
+                                <p>Mining/energy explorer uses FTS structure</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="flow-step-number">2</div>
+                            <div class="flow-step-text">
+                                <p><strong>Incurs &amp; renounces exploration expenses</strong></p>
+                                <p>CEE/CDE expenses flow through to investor</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="flow-step-number">3</div>
+                            <div class="flow-step-text">
+                                <p><strong>100% deduction + METC/OFFTS credits</strong></p>
+                                <p>~73% effective subsidy (Ontario top bracket)</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="flow-step-number">4</div>
+                            <div class="flow-step-text">
+                                <p><strong>Exit via LP rollover or same-day charity</strong></p>
+                                <p>Nil cost base &mdash; full proceeds taxable as gains</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flow-column uk">
+                    <h3>UK EIS / SEIS</h3>
+                    <div class="flow-steps">
+                        <div class="flow-step">
+                            <div class="flow-step-number">1</div>
+                            <div class="flow-step-text">
+                                <p><strong>Invest in qualifying SME</strong></p>
+                                <p>Virtually any sector; up to &pound;1M (EIS) / &pound;200K (SEIS)</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="flow-step-number">2</div>
+                            <div class="flow-step-text">
+                                <p><strong>Income tax credit: 30% (EIS) / 50% (SEIS)</strong></p>
+                                <p>Immediate reduction in tax bill</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="flow-step-number">3</div>
+                            <div class="flow-step-text">
+                                <p><strong>Hold 3+ years</strong></p>
+                                <p>Credit clawed back if sold early</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="flow-step-number">4</div>
+                            <div class="flow-step-text">
+                                <p><strong>Full CGT exemption + loss relief on income</strong></p>
+                                <p>Expanding April 2026: &pound;10M / &pound;24M limits</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flow-column us">
+                    <h3>US QSBS (&sect;1202)</h3>
+                    <div class="flow-steps">
+                        <div class="flow-step">
+                            <div class="flow-step-number">1</div>
+                            <div class="flow-step-text">
+                                <p><strong>Acquire stock at original issuance</strong></p>
+                                <p>C-corp with &le;$75M gross assets (post-OBBBA)</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="flow-step-number">2</div>
+                            <div class="flow-step-text">
+                                <p><strong>No upfront tax benefit</strong></p>
+                                <p>Zero incentive at time of investment</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="flow-step-number">3</div>
+                            <div class="flow-step-text">
+                                <p><strong>Hold 5+ years for 100% exclusion</strong></p>
+                                <p>Graduated: 50% at 3yr, 75% at 4yr, 100% at 5yr</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="flow-step-number">4</div>
+                            <div class="flow-step-text">
+                                <p><strong>100% federal CGT exclusion</strong></p>
+                                <p>Up to $15M or 10&times; basis per issuer</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cite" style="text-align: center; margin-top: 1rem;">
+                Sources: <a href="https://www.miningtaxcanada.com/flow-through-shares/">Mining Tax Canada</a> &middot;
+                <a href="https://www.gov.uk/guidance/venture-capital-schemes-apply-to-use-the-enterprise-investment-scheme">HMRC EIS Guidance</a> &middot;
+                <a href="https://www.hklaw.com/en/insights/publications/2025/07/one-big-beautiful-bill-act-increases-tax-benefits-for-qualified-small">Holland &amp; Knight (OBBBA)</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: CEI Elimination -->
+    <section id="section-3">
+        <div class="container">
+            <h2>The CEI: Announced, Never Legislated, Eliminated</h2>
+            <div class="callout">
+                <h3>Canadian Entrepreneurs' Incentive &mdash; Eliminated in Budget 2025</h3>
+                <p>Budget 2024 announced a reduced capital gains inclusion rate (33.3% vs. 66.7%) on up to <strong>$2M in lifetime eligible gains</strong> from qualifying CCPC shares (<a href="https://kmss.ca/summary-of-the-new-canadian-entrepreneur-incentive-rules-coming-into-place-for-eligible-capital-gains-starting-january-1-2025/">KMSS</a>). Combined with the $1.25M LCGE, entrepreneurs would have had favourable treatment on up to <strong>$6.25M</strong> in business sale proceeds (<a href="https://ncfacanada.org/guide-lifetime-capital-gains-and-entrepreneurs-incentive/">NCFA</a>). Budget 2025 <strong>scrapped the CEI before it was ever legislated</strong> (<a href="https://www.cbc.ca/news/politics/2026-tax-measures-changes-new-9.7022831">CBC, January 2026</a>).</p>
+            </div>
+
+            <p>The elimination matters because the CEI was Canada's <em>only proposed</em> exit-side incentive for innovation investors. Budget 2025 simultaneously failed to extend FTS to innovation &mdash; meaning it <strong>removed one exit-side incentive and created no entry-side incentive</strong>. Canada now has zero innovation-specific investor tax incentive of any kind outside the mining FTS.</p>
+
+            <div class="callout-us">
+                <h3>Meanwhile, the US Expanded QSBS</h3>
+                <p>The One Big Beautiful Bill Act (July 2025) raised the QSBS gross asset threshold from $50M to <strong>$75M</strong>, the exclusion cap from $10M to <strong>$15M</strong>, and introduced graduated exclusions (50%/75%/100% at 3/4/5 years). Between 2012&ndash;2022, approximately <strong>$152 billion</strong> in gains were excluded &mdash; growing from 0.25% to 2.55% of all realised capital gains (<a href="https://home.treasury.gov/system/files/131/WP-127.pdf">US Treasury WP 127</a>; <a href="https://equitablegrowth.org/the-qualified-small-business-stock-exclusion-overwhelmingly-benefits-the-wealthy-and-should-be-reformed-in-2025/">Equitable Growth</a>).</p>
+                <p>Taxpayers earning &gt;$1M account for ~75% of excluded gains but only 25% of claims filed. Four states do not conform: California, Pennsylvania, Alabama, Mississippi (<a href="https://www.hklaw.com/en/insights/publications/2025/07/one-big-beautiful-bill-act-increases-tax-benefits-for-qualified-small">Holland &amp; Knight</a>).</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4: $10K Test -->
+    <section id="section-4">
+        <div class="container">
+            <h2>The $10,000 Test</h2>
+            <p>What happens to a $10,000 investment under each scheme? (Ontario top marginal rate.)</p>
+
+            <div class="tabs">
+                <button class="tab-button active" data-tab="success">Investment Doubles</button>
+                <button class="tab-button" data-tab="loss">Total Loss</button>
+                <button class="tab-button" data-tab="baseline">No Incentive</button>
+            </div>
+
+            <div id="success" class="tab-content active">
+                <div class="scenario-label">Investment doubles: $10,000 &rarr; $20,000</div>
+
+                <div class="bar-chart-row">
+                    <div class="bar-label">FTS (Ontario, with METC + OFFTS)</div>
+                    <div class="bar-container">
+                        <div class="bar-segment benefit" style="flex-basis: 36%;">Upfront +$7,278</div>
+                        <div class="bar-segment cost" style="flex-basis: 27%;">Exit tax &minus;$5,353</div>
+                        <div class="bar-segment gain" style="flex-basis: 37%;">Net +$11,925</div>
+                    </div>
+                    <div class="bar-total positive">Net: +$11,925 (119% return) &mdash; but gains fully taxable (nil cost base)</div>
+                </div>
+
+                <div class="bar-chart-row">
+                    <div class="bar-label">UK EIS (30% credit + full CGT exemption)</div>
+                    <div class="bar-container">
+                        <div class="bar-segment benefit" style="flex-basis: 15%;">+$3,000</div>
+                        <div class="bar-segment gain" style="flex-basis: 85%;">Tax-free gain +$13,000</div>
+                    </div>
+                    <div class="bar-total positive">Net: +$13,000 (130% return) &mdash; zero CGT after 3-year hold</div>
+                </div>
+
+                <div class="bar-chart-row">
+                    <div class="bar-label">UK SEIS (50% credit + full CGT exemption)</div>
+                    <div class="bar-container">
+                        <div class="bar-segment benefit" style="flex-basis: 25%;">+$5,000</div>
+                        <div class="bar-segment gain" style="flex-basis: 75%;">Tax-free gain +$15,000</div>
+                    </div>
+                    <div class="bar-total positive">Net: +$15,000 (150% return)</div>
+                </div>
+
+                <div class="bar-chart-row">
+                    <div class="bar-label">US QSBS (100% exclusion after 5 years)</div>
+                    <div class="bar-container">
+                        <div class="bar-segment us-gain" style="flex-basis: 100%;">Tax-free gain +$10,000</div>
+                    </div>
+                    <div class="bar-total positive">Net: +$10,000 (100% return) &mdash; no upfront benefit, but 100% exclusion on exit</div>
+                </div>
+
+                <div class="bar-chart-row">
+                    <div class="bar-label">No Incentive (Canadian baseline)</div>
+                    <div class="bar-container">
+                        <div class="bar-segment gain" style="flex-basis: 33%;">After-tax gain</div>
+                    </div>
+                    <div class="bar-total positive">Net: +$6,667 (67% return)</div>
+                </div>
+            </div>
+
+            <div id="loss" class="tab-content">
+                <div class="scenario-label">Total loss: $10,000 &rarr; $0</div>
+
+                <div class="bar-chart-row">
+                    <div class="bar-label">FTS (Ontario, with METC + OFFTS)</div>
+                    <div class="bar-container">
+                        <div class="bar-segment benefit" style="flex-basis: 64%;">Deduction +$7,278</div>
+                        <div class="bar-segment cost" style="flex-basis: 36%;">Net loss &minus;$2,722</div>
+                    </div>
+                    <div class="bar-total negative">Net: &minus;$2,722 (loss softened by upfront deduction)</div>
+                </div>
+
+                <div class="bar-chart-row">
+                    <div class="bar-label">UK EIS (30% credit + loss relief against income)</div>
+                    <div class="bar-container">
+                        <div class="bar-segment benefit" style="flex-basis: 30%;">Credit +$3,000</div>
+                        <div class="bar-segment cost" style="flex-basis: 70%;">Net loss &minus;$4,150</div>
+                    </div>
+                    <div class="bar-total negative">Net: &minus;$4,150 (income tax loss relief available)</div>
+                </div>
+
+                <div class="bar-chart-row">
+                    <div class="bar-label">UK SEIS (50% credit + loss relief)</div>
+                    <div class="bar-container">
+                        <div class="bar-segment benefit" style="flex-basis: 50%;">Credit +$5,000</div>
+                        <div class="bar-segment cost" style="flex-basis: 50%;">Net loss &minus;$2,750</div>
+                    </div>
+                    <div class="bar-total negative">Net: &minus;$2,750</div>
+                </div>
+
+                <div class="bar-chart-row">
+                    <div class="bar-label">US QSBS (standard capital loss rules only)</div>
+                    <div class="bar-container">
+                        <div class="bar-segment cost" style="flex-basis: 100%;">Full loss &minus;$10,000</div>
+                    </div>
+                    <div class="bar-total negative">Net: &minus;$10,000 (no special loss relief; $5K capital loss usable)</div>
+                </div>
+
+                <div class="bar-chart-row">
+                    <div class="bar-label">No Incentive (Canadian baseline)</div>
+                    <div class="bar-container">
+                        <div class="bar-segment cost" style="flex-basis: 100%;">Full loss &minus;$10,000</div>
+                    </div>
+                    <div class="bar-total negative">Net: &minus;$10,000</div>
+                </div>
+            </div>
+
+            <div id="baseline" class="tab-content">
+                <div class="scenario-label">Context: unsubsidized investment outcomes</div>
+                <p style="color: var(--mid-gray); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                    Without any incentive, Canadian investors face the standard capital gains inclusion rate on gains and standard capital loss rules on losses. Compare these baselines to the incentive scenarios above.
+                </p>
+
+                <div class="bar-chart-row">
+                    <div class="bar-label">Successful exit (2&times; return, post-tax)</div>
+                    <div class="bar-container">
+                        <div class="bar-segment gain" style="flex-basis: 33%;">Net gain</div>
+                    </div>
+                    <div class="bar-total">+$6,667 after capital gains tax</div>
+                </div>
+
+                <div class="bar-chart-row">
+                    <div class="bar-label">Total loss</div>
+                    <div class="bar-container">
+                        <div class="bar-segment cost" style="flex-basis: 100%;">Full loss</div>
+                    </div>
+                    <div class="bar-total negative">&minus;$10,000 (capital loss of $5,000 usable against future gains)</div>
+                </div>
+            </div>
+
+            <div class="cite" style="margin-top: 1.5rem;">
+                Note: FTS calculations assume Ontario top marginal rate (~53.5%), 100% CEE deduction, 15% METC, 5% OFFTS. EIS/SEIS assume UK additional rate (45%). QSBS assumes 100% federal exclusion after 5-year hold (post-<a href="https://www.hklaw.com/en/insights/publications/2025/07/one-big-beautiful-bill-act-increases-tax-benefits-for-qualified-small">OBBBA July 2025</a>). All figures approximate.
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 5: FTS Holding Structures -->
+    <section id="section-5">
+        <div class="container">
+            <h2>How FTS Investors Actually Hold &mdash; and Exit</h2>
+            <p>The FTS market has systematically engineered away genuine equity exposure. Each innovation reduces the investor's contact with the underlying exploration venture.</p>
+
+            <div class="holding-grid">
+                <div class="holding-card">
+                    <h3>Traditional LP</h3>
+                    <div class="hold-period">18&ndash;24 mo</div>
+                    <p>Subscribe at year-end, LP dissolves and rolls over into resource mutual fund. No secondary market during term.</p>
+                    <div class="cite"><a href="https://ca.rbcwealthmanagement.com/documents/634020/3210246/The+Navigator+-+Flow-Through+Shares+and+Limited+Partnership+Units.pdf">RBC Wealth Management</a></div>
+                </div>
+                <div class="holding-card">
+                    <h3>Short-Duration LP</h3>
+                    <div class="hold-period">6&ndash;12 mo</div>
+                    <p>Compressed timeline targets investors who want the deduction with minimal equity exposure.</p>
+                    <div class="cite"><a href="https://www.ninepoint.com/about-ninepoint/press-releases/ninepoint-2025-flow-through-limited-partnership-announces-rollover-transaction-and-dissolution/">Ninepoint 2025</a></div>
+                </div>
+                <div class="holding-card">
+                    <h3>Charity Donation</h3>
+                    <div class="hold-period">Same day</div>
+                    <p>Subscribe, donate to charity, charity sells to liquidity provider &mdash; all three steps close same day. After-tax cost of giving: 2&ndash;10%.</p>
+                    <div class="cite"><a href="https://peartreecanada.com/">PearTree Canada</a> &middot; $500M+/year</div>
+                </div>
+                <div class="holding-card highlight">
+                    <h3>EIS/SEIS (contrast)</h3>
+                    <div class="hold-period">3+ years</div>
+                    <p>Credit clawed back if sold early. CGT exemption only after 3-year hold. Early exit <em>destroys</em> the tax benefit.</p>
+                    <div class="cite"><a href="https://www.gov.uk/guidance/venture-capital-schemes-apply-to-use-the-enterprise-investment-scheme">HMRC EIS Guidance</a></div>
+                </div>
+            </div>
+
+            <p style="margin-top: 1rem;">FTS are issued at a <strong>20&ndash;30% premium</strong> over common share price for CEE expenses, and 8&ndash;15% for CDE (<a href="https://www.miningtaxcanada.com/flow-through-shares/">Mining Tax Canada</a>; <a href="https://blog.cfoplus.boutique/flow-through-fundamentals-what-canadian-mining-executives-need-to-know-in-2025/">CFOplus 2025</a>). The premium reflects the tax value &mdash; but the nil cost base means <em>all</em> proceeds on sale are taxable as gains. Premium-sharing dynamics were modelled by <a href="https://www.ctf.ca/common/Uploaded%20files/Documents/PDF/1996ctj/1996CTJ4_Jog.pdf">Jog, Lenjosek &amp; McKenzie (1996)</a>, who found that effectiveness depends critically on whether the premium compensates for underlying equity risk.</p>
+        </div>
+    </section>
+
+    <!-- Section 6: Sector Gap -->
+    <section id="section-6">
+        <div class="container">
+            <h2>The Sector Gap</h2>
+            <div class="sector-visual">
+                <div>
+                    <div class="sector-bar">
+                        <div class="sector-bar-label">Canada FTS eligible sectors</div>
+                        <div class="sector-bar-visual narrow">
+                            <div class="sector-segment mining">Mining &amp; Energy</div>
+                        </div>
+                        <div style="font-size: 0.85rem; color: var(--mid-gray);">Limited to exploration and development</div>
+                    </div>
+                </div>
+                <div>
+                    <div class="sector-bar">
+                        <div class="sector-bar-label">UK EIS/SEIS eligible sectors</div>
+                        <div class="sector-bar-visual">
+                            <div class="sector-segment tech">Tech</div>
+                            <div class="sector-segment lifesci">Life<br>Sci</div>
+                            <div class="sector-segment cleantech">Clean-<br>tech</div>
+                            <div class="sector-segment manufacturing">Mfg</div>
+                            <div class="sector-segment services">Svcs</div>
+                            <div class="sector-segment ai">AI &amp;<br>Other</div>
+                        </div>
+                        <div style="font-size: 0.85rem; color: var(--mid-gray);">Virtually all qualifying trades</div>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 2.5rem;">
+                <div class="sector-gap-text">FTS covers <strong>1 sector</strong>. EIS/SEIS covers <strong>virtually all</strong>.<br>
+                    <span style="font-size: 0.9rem; font-weight: 400; color: var(--dark-gray);">UK funded <strong>6,070 companies</strong> in 2023&ndash;24 vs. Canada&rsquo;s ~670 &mdash; a <strong>9&times;</strong> breadth gap (<a href="https://www.gov.uk/government/statistics/enterprise-investment-scheme-seed-enterprise-investment-scheme-and-social-investment-tax-relief-may-2025/enterprise-investment-scheme-seed-enterprise-investment-scheme-and-social-investment-tax-relief-statistics-2025">HMRC</a>)</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 7: Behavioral Models -->
+    <section id="section-7">
+        <div class="container">
+            <h2>Two Models of Investor Behaviour</h2>
+            <div class="models-container">
+                <div class="model-card fts">
+                    <h3>FTS Model: Deduction Harvesting</h3>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-text">
+                                <strong>Month 0</strong>
+                                <span>Subscribe to FTS LP; claim 100% deduction</span>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-text">
+                                <strong>Month 0 (charity route)</strong>
+                                <span>Or: donate shares same day via PearTree &mdash; deduction + donation credit, zero equity exposure</span>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-text">
+                                <strong>Month 6&ndash;24</strong>
+                                <span>LP dissolves; rollover to mutual fund at nil cost base</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="model-stat">
+                        <strong>Empirical outcome (<a href="https://www.policyschool.ca/wp-content/uploads/2016/03/flow-through-shares-jog.pdf">Jog 2016</a>):</strong> Investors lost ~$1.2B on $2.5B deployed (48% value destruction). Small-company FTS: ~100% annualised losses. A <a href="https://www.policyschool.ca/wp-content/uploads/2016/03/flow-through-shares-jog.pdf">1994 Dept. of Finance evaluation</a> found &ldquo;little evidence that incremental exploration activity resulted in incremental discoveries.&rdquo;
+                    </div>
+                </div>
+
+                <div class="model-card eis">
+                    <h3>EIS/SEIS Model: Aligned Investment</h3>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-text">
+                                <strong>Year 0</strong>
+                                <span>Invest; claim 30&ndash;50% income tax credit</span>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-text">
+                                <strong>Years 1&ndash;3</strong>
+                                <span>Company scales; investor holds (credit clawed back if sold early)</span>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-text">
+                                <strong>Year 3+</strong>
+                                <span>Full CGT exemption unlocked; or loss relief against income if failed</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="model-stat">
+                        <strong>Outcome:</strong> 46.5% of UK unicorns received EIS funding (<a href="https://www.beauhurst.com/research/eis-30th-anniversary/">Beauhurst</a>). 51.4% of EIS investments under &pound;10K &mdash; reaching retail investors, not just tax planners (<a href="https://www.gov.uk/government/statistics/enterprise-investment-scheme-seed-enterprise-investment-scheme-and-social-investment-tax-relief-may-2025/enterprise-investment-scheme-seed-enterprise-investment-scheme-and-social-investment-tax-relief-statistics-2025">HMRC 2025</a>). Expanding April 2026: &pound;10M annual / &pound;24M lifetime company limits (<a href="https://www.gov.uk/guidance/venture-capital-schemes-apply-to-use-the-enterprise-investment-scheme">HMRC</a>).
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 8: Gap Analysis -->
+    <section id="section-8">
+        <div class="container">
+            <h2>What Canada Is Missing</h2>
+            <div class="gap-grid">
+                <div class="gap-column uk">
+                    <h3>UK &amp; US Features</h3>
+                    <ul class="gap-list">
+                        <li>Income tax credit on investment (EIS: 30%, SEIS: 50%)</li>
+                        <li>Capital gains exemption after hold period (EIS: 3yr, QSBS: 5yr)</li>
+                        <li>Capital gains deferral / rollover (EIS unlimited; QSBS &sect;1045)</li>
+                        <li>Loss relief against income (EIS/SEIS)</li>
+                        <li>Crowdfunding platform integration (EIS + Seedrs/Crowdcube)</li>
+                        <li>Sector breadth &mdash; all qualifying trades (EIS) or broad C-corp (QSBS)</li>
+                        <li>Scale-up support (EIS April 2026 expansion)</li>
+                    </ul>
+                </div>
+                <div class="gap-column missing">
+                    <h3>Canada Gaps</h3>
+                    <ul class="gap-list">
+                        <li>No income tax credit for innovation investment</li>
+                        <li>No capital gains exemption &mdash; nil cost base makes gains fully taxable</li>
+                        <li>No capital gains deferral or rollover mechanism</li>
+                        <li>No loss relief against income for failed startup investments</li>
+                        <li>No crowdfunding integration with tax incentives</li>
+                        <li>Mining &amp; energy only &mdash; no tech, cleantech, life sciences, AI</li>
+                        <li>CEI eliminated; no exit-side incentive of any kind</li>
+                    </ul>
+                </div>
+            </div>
+            <p style="text-align: center; margin-top: 2rem; font-weight: 600; font-size: 1.1rem; color: var(--text-black);">
+                Canada has strong tax incentives to invest in mining exploration (FTS) and real estate (principal residence exemption) &mdash; but <strong>zero tax incentive</strong> to invest in innovation.
+            </p>
+        </div>
+    </section>
+
+    <!-- Section 9: Path Forward -->
+    <section id="section-9">
+        <div class="container">
+            <h2>The Path Forward</h2>
+            <p>Four policy steps to close the innovation investment incentive gap:</p>
+            <div class="path-grid">
+                <div class="path-card">
+                    <span class="path-step-number">1</span>
+                    <h3>Innovation FTS</h3>
+                    <p>Extend flow-through share deduction to SR&ED-eligible companies in tech, cleantech, life sciences, and advanced manufacturing. Uses proven Canadian legislative framework. <a href="https://www.blg.com/en/insights/2025/ri/the-expansion-of-flow-through-shares-to-innovation-waiting-for-godot">BLG (Nov 2025)</a> has published detailed analysis of how this could work.</p>
+                </div>
+                <div class="path-card">
+                    <span class="path-step-number">2</span>
+                    <h3>Add EIS Features</h3>
+                    <p>Layer CGT exemption on 3+ year holds and loss relief against income &mdash; addressing the nil cost base problem and creating alignment incentives that the current FTS model lacks. <a href="https://cdhowe.org/publication/flow-through-shares-could-ignite-tech-innovation/">C.D. Howe</a> estimates $500M annually in new startup investment.</p>
+                </div>
+                <div class="path-card">
+                    <span class="path-step-number">3</span>
+                    <h3>Platform Integration</h3>
+                    <p>Connect with OSC-regulated equity crowdfunding platforms (MI 45-108, proposed MI 45-111) to lower friction and bring retail investors into innovation ventures at scale &mdash; replicating the UK's EIS + Seedrs/Crowdcube ecosystem.</p>
+                </div>
+                <div class="path-card">
+                    <span class="path-step-number">4</span>
+                    <h3>Ontario Provincial Credit</h3>
+                    <p>Ontario creates a 10&ndash;15% provincial innovation investment tax credit (analogous to OFFTS) as proof-of-concept. Within Ontario's fiscal authority; doesn't require federal action. OSC could play advisory/design role.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="sources-grid">
+            <div class="sources-column">
+                <h4>Primary Data Sources</h4>
+                <ul>
+                    <li><a href="https://www.gov.uk/government/statistics/enterprise-investment-scheme-seed-enterprise-investment-scheme-and-social-investment-tax-relief-may-2025/enterprise-investment-scheme-seed-enterprise-investment-scheme-and-social-investment-tax-relief-statistics-2025">HMRC, <em>EIS/SEIS Statistics</em> (2025)</a></li>
+                    <li><a href="https://www.beauhurst.com/research/eis-30th-anniversary/">Beauhurst, <em>EIS 30th Anniversary Report</em></a></li>
+                    <li><a href="https://www.eisa.org.uk/about-eis/facts-and-figures/">EISA, <em>Facts and Figures</em></a></li>
+                    <li><a href="https://home.treasury.gov/system/files/131/WP-127.pdf">US Treasury, Working Paper 127 (QSBS)</a></li>
+                    <li><a href="https://equitablegrowth.org/the-qualified-small-business-stock-exclusion-overwhelmingly-benefits-the-wealthy-and-should-be-reformed-in-2025/">Equitable Growth, <em>QSBS Exclusion</em> (2025)</a></li>
+                    <li><a href="https://www.policyschool.ca/wp-content/uploads/2016/03/flow-through-shares-jog.pdf">Jog, V. (2016), <em>Rates of Return on Flow-Through Shares</em></a></li>
+                    <li><a href="https://www.ctf.ca/common/Uploaded%20files/Documents/PDF/1996ctj/1996CTJ4_Jog.pdf">Jog, Lenjosek &amp; McKenzie (1996), <em>Premium-Sharing</em></a></li>
+                    <li><a href="https://www.mining.com/canadas-flow-through-shares-surge-despite-capital-gains/">Mining.com, <em>FTS Surge</em> (2024)</a></li>
+                    <li><a href="https://pdac.ca/programs-and-advocacy/access-to-capital/flow-through-shares">PDAC, <em>Flow-Through Shares</em></a></li>
+                </ul>
+            </div>
+            <div class="sources-column">
+                <h4>Policy &amp; Analysis</h4>
+                <ul>
+                    <li><a href="https://www.blg.com/en/insights/2025/ri/the-expansion-of-flow-through-shares-to-innovation-waiting-for-godot">BLG, <em>Innovation FTS &mdash; Waiting for Godot?</em> (Nov 2025)</a></li>
+                    <li><a href="https://www.blg.com/en/insights/2025/05/repurposing-flow-through-shares-to-promote-innovation">BLG, <em>Repurposing FTS</em> (May 2025)</a></li>
+                    <li><a href="https://cdhowe.org/publication/flow-through-shares-could-ignite-tech-innovation/">C.D. Howe, <em>FTS Could Ignite Tech Innovation</em></a></li>
+                    <li><a href="https://www.conferenceboard.ca/insights/the-future-is-now-innovation-in-budget-2025/">Conference Board, <em>Innovation in Budget 2025</em></a></li>
+                    <li><a href="https://www.hklaw.com/en/insights/publications/2025/07/one-big-beautiful-bill-act-increases-tax-benefits-for-qualified-small">Holland &amp; Knight, <em>OBBBA &amp; QSBS</em> (July 2025)</a></li>
+                    <li><a href="https://itep.org/qsbs-trump-tax-law-threatens-state-revenues-enriches-wealthy/">ITEP, <em>QSBS Giveaway</em> (2025)</a></li>
+                    <li><a href="https://www.cbc.ca/news/politics/2026-tax-measures-changes-new-9.7022831">CBC, <em>2026 Tax Measures</em> (Jan 2026)</a></li>
+                    <li><a href="https://kmss.ca/summary-of-the-new-canadian-entrepreneur-incentive-rules-coming-into-place-for-eligible-capital-gains-starting-january-1-2025/">KMSS, <em>CEI Summary</em> (Feb 2025)</a></li>
+                    <li><a href="https://peartreecanada.com/">PearTree Canada</a> &middot; <a href="https://www.miningtaxcanada.com/flow-through-shares/">Mining Tax Canada</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-note">
+            Data current to March 2026. Part of the <em>OSC Growth Sectors Research Vault</em>.
+            See also: <a href="#">Investor-Side Tax Incentives Comparison</a> (full analysis) &middot; <a href="#">EIS-SEIS</a> &middot; <a href="#">Flow-Through Shares</a>
+        </div>
+    </footer>
+
+    <script>
+        // Scroll-triggered fade-in
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Tab switching
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabName = button.getAttribute('data-tab');
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+                button.classList.add('active');
+                document.getElementById(tabName).classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
