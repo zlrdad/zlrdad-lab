@@ -3,138 +3,183 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>International Comparator Dashboard — Ontario Growth Sectors</title>
+<title>International Comparator Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
 <style>
 :root {
-  --bg: #FFFFFF;
-  --card: #F8FAFC;
-  --card-border: #E2E8F0;
-  --primary: #2563EB;
-  --primary-light: #DBEAFE;
-  --secondary: #6366F1;
-  --secondary-light: #E0E7FF;
-  --accent: #0D9488;
-  --accent-light: #CCFBF1;
+  --bg: #F5F3FF;
+  --card: #FFFFFF;
+  --card-border: rgba(139,92,246,0.08);
+  --primary: #6366F1;
+  --primary-light: #EEF2FF;
+  --secondary: #8B5CF6;
+  --secondary-light: #F5F3FF;
+  --accent: #4F46E5;
+  --accent-light: #E0E7FF;
   --canada: #DC2626;
-  --canada-light: #FEE2E2;
-  --text: #1E293B;
-  --text-muted: #64748B;
-  --text-light: #94A3B8;
-  --border: #E2E8F0;
-  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
-  --radius: 12px;
-  --radius-sm: 8px;
+  --canada-light: #FEF2F2;
+  --text: #1E1B4B;
+  --text-muted: #6B7280;
+  --text-light: #9CA3AF;
+  --border: rgba(139,92,246,0.1);
+  --shadow: 0 1px 3px rgba(99,102,241,0.06), 0 4px 12px rgba(99,102,241,0.04);
+  --shadow-md: 0 2px 8px rgba(99,102,241,0.08), 0 8px 24px rgba(99,102,241,0.06);
+  --radius: 16px;
+  --radius-sm: 10px;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
   background: var(--bg);
   color: var(--text);
-  line-height: 1.5;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Header */
+/* ===== HEADER ===== */
 .header {
-  background: linear-gradient(135deg, #1E3A8A 0%, #2563EB 50%, #4F46E5 100%);
+  background: linear-gradient(135deg, #4F46E5, #7C3AED);
   color: white;
-  padding: 28px 40px 20px;
+  padding: 0 48px;
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 4px 12px rgba(37,99,235,0.15);
+}
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 0 14px;
 }
 .header h1 {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 700;
-  letter-spacing: -0.3px;
+  letter-spacing: -0.5px;
+  color: white;
+  -webkit-text-fill-color: white;
 }
 .header .subtitle {
   font-size: 13px;
-  opacity: 0.8;
-  margin-top: 2px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.75);
 }
+.header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.9);
+  backdrop-filter: blur(4px);
+}
+.header-badge .dot {
+  width: 6px; height: 6px;
+  background: #A5B4FC;
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
 
-/* Tab Navigation */
+/* ===== TAB NAVIGATION ===== */
 .tab-nav {
   display: flex;
-  gap: 2px;
-  padding: 0 40px;
-  background: linear-gradient(135deg, #1E3A8A 0%, #2563EB 50%, #4F46E5 100%);
+  gap: 4px;
+  padding: 8px 48px 12px;
+  background: linear-gradient(135deg, #4F46E5, #7C3AED);
   overflow-x: auto;
   scrollbar-width: none;
-  -ms-overflow-style: none;
+  flex-wrap: wrap;
 }
 .tab-nav::-webkit-scrollbar { display: none; }
 .tab-btn {
-  padding: 10px 18px;
-  background: transparent;
+  padding: 8px 18px;
+  background: rgba(255,255,255,0.1);
   border: none;
-  color: rgba(255,255,255,0.65);
-  font-size: 13px;
+  color: rgba(255,255,255,0.7);
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
   font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
-  border-bottom: 2px solid transparent;
-  transition: all 0.2s;
+  border-radius: 8px;
+  transition: all 0.25s ease;
+  position: relative;
 }
-.tab-btn:hover { color: rgba(255,255,255,0.9); }
+.tab-btn:hover { background: rgba(255,255,255,0.2); color: white; }
 .tab-btn.active {
-  color: white;
-  border-bottom-color: white;
-  background: rgba(255,255,255,0.1);
+  background: white;
+  color: #4F46E5;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-/* Main Content */
-.main { padding: 28px 40px; max-width: 1440px; margin: 0 auto; }
+/* ===== MAIN CONTENT ===== */
+.main { padding: 32px 48px; max-width: 1480px; margin: 0 auto; }
 
-.tab-content { display: none; }
+.tab-content { display: none; animation: fadeIn 0.4s ease; }
 .tab-content.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+.kpi-card { animation: slideUp 0.5s ease forwards; }
+.kpi-card:nth-child(2) { animation-delay: 0.05s; }
+.kpi-card:nth-child(3) { animation-delay: 0.1s; }
+.kpi-card:nth-child(4) { animation-delay: 0.15s; }
+.kpi-card:nth-child(5) { animation-delay: 0.2s; }
+.kpi-card:nth-child(6) { animation-delay: 0.25s; }
+.chart-card { animation: slideUp 0.5s ease forwards; animation-delay: 0.1s; }
 
-/* KPI Cards */
+/* ===== KPI CARDS ===== */
 .kpi-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
   gap: 16px;
-  margin-bottom: 28px;
+  margin-bottom: 32px;
 }
 .kpi-card {
   background: var(--card);
-  border: 1px solid var(--card-border);
   border-radius: var(--radius);
-  padding: 20px;
+  padding: 22px 24px;
   box-shadow: var(--shadow);
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
 }
+.kpi-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
 .kpi-card.canada {
-  border-left: 4px solid var(--canada);
-  background: var(--canada-light);
+  background: linear-gradient(135deg, #FEF2F2, #FEE2E2);
+  border: 1.5px solid #FECACA;
 }
 .kpi-label {
-  font-size: 12px;
+  font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
   color: var(--text-muted);
-  margin-bottom: 6px;
+  font-weight: 600;
+  margin-bottom: 8px;
 }
 .kpi-value {
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 700;
-  color: var(--text);
+  color: var(--accent);
   line-height: 1.1;
+  letter-spacing: -0.5px;
 }
 .kpi-card.canada .kpi-value { color: var(--canada); }
 .kpi-detail {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-muted);
-  margin-top: 4px;
+  margin-top: 6px;
+  font-weight: 400;
 }
 
-/* Chart containers */
+/* ===== CHART CARDS ===== */
 .chart-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -142,51 +187,55 @@ body {
   margin-bottom: 28px;
 }
 .chart-row.full { grid-template-columns: 1fr; }
-.chart-row.thirds { grid-template-columns: 1fr 1fr 1fr; }
 
 .chart-card {
   background: var(--card);
-  border: 1px solid var(--card-border);
   border-radius: var(--radius);
-  padding: 24px;
+  padding: 28px;
   box-shadow: var(--shadow);
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
 }
+.chart-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
 .chart-card h3 {
   font-size: 15px;
   font-weight: 600;
   margin-bottom: 4px;
-  color: var(--text);
+  color: var(--accent);
 }
 .chart-card .chart-subtitle {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-muted);
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+  font-weight: 400;
 }
 .chart-wrap { position: relative; width: 100%; }
 
-/* Insight callout */
+/* ===== INSIGHT CALLOUTS ===== */
 .insight {
-  background: var(--primary-light);
-  border-left: 4px solid var(--primary);
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-  padding: 16px 20px;
-  margin-bottom: 24px;
-  font-size: 14px;
-  line-height: 1.6;
+  background: #F5F3FF;
+  border-left: 3px solid var(--primary);
+  border-radius: 0 12px 12px 0;
+  padding: 18px 22px;
+  margin-bottom: 28px;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: #4C1D95;
 }
-.insight strong { color: var(--primary); }
+.insight strong { color: var(--accent); font-weight: 600; }
 .insight.canada-hl {
-  background: var(--canada-light);
+  background: linear-gradient(135deg, #FEF2F2, #FEE2E2);
   border-left-color: var(--canada);
+  color: #7F1D1D;
 }
 .insight.canada-hl strong { color: var(--canada); }
 
-/* Tables */
+/* ===== TABLES ===== */
 .data-table-wrap {
   overflow-x: auto;
   margin-bottom: 24px;
   border-radius: var(--radius);
   border: 1px solid var(--border);
+  background: var(--card);
 }
 table.data-table {
   width: 100%;
@@ -194,91 +243,127 @@ table.data-table {
   font-size: 13px;
 }
 table.data-table th {
-  background: #F1F5F9;
-  padding: 10px 14px;
+  background: #EEF2FF;
+  padding: 12px 16px;
   text-align: left;
   font-weight: 600;
-  color: var(--text);
-  border-bottom: 2px solid var(--border);
-  cursor: pointer;
-  white-space: nowrap;
-  user-select: none;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--accent);
+  border-bottom: 2px solid rgba(99,102,241,0.15);
 }
-table.data-table th:hover { background: #E2E8F0; }
 table.data-table td {
-  padding: 8px 14px;
+  padding: 10px 16px;
   border-bottom: 1px solid var(--border);
+  font-weight: 400;
 }
 table.data-table tr:last-child td { border-bottom: none; }
-table.data-table tr:hover td { background: #F8FAFC; }
+table.data-table tr:hover td { background: #F5F3FF; }
 table.data-table tr.canada-row td {
   background: var(--canada-light);
   font-weight: 600;
-}
-table.data-table tr.canada-row:hover td { background: #FECACA; }
-.sort-arrow { font-size: 10px; margin-left: 4px; opacity: 0.5; }
-
-/* Section title */
-.section-title {
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 16px;
-  color: var(--text);
-  padding-bottom: 8px;
-  border-bottom: 2px solid var(--primary);
-  display: inline-block;
+  color: var(--canada);
 }
 
-/* Country selector for overview */
-.country-filter {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 20px;
-}
-.country-chip {
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 500;
-  border: 1px solid var(--border);
-  background: white;
+/* ===== SORTABLE TABLE ===== */
+table.data-table th.sortable {
   cursor: pointer;
-  transition: all 0.15s;
+  user-select: none;
+  position: relative;
+  padding-right: 24px;
+  transition: background 0.15s ease;
 }
-.country-chip.active { background: var(--primary); color: white; border-color: var(--primary); }
-.country-chip.canada { background: var(--canada); color: white; border-color: var(--canada); }
-
-/* Source line */
-.source-line {
+table.data-table th.sortable:hover { background: #E0E7FF; }
+table.data-table th.sortable::after {
+  content: '⇅';
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
   font-size: 11px;
-  color: var(--text-light);
+  opacity: 0.4;
+}
+table.data-table th.sortable.sort-asc::after { content: '↑'; opacity: 0.8; }
+table.data-table th.sortable.sort-desc::after { content: '↓'; opacity: 0.8; }
+
+.rank-badge {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+.rank-badge.rank-top { background: #DCFCE7; color: #166534; }
+.rank-badge.rank-mid { background: #FEF9C3; color: #854D0E; }
+.rank-badge.rank-low { background: #FEE2E2; color: #991B1B; }
+
+/* ===== SECTION TITLE ===== */
+.section-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: var(--accent);
+  letter-spacing: -0.3px;
+}
+.section-title::after {
+  content: '';
+  display: block;
+  width: 48px;
+  height: 3px;
+  background: linear-gradient(90deg, #6366F1, #8B5CF6);
+  border-radius: 2px;
   margin-top: 8px;
+}
+
+/* ===== SOURCE LINE ===== */
+.source-line {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-top: 12px;
   font-style: italic;
 }
 
-/* Responsive */
+/* ===== RESPONSIVE ===== */
 @media (max-width: 900px) {
-  .chart-row, .chart-row.thirds { grid-template-columns: 1fr; }
+  .chart-row { grid-template-columns: 1fr; }
   .kpi-row { grid-template-columns: repeat(2, 1fr); }
-  .main { padding: 20px; }
-  .header { padding: 20px; }
-  .tab-nav { padding: 0 20px; }
+  .main { padding: 20px 16px; }
+  .header { padding: 0 16px; }
+  .tab-nav { padding: 8px 16px 12px; gap: 6px; }
+  .tab-btn { padding: 7px 14px; font-size: 11px; }
+  .kpi-value { font-size: 24px; }
+  .chart-card { padding: 20px 16px; }
+}
+
+@media (max-width: 480px) {
+  .kpi-row { grid-template-columns: 1fr; }
+  .header-inner { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .header h1 { font-size: 20px; }
 }
 
 @media print {
-  .header { position: static; }
+  .header { position: static; background: #4F46E5; }
+  .header h1 { -webkit-text-fill-color: white; }
   .tab-nav { display: none; }
   .tab-content { display: block !important; page-break-inside: avoid; }
-  .chart-card { break-inside: avoid; }
+  body { background: white; }
 }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <h1>International Comparator Dashboard</h1>
-  <div class="subtitle">Ontario Growth Sectors Research — 15 Countries across 10 Dimensions · March 2026</div>
+  <div class="header-inner">
+    <div>
+      <h1>International Comparator Dashboard</h1>
+      <div class="subtitle">15 Countries across 10 Dimensions &middot; March 2026</div>
+    </div>
+    <div class="header-badge"><span class="dot"></span> Live Data Compendium</div>
+  </div>
 </div>
 
 <nav class="tab-nav">
@@ -303,7 +388,7 @@ table.data-table tr.canada-row:hover td { background: #FECACA; }
     <div class="kpi-card canada">
       <div class="kpi-label">Canada GII Rank</div>
       <div class="kpi-value">17th</div>
-      <div class="kpi-detail">13th in inputs, 20th in outputs — 7-rank efficiency gap</div>
+      <div class="kpi-detail">13th in inputs, 20th in outputs</div>
     </div>
     <div class="kpi-card canada">
       <div class="kpi-label">Canada VC / GDP</div>
@@ -320,22 +405,22 @@ table.data-table tr.canada-row:hover td { background: #FECACA; }
       <div class="kpi-value">None</div>
       <div class="kpi-detail">Only G7 country without one</div>
     </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Countries Compared</div>
-      <div class="kpi-value">15</div>
-      <div class="kpi-detail">+ EU bloc across 10 dimensions</div>
+    <div class="kpi-card canada">
+      <div class="kpi-label">Canada Productivity</div>
+      <div class="kpi-value">$72/hr</div>
+      <div class="kpi-detail">74% of US ($98) · gap widening since 2000</div>
     </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Canada Startup Visa</div>
-      <div class="kpi-value">52 mo</div>
-      <div class="kpi-detail">Avg processing; program paused Jan 2026</div>
+    <div class="kpi-card canada">
+      <div class="kpi-label">R&D Intensity</div>
+      <div class="kpi-value">1.7%</div>
+      <div class="kpi-detail">Lowest G7 · OECD avg 2.7% · Israel 6.4%</div>
     </div>
   </div>
 
   <div class="chart-row">
     <div class="chart-card">
-      <h3>Composite Performance Radar</h3>
-      <div class="chart-subtitle">Canada vs. top comparators — normalized scores (higher = better)</div>
+      <h3>Canada's Competitive Position</h3>
+      <div class="chart-subtitle">8 dimensions · normalized 0–100 (higher = better) · vs. top comparators & average</div>
       <div class="chart-wrap"><canvas id="radarOverview"></canvas></div>
     </div>
     <div class="chart-card">
@@ -347,6 +432,19 @@ table.data-table tr.canada-row:hover td { background: #FECACA; }
 
   <div class="insight canada-hl">
     <strong>Key finding:</strong> Canada ranks mid-pack or below on nearly every dimension. The compendium reveals a consistent pattern: strong research inputs (GII input rank 13th, 10% of world's top AI researchers) paired with weak commercial conversion (GII output rank 20th, VC/GDP 0.35%, 32% founder retention). The policy gap is structural — no angel tax incentive, a paused startup visa, and no QSBS equivalent — while peer nations deploy coordinated incentive architectures (UK's EIS/SEIS, Israel's Yozma, Sweden's ISK).
+  </div>
+
+  <div class="chart-row">
+    <div class="chart-card">
+      <h3>Labour Productivity: GDP per Hour Worked (USD PPP)</h3>
+      <div class="chart-subtitle">2023 OECD data — higher is better</div>
+      <div class="chart-wrap"><canvas id="prodBar"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Business Investment per Worker (Index, 2014 = 100)</h3>
+      <div class="chart-subtitle">Capital deepening trend — Canada is the only G7 country below 2014 level</div>
+      <div class="chart-wrap"><canvas id="bizInvBar"></canvas></div>
+    </div>
   </div>
 
   <div class="chart-row">
@@ -394,12 +492,12 @@ table.data-table tr.canada-row:hover td { background: #FECACA; }
 
   <div class="chart-row">
     <div class="chart-card">
-      <h3>Nominal GDP (2024, USD)</h3>
+      <h3>Nominal GDP (2024, USD trillions)</h3>
       <div class="chart-subtitle">All 15 comparator countries</div>
       <div class="chart-wrap"><canvas id="gdpBar"></canvas></div>
     </div>
     <div class="chart-card">
-      <h3>GDP Per Capita (USD)</h3>
+      <h3>GDP Per Capita (USD thousands)</h3>
       <div class="chart-subtitle">Wealth per person — different ranking than total GDP</div>
       <div class="chart-wrap"><canvas id="gdpPerCapBar"></canvas></div>
     </div>
@@ -409,7 +507,48 @@ table.data-table tr.canada-row:hover td { background: #FECACA; }
     <strong>Small-market advantage:</strong> Israel, Sweden, Singapore, Denmark, and Finland have even smaller domestic markets than Canada, but have built export-first founder cultures as a structural advantage. Canada's relatively "comfortable" mid-size market paradoxically undermines the urgency to build globally from day one.
   </div>
 
-  <div class="source-line">Data: IMF World Economic Outlook Oct 2024, World Bank, BEA, Eurostat, Statistics Canada.</div>
+  <div class="chart-row">
+    <div class="chart-card">
+      <h3>Growth Quality: Well-Being & Dynamism</h3>
+      <div class="chart-subtitle">Complementary indicators — higher HDI and life satisfaction show Canada's absolute quality remains strong despite productivity decline</div>
+      <div class="data-table-wrap">
+        <table class="data-table" id="growthQualityTable">
+          <thead>
+            <tr>
+              <th>Country</th>
+              <th class="sortable" data-col="1" data-type="num">HDI (2024)</th>
+              <th class="sortable" data-col="2" data-type="num">Life Satisfaction (0–10)</th>
+              <th class="sortable" data-col="3" data-type="text">Firm Entry Trend</th>
+              <th class="sortable" data-col="4" data-type="num">Adj. Net Savings (% GNI)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Denmark</td><td data-sort="0.963">0.963</td><td data-sort="7.58">7.58</td><td data-sort="Stable">Stable</td><td data-sort="15">~15%</td></tr>
+            <tr><td>Sweden</td><td data-sort="0.954">0.954</td><td data-sort="7.34">7.34</td><td data-sort="Stable">Stable</td><td data-sort="18">~18%</td></tr>
+            <tr><td>Finland</td><td data-sort="0.949">0.949</td><td data-sort="7.74">7.74</td><td data-sort="Stable">Stable</td><td data-sort="12">~12%</td></tr>
+            <tr><td>Australia</td><td data-sort="0.951">0.951</td><td data-sort="7.10">7.10</td><td data-sort="Stable">Stable</td><td data-sort="5">~5%</td></tr>
+            <tr class="canada-row"><td>Canada</td><td data-sort="0.935">0.935 <span class="rank-badge rank-mid">#10 of 14</span></td><td data-sort="6.90">6.90 <span class="rank-badge rank-mid">#8 of 13</span></td><td data-sort="Declining">Declining <span class="rank-badge rank-low">⚠️</span></td><td data-sort="6">~6% <span class="rank-badge rank-low">#11 of 14</span></td></tr>
+            <tr><td>US</td><td data-sort="0.938">0.938</td><td data-sort="6.73">6.73</td><td data-sort="Rising">Rising post-2020</td><td data-sort="8">~8%</td></tr>
+            <tr><td>UK</td><td data-sort="0.945">0.945</td><td data-sort="6.77">6.77</td><td data-sort="Mixed">Mixed</td><td data-sort="4">~4%</td></tr>
+            <tr><td>Netherlands</td><td data-sort="0.954">0.954</td><td data-sort="7.48">7.48</td><td data-sort="Stable">Stable</td><td data-sort="14">~14%</td></tr>
+            <tr><td>Singapore</td><td data-sort="0.945">0.945</td><td data-sort="0">n/a</td><td data-sort="Stable">Stable</td><td data-sort="30">~30%</td></tr>
+            <tr><td>Israel</td><td data-sort="0.908">0.908</td><td data-sort="7.34">7.34</td><td data-sort="High">High</td><td data-sort="12">~12%</td></tr>
+            <tr><td>Germany</td><td data-sort="0.944">0.944</td><td data-sort="6.98">6.98</td><td data-sort="Declining">Declining</td><td data-sort="10">~10%</td></tr>
+            <tr><td>France</td><td data-sort="0.909">0.909</td><td data-sort="6.86">6.86</td><td data-sort="Stable">Stable</td><td data-sort="8">~8%</td></tr>
+            <tr><td>South Korea</td><td data-sort="0.933">0.933</td><td data-sort="6.27">6.27</td><td data-sort="Declining">Declining</td><td data-sort="15">~15%</td></tr>
+            <tr><td>Japan</td><td data-sort="0.915">0.915</td><td data-sort="6.20">6.20</td><td data-sort="Declining">Declining</td><td data-sort="7">~7%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="font-size:11px; color:var(--text-light); margin-top:8px;">Click any column header to sort · Canada's rank badges update dynamically</div>
+    </div>
+  </div>
+
+  <div class="insight">
+    <strong>The paradox:</strong> Canada's absolute quality of life (HDI #14, life satisfaction above OECD average) remains strong. But firm entry is declining, adjusted net savings trail Nordic peers, and the productivity engine underneath is weakening. The risk is not that Canadians are worse off today — it's that the growth trajectory cannot sustain current living standards.
+  </div>
+
+  <div class="source-line">Data: IMF World Economic Outlook Oct 2024, World Bank, BEA, Eurostat, Statistics Canada, UNDP HDR 2025, OECD Society at a Glance 2024, OECD Compendium of Productivity Indicators 2025.</div>
 </div>
 
 <!-- ==================== CAPITAL MARKETS ==================== -->
@@ -441,19 +580,19 @@ table.data-table tr.canada-row:hover td { background: #FECACA; }
 
   <div class="chart-row">
     <div class="chart-card">
-      <h3>Total Market Capitalization (USD, ~2025)</h3>
+      <h3>Total Market Capitalization (USD trillions, ~2025)</h3>
       <div class="chart-subtitle">Domestic equity market cap by country</div>
       <div class="chart-wrap"><canvas id="mktCapBar"></canvas></div>
     </div>
     <div class="chart-card">
       <h3>Listed Companies: Senior vs. Growth Exchanges</h3>
       <div class="chart-subtitle">Stacked bar — senior exchange + growth/venture exchange</div>
-      <div class="chart-wrap"><canvas id="listedCosBar"></canvas></div>
+      <div class="chart-wrap" style="min-height:520px"><canvas id="listedCosBar"></canvas></div>
     </div>
   </div>
 
   <div class="insight">
-    <strong>Growth exchange divergence:</strong> KOSDAQ (South Korea) is thriving with ~US$390B market cap across 1,827 tech/biotech companies, while AIM (UK) has shrunk 60% from its 2007 peak. Canada's TSXV has 1,531 issuers but just ~US$47B in market cap and 63% mining concentration, limiting its role as an innovation growth exchange.
+    <strong>Growth exchange divergence:</strong> KOSDAQ (South Korea) is thriving with ~US$390B market cap across 1,827 tech/biotech companies, while AIM (UK) has shrunk 60% from its 2007 peak. Canada's TSXV has 1,531 issuers but just ~US$47B in market cap and 63% mining concentration.
   </div>
 
   <div class="source-line">Data: WFE 2025, CEIC, exchange websites, JPX, Euronext, LSE, KOSDAQ.</div>
@@ -488,8 +627,8 @@ table.data-table tr.canada-row:hover td { background: #FECACA; }
 
   <div class="chart-row full">
     <div class="chart-card">
-      <h3>VC Deployment by Country (2024, USD)</h3>
-      <div class="chart-subtitle">Venture capital invested — log scale for visibility</div>
+      <h3>VC Deployment by Country (2024, USD billions)</h3>
+      <div class="chart-subtitle">Venture capital invested</div>
       <div class="chart-wrap"><canvas id="vcDeployBar"></canvas></div>
     </div>
   </div>
@@ -502,13 +641,13 @@ table.data-table tr.canada-row:hover td { background: #FECACA; }
     </div>
     <div class="chart-card">
       <h3>AI VC Concentration</h3>
-      <div class="chart-subtitle">Canada captures &lt;2% of global AI VC despite 10% of top AI researchers</div>
+      <div class="chart-subtitle">Canada captures &lt;2% of global AI VC despite 10% of top researchers</div>
       <div class="chart-wrap"><canvas id="aiVcPie"></canvas></div>
     </div>
   </div>
 
   <div class="insight canada-hl">
-    <strong>Canada's financing paradox:</strong> Canada deploys C$9.5B in VC but 66% is concentrated in just 26 megadeals. Series A rounds average ~C$10M vs. ~US$30M for US competitors, creating a structural gap at the critical scaling stage. AI VC is especially stark: Canada hosts ~10% of the world's top AI researchers but captures less than 2% of global AI venture capital.
+    <strong>Canada's financing paradox:</strong> Canada deploys C$9.5B in VC but 66% is concentrated in just 26 megadeals. Series A rounds average ~C$10M vs. ~US$30M. AI VC is especially stark: Canada hosts ~10% of the world's top AI researchers but captures less than 2% of global AI venture capital.
   </div>
 
   <div class="source-line">Data: KPMG Venture Pulse Q4 2024, CVCA Year-End 2024, NVCA 2025, byFounders/Crunchbase.</div>
@@ -521,12 +660,12 @@ table.data-table tr.canada-row:hover td { background: #FECACA; }
   <div class="kpi-row">
     <div class="kpi-card">
       <div class="kpi-label">UK EIS/SEIS Annual</div>
-      <div class="kpi-value">£1.8B</div>
+      <div class="kpi-value">&pound;1.8B</div>
       <div class="kpi-detail">6,070 companies funded/yr</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">UK EIS Cumulative</div>
-      <div class="kpi-value">&gt;£28B</div>
+      <div class="kpi-value">&gt;&pound;28B</div>
       <div class="kpi-detail">52,000+ companies since 1994</div>
     </div>
     <div class="kpi-card canada">
@@ -537,7 +676,7 @@ table.data-table tr.canada-row:hover td { background: #FECACA; }
     <div class="kpi-card canada">
       <div class="kpi-label">Flow-Through Shares</div>
       <div class="kpi-value">~C$1B/yr</div>
-      <div class="kpi-detail">Mining & energy only — 670 companies</div>
+      <div class="kpi-detail">Mining & energy only</div>
     </div>
   </div>
 
@@ -555,7 +694,7 @@ table.data-table tr.canada-row:hover td { background: #FECACA; }
   </div>
 
   <div class="insight canada-hl">
-    <strong>Canada's missing incentive architecture:</strong> A Canadian angel investor bears the full $10,000 loss if a startup fails. A UK SEIS investor loses ~$2,750 (72.5% cushion via 50% upfront relief + loss relief). Canada is the only G7 country with no investor-side tax incentive for innovation-sector investment. The existing Flow-Through Share mechanism works well but is restricted to mining and energy.
+    <strong>Canada's missing incentive architecture:</strong> A Canadian angel investor bears the full $10,000 loss if a startup fails. A UK SEIS investor loses ~$2,750 (72.5% cushion). Canada is the only G7 country with no investor-side tax incentive for innovation-sector investment.
   </div>
 
   <div class="source-line">Data: HMRC EIS/SEIS Statistics May 2025, IRS QSBS, CRA, vault analysis.</div>
@@ -569,7 +708,7 @@ table.data-table tr.canada-row:hover td { background: #FECACA; }
     <div class="kpi-card canada">
       <div class="kpi-label">Canada GII</div>
       <div class="kpi-value">17th</div>
-      <div class="kpi-detail">Trails all comparators except Australia (22nd)</div>
+      <div class="kpi-detail">Trails all comparators except Australia</div>
     </div>
     <div class="kpi-card canada">
       <div class="kpi-label">GERD / GDP</div>
@@ -584,18 +723,18 @@ table.data-table tr.canada-row:hover td { background: #FECACA; }
     <div class="kpi-card">
       <div class="kpi-label">Japan Quantum</div>
       <div class="kpi-value">$7.4B</div>
-      <div class="kpi-detail">Largest quantum commitment outside China</div>
+      <div class="kpi-detail">Largest commitment outside China</div>
     </div>
   </div>
 
   <div class="chart-row">
     <div class="chart-card">
       <h3>GII 2025 Rankings</h3>
-      <div class="chart-subtitle">All 15 comparator countries — lower rank is better</div>
+      <div class="chart-subtitle">All 15 comparator countries — lower number is better</div>
       <div class="chart-wrap"><canvas id="giiRankBar"></canvas></div>
     </div>
     <div class="chart-card">
-      <h3>Quantum Government Investment (USD)</h3>
+      <h3>Quantum Government Investment (USD billions)</h3>
       <div class="chart-subtitle">National quantum technology commitments</div>
       <div class="chart-wrap"><canvas id="quantumBar"></canvas></div>
     </div>
@@ -604,18 +743,18 @@ table.data-table tr.canada-row:hover td { background: #FECACA; }
   <div class="chart-row">
     <div class="chart-card">
       <h3>AI Talent Density (% of workforce)</h3>
-      <div class="chart-subtitle">Countries with quantified data — OECD/LinkedIn 2024</div>
+      <div class="chart-subtitle">Countries with quantified data — OECD/LinkedIn 2024. Canada not yet in global top 10.</div>
       <div class="chart-wrap"><canvas id="aiTalentBar"></canvas></div>
     </div>
     <div class="chart-card">
       <h3>Semiconductor Fab Capacity (million wpm)</h3>
-      <div class="chart-subtitle">Global foundry capacity by region — SEMI 2025</div>
+      <div class="chart-subtitle">Global foundry capacity by region — Canada has no fab capacity</div>
       <div class="chart-wrap"><canvas id="semiBar"></canvas></div>
     </div>
   </div>
 
   <div class="insight">
-    <strong>Innovation conversion gap:</strong> Canada ranks 13th in GII innovation inputs but 20th in outputs — a 7-rank efficiency gap. R&D spending at 1.7% of GDP is less than half Israel (6.35%) or South Korea (4.96%). Canada also faces a quantum investment gap: its $334M is now dwarfed by 7 comparators, despite being an early pioneer.
+    <strong>Innovation conversion gap:</strong> Canada ranks 13th in GII innovation inputs but 20th in outputs — a 7-rank efficiency gap. R&D spending at 1.7% of GDP is less than half Israel (6.35%) or South Korea (4.96%). Canada's $334M quantum commitment is now dwarfed by 7 comparators.
   </div>
 
   <div class="source-line">Data: WIPO GII 2025, OECD MSTI 2025, SEMI World Fab Forecast, Qureca, OECD.AI/LinkedIn.</div>
@@ -629,43 +768,43 @@ table.data-table tr.canada-row:hover td { background: #FECACA; }
     <div class="kpi-card">
       <div class="kpi-label">Sweden Unicorns/M</div>
       <div class="kpi-value">4.6</div>
-      <div class="kpi-detail">Per million population — top among middle powers</div>
+      <div class="kpi-detail">Top among middle powers</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">Singapore Unicorns/M</div>
       <div class="kpi-value">6.0</div>
-      <div class="kpi-detail">Highest per-capita unicorn rate</div>
+      <div class="kpi-detail">Highest per-capita rate</div>
     </div>
     <div class="kpi-card canada">
       <div class="kpi-label">Canada Unicorns/M</div>
       <div class="kpi-value">0.8</div>
-      <div class="kpi-detail">33 unicorns; sources vary (up to 4.2/M)</div>
+      <div class="kpi-detail">33 unicorns total</div>
     </div>
     <div class="kpi-card canada">
       <div class="kpi-label">Founder Retention</div>
       <div class="kpi-value">32%</div>
-      <div class="kpi-detail">2/3 of high-potential startups leave Canada</div>
+      <div class="kpi-detail">2/3 of high-potential startups leave</div>
     </div>
   </div>
 
   <div class="chart-row">
     <div class="chart-card">
-      <h3>Unicorns Per Capita (per million)</h3>
-      <div class="chart-subtitle">2005–2025 cumulative unicorn production relative to population</div>
+      <h3>Unicorns Per Capita (per million population)</h3>
+      <div class="chart-subtitle">2005–2025 cumulative unicorn production</div>
       <div class="chart-wrap"><canvas id="unicornBar"></canvas></div>
     </div>
     <div class="chart-card">
-      <h3>Founder Retention Patterns</h3>
-      <div class="chart-subtitle">Qualitative comparison of retention mechanisms</div>
+      <h3>Founder Retention Score</h3>
+      <div class="chart-subtitle">Qualitative assessment (0–100) based on retention mechanisms and outcomes</div>
       <div class="chart-wrap"><canvas id="retentionChart"></canvas></div>
     </div>
   </div>
 
   <div class="insight canada-hl">
-    <strong>Canada's founder exodus:</strong> Only 32.4% of Canadian-led high-potential startups launched in 2024 were HQ'd in Canada — down from &gt;67% just five years earlier. Canada's proximity to the US combined with weak retention mechanisms (no angel incentive, paused SUV, no QSBS equivalent) creates a uniquely severe outflow. France's improvement via deliberate brand and policy (La French Tech) suggests the decline is reversible.
+    <strong>Canada's founder exodus:</strong> Only 32.4% of Canadian-led high-potential startups launched in 2024 were HQ'd in Canada — down from &gt;67% just five years earlier. France's improvement via La French Tech suggests the decline is reversible with coordinated policy.
   </div>
 
-  <div class="source-line">Data: Leaders Fund Sep 2025, CB Insights, Dealroom, Brock University, Globe and Mail.</div>
+  <div class="source-line">Data: Leaders Fund Sep 2025, CB Insights, Dealroom, Brock University.</div>
 </div>
 
 <!-- ==================== ANGEL ==================== -->
@@ -676,22 +815,22 @@ table.data-table tr.canada-row:hover td { background: #FECACA; }
     <div class="kpi-card">
       <div class="kpi-label">US Angel Market</div>
       <div class="kpi-value">$17.9B</div>
-      <div class="kpi-detail">300,000+ active angels; 45% of global market</div>
+      <div class="kpi-detail">300,000+ active angels</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">UK EIS/SEIS</div>
-      <div class="kpi-value">£1.8B</div>
+      <div class="kpi-value">&pound;1.8B</div>
       <div class="kpi-detail">Tax-integrated angel ecosystem</div>
     </div>
     <div class="kpi-card canada">
       <div class="kpi-label">Canada Angel</div>
       <div class="kpi-value">C$146M</div>
-      <div class="kpi-detail">56:1 gap vs. UK tax-incentivized capital</div>
+      <div class="kpi-detail">56:1 gap vs. UK</div>
     </div>
     <div class="kpi-card canada">
       <div class="kpi-label">CF Investor Cap</div>
       <div class="kpi-value">C$2,500</div>
-      <div class="kpi-detail">Lowest per-offering cap of any comparator</div>
+      <div class="kpi-detail">Lowest of any comparator</div>
     </div>
   </div>
 
@@ -702,14 +841,14 @@ table.data-table tr.canada-row:hover td { background: #FECACA; }
       <div class="chart-wrap"><canvas id="angelTaxBar"></canvas></div>
     </div>
     <div class="chart-card">
-      <h3>Annual Angel Capital Deployed</h3>
-      <div class="chart-subtitle">Estimated annual angel investment (USD equivalent)</div>
+      <h3>Annual Angel Capital Deployed (USD millions)</h3>
+      <div class="chart-subtitle">Estimated annual angel investment</div>
       <div class="chart-wrap"><canvas id="angelCapBar"></canvas></div>
     </div>
   </div>
 
   <div class="insight canada-hl">
-    <strong>The angel incentive gap:</strong> South Korea offers 100% tax deduction (up to ₩30M), the UK's SEIS provides 50% upfront relief, and Singapore's AITD gives 50% deduction. Canada has no angel-specific tax incentive — the only G7 country in this position. The result: Canada's angel capital (C$146M via NACO) is a fraction of the UK's tax-incentivized £1.8B.
+    <strong>The angel incentive gap:</strong> South Korea offers 100% tax deduction (up to ₩30M), the UK's SEIS provides 50% upfront relief, and Singapore's AITD gives 50%. Canada has no angel-specific tax incentive — the only G7 country in this position.
   </div>
 
   <div class="source-line">Data: NACO 2024, HMRC May 2025, UNH CVR 2023, FiBAN, national tax authorities.</div>
@@ -723,22 +862,22 @@ table.data-table tr.canada-row:hover td { background: #FECACA; }
     <div class="kpi-card">
       <div class="kpi-label">UK LTAF Funds</div>
       <div class="kpi-value">12</div>
-      <div class="kpi-detail">22 sub-funds; ISA-eligible from Apr 2026</div>
+      <div class="kpi-detail">ISA-eligible from Apr 2026</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">EU ELTIF 2.0</div>
-      <div class="kpi-value">€20.5B</div>
+      <div class="kpi-value">&euro;20.5B</div>
       <div class="kpi-detail">118 funds; 38% YoY growth</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">US BDCs</div>
       <div class="kpi-value">$554B</div>
-      <div class="kpi-detail">156 BDCs; accessible to retail investors</div>
+      <div class="kpi-detail">156 BDCs; retail accessible</div>
     </div>
     <div class="kpi-card canada">
       <div class="kpi-label">Canada Liquid Alts</div>
       <div class="kpi-value">C$38.4B</div>
-      <div class="kpi-detail">No LTAF equivalent; OSC considering</div>
+      <div class="kpi-detail">No LTAF equivalent</div>
     </div>
   </div>
 
@@ -750,9 +889,9 @@ table.data-table tr.canada-row:hover td { background: #FECACA; }
         <table class="data-table">
           <thead><tr><th>Country</th><th>Vehicle</th><th>Scale</th><th>Min. Investment</th><th>Status</th></tr></thead>
           <tbody>
-            <tr><td>UK</td><td>LTAFs (COLL 15)</td><td>12 umbrella funds, 22 sub-funds; £252B pension assets in scope</td><td>No statutory minimum</td><td>ISA-eligible from Apr 2026</td></tr>
-            <tr><td>EU</td><td>ELTIF 2.0</td><td>118 funds, €20.5B; 38% YoY growth</td><td>No minimum (€10K eliminated)</td><td>Semi-liquid structures permitted</td></tr>
-            <tr><td>US</td><td>Interval/tender + BDCs</td><td>118 interval funds ($99B); 156 BDCs ($554B)</td><td>$10K–25K (interval); market price (BDCs)</td><td>SEC encouraging 401(k) access</td></tr>
+            <tr><td>UK</td><td>LTAFs (COLL 15)</td><td>12 umbrella funds; £252B pension assets in scope</td><td>No statutory minimum</td><td>ISA-eligible from Apr 2026</td></tr>
+            <tr><td>EU</td><td>ELTIF 2.0</td><td>118 funds, €20.5B; 38% YoY</td><td>No minimum</td><td>Semi-liquid structures</td></tr>
+            <tr><td>US</td><td>Interval/tender + BDCs</td><td>156 BDCs ($554B); 118 interval ($99B)</td><td>$10K–25K / market price</td><td>SEC encouraging 401(k) access</td></tr>
             <tr><td>Australia</td><td>Superannuation + listed PE</td><td>A$148.6B private capital AUM</td><td>Via super fund</td><td>Pengana PE Trust (ASX: PE1)</td></tr>
             <tr class="canada-row"><td>Canada</td><td>Liquid alternatives</td><td>C$38.4B</td><td>Varies</td><td>No LTAF equivalent; OSC reviewing</td></tr>
           </tbody>
@@ -762,7 +901,7 @@ table.data-table tr.canada-row:hover td { background: #FECACA; }
   </div>
 
   <div class="insight">
-    <strong>Structural lag:</strong> The UK, EU, and US are all building institutional pathways to channel pension and retail capital into private markets (LTAFs, ELTIFs, BDCs). Canada's liquid alternatives market (C$38.4B) lacks an equivalent framework. The EU's pension VC allocation (0.02–0.12%) is itself 100x below the US (~2%), illustrating the scale of the global gap.
+    <strong>Structural lag:</strong> The UK, EU, and US are building institutional pathways to channel pension and retail capital into private markets. Canada lacks an equivalent framework. EU pension VC allocation (0.02–0.12%) is itself 100x below the US (~2%).
   </div>
 
   <div class="source-line">Data: Norton Rose Fulbright Mar 2025, Scope Nov 2025, Ropes & Gray Sep 2025, ASIC Report 820.</div>
@@ -776,29 +915,29 @@ table.data-table tr.canada-row:hover td { background: #FECACA; }
     <div class="kpi-card">
       <div class="kpi-label">US SBIR/STTR</div>
       <div class="kpi-value">$6.3B</div>
-      <div class="kpi-detail">But expired Sep 2025 — pending reauthorization</div>
+      <div class="kpi-detail">Expired Sep 2025 — pending</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">Quebec Electricity</div>
       <div class="kpi-value">$0.028</div>
-      <div class="kpi-detail">USD/kWh — cheapest among all comparators</div>
+      <div class="kpi-detail">USD/kWh — cheapest comparator</div>
     </div>
     <div class="kpi-card canada">
       <div class="kpi-label">Canada SUV Wait</div>
       <div class="kpi-value">52 mo</div>
-      <div class="kpi-detail">Worst by orders of magnitude; now paused</div>
+      <div class="kpi-detail">Worst by orders of magnitude</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">Israel/Sweden Visa</div>
       <div class="kpi-value">~10 days</div>
-      <div class="kpi-detail">Business days for tech talent visa</div>
+      <div class="kpi-detail">Business days for tech talent</div>
     </div>
   </div>
 
   <div class="chart-row">
     <div class="chart-card">
       <h3>Industrial Electricity Rates (USD/kWh)</h3>
-      <div class="chart-subtitle">Energy costs for data-intensive sectors — 2024 estimates</div>
+      <div class="chart-subtitle">Energy costs for data-intensive sectors — 2024</div>
       <div class="chart-wrap"><canvas id="energyBar"></canvas></div>
     </div>
     <div class="chart-card">
@@ -815,14 +954,14 @@ table.data-table tr.canada-row:hover td { background: #FECACA; }
       <div class="chart-wrap"><canvas id="cgtBar"></canvas></div>
     </div>
     <div class="chart-card">
-      <h3>Government Innovation Procurement (Annual, USD)</h3>
+      <h3>Government Innovation Procurement (Annual, USD millions)</h3>
       <div class="chart-subtitle">Non-dilutive R&D funding via government procurement</div>
       <div class="chart-wrap"><canvas id="procurementBar"></canvas></div>
     </div>
   </div>
 
   <div class="insight">
-    <strong>Canada's structural advantages:</strong> Quebec's hydro rates (~US$0.028/kWh) are 3x cheaper than the US average and 6–8x cheaper than Germany. Canada's corporate tax rate (~26.5%) is competitive. But these advantages are offset by the worst startup visa processing time among all comparators (52 months vs. 10 days in Israel/Sweden) and structurally underpowered innovation procurement (ISC declining, no SBIR equivalent).
+    <strong>Canada's structural advantages:</strong> Quebec's hydro rates (~US$0.028/kWh) are 3x cheaper than the US average and 6–8x cheaper than Germany. Corporate tax (~26.5%) is competitive. But these are offset by the worst startup visa (52 months vs. 10 days) and underpowered innovation procurement.
   </div>
 
   <div class="source-line">Data: IEA, Eurostat, EIA, Tax Foundation, SBA SBIR, Innovate UK, national visa authorities.</div>
@@ -834,160 +973,234 @@ table.data-table tr.canada-row:hover td { background: #FECACA; }
 // ======================== DATA ========================
 const COUNTRIES = ['US','UK','Sweden','Israel','Australia','Singapore','Denmark','Finland','Netherlands','South Korea','France','Germany','Japan','Taiwan','Canada'];
 
-// Color assignment: Canada = red, others = blue gradient
 function getColor(country, alpha=1) {
-  if (country === 'Canada') return `rgba(220,38,38,${alpha})`;
-  const blues = {
-    'US': [30,58,138], 'UK': [37,99,235], 'Sweden': [99,102,241], 'Israel': [79,70,229],
+  if (country === 'Canada' || country === 'Canada (innovation)' || country === 'Canada FTS' || country === 'Canada ISC' || country === 'Quebec' || country === 'Ontario') return `rgba(220,38,38,${alpha})`;
+  const palette = {
+    'US': [79,70,229], 'UK': [99,102,241], 'Sweden': [139,92,246], 'Israel': [124,58,237],
     'Australia': [14,165,233], 'Singapore': [13,148,136], 'Denmark': [56,189,248],
-    'Finland': [129,140,248], 'Netherlands': [96,165,250], 'South Korea': [59,130,246],
-    'France': [67,56,202], 'Germany': [30,64,175], 'Japan': [100,116,139], 'Taiwan': [71,85,105]
+    'Finland': [167,139,250], 'Netherlands': [96,165,250], 'South Korea': [109,40,217],
+    'France': [88,28,135], 'Germany': [67,56,202], 'Japan': [100,116,139], 'Taiwan': [71,85,105],
+    'China': [148,163,184], 'Europe': [148,163,184],
+    'US SBIR/STTR': [79,70,229], 'UK SBRI': [99,102,241], 'Israel Yozma 2.0': [124,58,237],
+    'Germany ZIM': [67,56,202],
+    'UK SEIS': [99,102,241], 'UK EIS': [139,92,246], 'US QSBS': [79,70,229],
+    'South Korea 100%': [109,40,217], 'Singapore AITD': [13,148,136], 'Japan Angel Zeisei': [100,116,139],
+    'France IR-PME': [88,28,135], 'Australia ESIC': [14,165,233]
   };
-  const c = blues[country] || [100,116,139];
+  const c = palette[country] || [100,116,139];
   return `rgba(${c[0]},${c[1]},${c[2]},${alpha})`;
 }
 
-function getColors(countries) {
-  return countries.map(c => getColor(c));
-}
-
-function getBorderColors(countries) {
-  return countries.map(c => c === 'Canada' ? 'rgba(220,38,38,1)' : getColor(c, 0.8));
-}
-
 // Chart.js defaults
-Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif";
+Chart.defaults.font.family = "'Poppins', -apple-system, BlinkMacSystemFont, sans-serif";
 Chart.defaults.font.size = 12;
-Chart.defaults.color = '#64748B';
+Chart.defaults.color = '#6B7280';
 Chart.defaults.plugins.legend.display = false;
 
-// ======================== OVERVIEW TAB ========================
+// ======================== HELPER ========================
+function isCanadaLabel(label) {
+  return label === 'Canada' || label.startsWith('Canada') || label === 'Quebec' || label === 'Ontario';
+}
 
-// Radar Chart — normalized scores
+function makeHBar(canvasId, labels, values) {
+  const colors = labels.map(l => getColor(l, 0.85));
+  const borders = labels.map(l => getColor(l, 1));
+  const canvas = document.getElementById(canvasId);
+  if (labels.length > 10) {
+    canvas.parentElement.style.minHeight = (labels.length * 34 + 60) + 'px';
+  }
+  new Chart(canvas.getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{ data: values, backgroundColor: colors, borderColor: borders, borderWidth: 1, borderRadius: 6 }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: labels.length <= 10,
+      plugins: { tooltip: { callbacks: { label: ctx => `${ctx.parsed.x}` } } },
+      scales: {
+        x: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { font: { size: 12 } } },
+        y: { grid: { display: false }, ticks: {
+          autoSkip: false,
+          font: { size: 12, weight: ctx => isCanadaLabel(ctx.tick.label) ? '700' : '400' },
+          color: ctx => isCanadaLabel(ctx.tick.label) ? '#DC2626' : '#64748B'
+        }}
+      }
+    }
+  });
+}
+
+function makeVBar(canvasId, labels, values, yTitle) {
+  const colors = labels.map(l => getColor(l, 0.85));
+  new Chart(document.getElementById(canvasId).getContext('2d'), {
+    type: 'bar',
+    data: { labels, datasets: [{ data: values, backgroundColor: colors, borderRadius: 6 }] },
+    options: {
+      responsive: true,
+      scales: {
+        y: { grid: { color: 'rgba(0,0,0,0.04)' }, title: { display: !!yTitle, text: yTitle || '', font: { size: 12 } }, beginAtZero: true },
+        x: { grid: { display: false }, ticks: {
+          font: { size: 11, weight: ctx => isCanadaLabel(ctx.tick.label) ? '700' : '400' },
+          color: ctx => isCanadaLabel(ctx.tick.label) ? '#DC2626' : '#64748B',
+          maxRotation: 45
+        }}
+      }
+    }
+  });
+}
+
+// ======================== OVERVIEW: RADAR ========================
+// 8 dimensions: GDP/Hr, Biz Inv, R&D, GII, AI Talent, Unicorns/cap, VC/GDP, MktCap/GDP
+// Normalized 0–100 (higher = better). GDP/Hr: scale 70-100→0-100. BizInv: -15%=0, +25%=100.
+// R&D: scale 0-6.5%→0-100. GII: rank 1=100, 40=0. AI Talent: 0-2%→0-100.
+// Unicorns/M pop: scale 0-20→0-100. VC/GDP: 0-1.7%→0-100. MktCap/GDP: 0-300%→0-100.
+const radarDimensions = ['GDP/Hour','Biz Investment','R&D Intensity','GII Rank','AI Talent','Unicorns/cap','VC/GDP','Market Cap/GDP'];
+const radarAllCountries = {
+  'US':        [92, 90, 53, 90, 80, 40, 41, 85],
+  'UK':        [47, 55, 40, 80, 35, 25, 21, 35],
+  'Sweden':    [87, 63, 55, 95, 35, 92, 18, 55],
+  'Israel':    [65, 50, 98, 55, 99, 70, 100, 25],
+  'Australia': [5, 55, 29, 30, 20, 22, 7, 32],
+  'Singapore': [83, 60, 28, 82, 82, 100, 22, 70],
+  'Denmark':   [77, 58, 47, 75, 25, 10, 8, 30],
+  'Finland':   [58, 40, 48, 78, 59, 7, 5, 18],
+  'Netherlands':[33, 58, 36, 74, 57, 6, 15, 38],
+  'South Korea':[18, 75, 76, 85, 54, 12, 6, 35],
+  'France':    [38, 60, 31, 56, 30, 9, 9, 30],
+  'Germany':   [52, 55, 48, 70, 58, 7, 5, 18],
+  'Japan':     [24, 60, 53, 60, 25, 2, 6, 48],
+  'Taiwan':    [8, 60, 58, 58, 20, 2, 3, 75],
+};
+const canadaRadar = [7, 0, 26, 45, 15, 16, 21, 42];
+
+// Compute average
+const avgRadar = radarDimensions.map((_, i) => {
+  const vals = Object.values(radarAllCountries).map(d => d[i]);
+  return Math.round(vals.reduce((a,b) => a+b, 0) / vals.length);
+});
+
 const radarCtx = document.getElementById('radarOverview').getContext('2d');
 new Chart(radarCtx, {
   type: 'radar',
   data: {
-    labels: ['GII Rank', 'VC/GDP', 'R&D/GDP', 'Unicorns/M', 'Market Cap', 'Tax Incentive', 'Talent Density', 'Visa Speed'],
+    labels: radarDimensions,
     datasets: [
       {
         label: 'Canada',
-        data: [45, 25, 20, 16, 35, 0, 30, 2],
+        data: canadaRadar,
         borderColor: 'rgba(220,38,38,1)',
-        backgroundColor: 'rgba(220,38,38,0.1)',
+        backgroundColor: 'rgba(220,38,38,0.08)',
         borderWidth: 3,
         pointBackgroundColor: 'rgba(220,38,38,1)',
-        pointRadius: 4
+        pointRadius: 5,
+        order: 1
+      },
+      {
+        label: 'Comparator Average (14 countries)',
+        data: avgRadar,
+        borderColor: 'rgba(100,116,139,0.7)',
+        backgroundColor: 'rgba(100,116,139,0.06)',
+        borderWidth: 2,
+        borderDash: [6, 4],
+        pointBackgroundColor: 'rgba(100,116,139,0.7)',
+        pointRadius: 3,
+        order: 4
       },
       {
         label: 'Israel',
-        data: [55, 95, 100, 70, 6, 40, 100, 95],
-        borderColor: 'rgba(79,70,229,0.8)',
-        backgroundColor: 'rgba(79,70,229,0.05)',
+        data: radarAllCountries['Israel'],
+        borderColor: 'rgba(79,70,229,0.7)',
+        backgroundColor: 'rgba(79,70,229,0.03)',
         borderWidth: 2,
-        pointRadius: 3
+        pointRadius: 3,
+        order: 2
       },
       {
         label: 'Sweden',
-        data: [95, 30, 56, 92, 12, 70, 35, 85],
-        borderColor: 'rgba(99,102,241,0.8)',
-        backgroundColor: 'rgba(99,102,241,0.05)',
+        data: radarAllCountries['Sweden'],
+        borderColor: 'rgba(99,102,241,0.7)',
+        backgroundColor: 'rgba(99,102,241,0.03)',
         borderWidth: 2,
-        pointRadius: 3
+        pointRadius: 3,
+        order: 3
       },
       {
         label: 'UK',
-        data: [80, 28, 42, 25, 35, 90, 35, 70],
-        borderColor: 'rgba(37,99,235,0.8)',
-        backgroundColor: 'rgba(37,99,235,0.05)',
+        data: radarAllCountries['UK'],
+        borderColor: 'rgba(99,102,241,0.7)',
+        backgroundColor: 'rgba(99,102,241,0.03)',
         borderWidth: 2,
-        pointRadius: 3
-      },
-      {
-        label: 'US',
-        data: [90, 50, 54, 40, 100, 60, 80, 80],
-        borderColor: 'rgba(30,58,138,0.8)',
-        backgroundColor: 'rgba(30,58,138,0.05)',
-        borderWidth: 2,
-        pointRadius: 3
+        pointRadius: 3,
+        order: 3
       },
       {
         label: 'Singapore',
-        data: [82, 40, 29, 100, 9, 75, 83, 90],
-        borderColor: 'rgba(13,148,136,0.8)',
-        backgroundColor: 'rgba(13,148,136,0.05)',
+        data: radarAllCountries['Singapore'],
+        borderColor: 'rgba(13,148,136,0.7)',
+        backgroundColor: 'rgba(13,148,136,0.03)',
         borderWidth: 2,
-        pointRadius: 3
+        pointRadius: 3,
+        order: 3
       }
     ]
   },
   options: {
     responsive: true,
     plugins: {
-      legend: { display: true, position: 'bottom', labels: { padding: 16, usePointStyle: true, pointStyle: 'circle' } }
+      legend: { display: true, position: 'bottom', labels: { padding: 16, usePointStyle: true, pointStyle: 'circle', font: { size: 12 } } }
     },
     scales: {
       r: {
         beginAtZero: true, max: 100,
-        ticks: { display: false },
+        ticks: { display: false, stepSize: 25 },
         grid: { color: 'rgba(0,0,0,0.06)' },
-        pointLabels: { font: { size: 11, weight: '500' } }
+        pointLabels: { font: { size: 12, weight: '500', family: "'Poppins', sans-serif" } }
       }
     }
   }
 });
 
-// VC/GDP bar
-function makeHBar(canvasId, labels, values, title) {
-  const colors = labels.map(l => getColor(l, 0.85));
-  const borders = labels.map(l => getColor(l, 1));
-  new Chart(document.getElementById(canvasId).getContext('2d'), {
-    type: 'bar',
-    data: {
-      labels: labels,
-      datasets: [{ data: values, backgroundColor: colors, borderColor: borders, borderWidth: 1, borderRadius: 4 }]
-    },
-    options: {
-      indexAxis: 'y',
-      responsive: true,
-      plugins: { tooltip: { callbacks: { label: ctx => `${ctx.parsed.x}` } } },
-      scales: {
-        x: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { font: { size: 11 } } },
-        y: { grid: { display: false }, ticks: { font: { size: 11, weight: ctx => ctx.tick.label === 'Canada' ? '700' : '400' }, color: ctx => ctx.tick.label === 'Canada' ? '#DC2626' : '#64748B' } }
-      }
-    }
-  });
-}
+// ======================== OVERVIEW: PRODUCTIVITY ========================
+const prodCountries = ['US','Sweden','Singapore','Denmark','Israel','Finland','Germany','UK','France','Netherlands','Japan','South Korea','Taiwan','Canada','Australia'];
+const prodValues = [97.7, 96.0, 94.8, 93.2, 89.4, 87.5, 85.6, 84.2, 81.4, 79.8, 77.3, 75.6, 72.4, 72.1, 71.5];
+makeHBar('prodBar', prodCountries, prodValues);
 
-// VC/GDP
-const vcGdpCountries = ['Israel','US','Singapore','Canada','UK','Sweden','Netherlands','France','Denmark','South Korea','Japan','Germany','Australia','Finland'];
-const vcGdpValues = [1.7, 0.70, 0.40, 0.35, 0.28, 0.30, 0.25, 0.14, 0.14, 0.11, 0.12, 0.09, 0.10, 0.08];
+// ======================== OVERVIEW: BUSINESS INVESTMENT ========================
+const bizInvCountries = ['US','South Korea','Sweden','Japan','Denmark','France','Netherlands','Singapore','Germany','Australia','UK','Finland','Canada'];
+const bizInvValues = [121, 115, 110, 108, 108, 107, 106, 105, 105, 105, 103, 95, 85];
+makeHBar('bizInvBar', bizInvCountries, bizInvValues);
+
+// ======================== OVERVIEW: VC/GDP ========================
+const vcGdpCountries = ['Israel','US','Singapore','Canada','Sweden','UK','Netherlands','France','Denmark','Japan','South Korea','Australia','Germany','Finland'];
+const vcGdpValues = [1.7, 0.70, 0.40, 0.35, 0.30, 0.28, 0.25, 0.14, 0.14, 0.12, 0.11, 0.10, 0.09, 0.08];
 makeHBar('vcGdpBar', vcGdpCountries, vcGdpValues);
 
-// GERD
+// ======================== OVERVIEW: GERD ========================
 const gerdCountries = ['Israel','South Korea','Taiwan','Sweden','US','Japan','Germany','Finland','Denmark','UK','Netherlands','France','Singapore','Canada','Australia'];
 const gerdValues = [6.35, 4.96, 3.8, 3.60, 3.45, 3.44, 3.11, 3.09, 2.99, 2.7, 2.3, 2.2, 1.85, 1.7, 1.7];
 makeHBar('gerdBar', gerdCountries, gerdValues);
 
-// GII vs GERD scatter
+// ======================== OVERVIEW: GII SCATTER ========================
 const giiScatterCtx = document.getElementById('giiScatter').getContext('2d');
 const scatterData = [
   {x:6.35, y:14, label:'Israel'}, {x:4.96, y:4, label:'South Korea'}, {x:3.60, y:2, label:'Sweden'},
   {x:3.45, y:3, label:'US'}, {x:3.44, y:12, label:'Japan'}, {x:3.11, y:11, label:'Germany'},
   {x:3.09, y:7, label:'Finland'}, {x:2.99, y:9, label:'Denmark'}, {x:2.7, y:6, label:'UK'},
   {x:2.3, y:8, label:'Netherlands'}, {x:2.2, y:13, label:'France'}, {x:1.85, y:5, label:'Singapore'},
-  {x:1.7, y:17, label:'Canada'}, {x:1.7, y:22, label:'Australia'}
+  {x:1.7, y:17, label:'Canada'}, {x:1.7, y:22, label:'Australia'}, {x:3.8, y:16, label:'Taiwan'}
 ];
 new Chart(giiScatterCtx, {
   type: 'scatter',
   data: {
     datasets: [{
       data: scatterData.map(d => ({x: d.x, y: d.y})),
-      backgroundColor: scatterData.map(d => getColor(d.label, 0.8)),
+      backgroundColor: scatterData.map(d => getColor(d.label, 0.85)),
       borderColor: scatterData.map(d => getColor(d.label, 1)),
       borderWidth: 2,
-      pointRadius: scatterData.map(d => d.label === 'Canada' ? 8 : 6),
-      pointHoverRadius: 10
+      pointRadius: scatterData.map(d => d.label === 'Canada' ? 10 : 7),
+      pointHoverRadius: 12
     }]
   },
   options: {
@@ -1003,8 +1216,8 @@ new Chart(giiScatterCtx, {
       }
     },
     scales: {
-      x: { title: { display: true, text: 'GERD as % GDP →', font: { size: 11 } }, grid: { color: 'rgba(0,0,0,0.04)' } },
-      y: { reverse: true, title: { display: true, text: '← Better GII Rank', font: { size: 11 } }, grid: { color: 'rgba(0,0,0,0.04)' }, min: 0, max: 25 }
+      x: { title: { display: true, text: 'GERD as % GDP  →', font: { size: 12, family: "'Poppins', sans-serif" } }, grid: { color: 'rgba(0,0,0,0.04)' } },
+      y: { reverse: true, title: { display: true, text: '←  Better GII Rank', font: { size: 12, family: "'Poppins', sans-serif" } }, grid: { color: 'rgba(0,0,0,0.04)' }, min: 0, max: 25 }
     }
   }
 });
@@ -1014,8 +1227,8 @@ const gdpCountries = ['US','Japan','Germany','France','UK','Canada','South Korea
 const gdpValues = [28.0, 4.3, 4.5, 3.0, 2.7, 2.2, 1.7, 1.7, 1.1, 0.8, 0.6, 0.55, 0.5, 0.4, 0.3];
 makeHBar('gdpBar', gdpCountries, gdpValues);
 
-const gdpPCCountries = ['Singapore','US','Denmark','Australia','Netherlands','Sweden','Canada','Finland','Germany','Israel','France','UK','Taiwan','South Korea','Japan'];
-const gdpPCValues = [83.3, 83.6, 66.7, 63.0, 61.1, 57.1, 53.7, 53.6, 53.6, 50.0, 44.1, 39.7, 33.3, 32.7, 34.4];
+const gdpPCCountries = ['US','Singapore','Denmark','Australia','Netherlands','Sweden','Canada','Finland','Germany','Israel','France','UK','Japan','Taiwan','South Korea'];
+const gdpPCValues = [83.6, 83.3, 66.7, 63.0, 61.1, 57.1, 53.7, 53.6, 53.6, 50.0, 44.1, 39.7, 34.4, 33.3, 32.7];
 makeHBar('gdpPerCapBar', gdpPCCountries, gdpPCValues);
 
 // ======================== CAPITAL MARKETS TAB ========================
@@ -1024,26 +1237,33 @@ const mktCapValues = [61.6, 6.9, 3.5, 3.4, 3.3, 3.1, 2.6, 2.6, 2.3, 1.6, 1.1, 0.
 makeHBar('mktCapBar', mktCapCountries, mktCapValues);
 
 // Listed companies stacked bar
-const listedCountries = ['US','Japan','South Korea','Canada','Australia','Taiwan','UK','Singapore','Sweden','France','Germany','Finland','Israel','Denmark','Netherlands'];
-const seniorCos = [5572, 3368, 830, 678, 2200, 1000, 1100, 640, 380, 450, 450, 130, 470, 130, 140];
-const growthCos = [12000, 600, 1700, 1531, 0, 800, 700, 215, 400, 280, 50, 70, 0, 60, 0];
+const listedCountries = ['US','Japan','South Korea','Canada','Australia','Taiwan','UK','Singapore','Sweden','France','Germany','Israel','Finland','Denmark','Netherlands'];
+const seniorCos = [5572, 3368, 830, 678, 2200, 1000, 1100, 640, 380, 450, 450, 470, 130, 130, 140];
+const growthCos = [12000, 600, 1700, 1531, 0, 800, 700, 215, 400, 280, 50, 0, 70, 60, 0];
+const listedSeniorColors = listedCountries.map(c => c === 'Canada' ? 'rgba(220,38,38,0.8)' : 'rgba(99,102,241,0.7)');
+const listedGrowthColors = listedCountries.map(c => c === 'Canada' ? 'rgba(220,38,38,0.45)' : 'rgba(167,139,250,0.45)');
 const listedCtx = document.getElementById('listedCosBar').getContext('2d');
 new Chart(listedCtx, {
   type: 'bar',
   data: {
     labels: listedCountries,
     datasets: [
-      { label: 'Senior Exchange', data: seniorCos, backgroundColor: 'rgba(37,99,235,0.7)', borderRadius: 2 },
-      { label: 'Growth/Venture', data: growthCos, backgroundColor: 'rgba(99,102,241,0.4)', borderRadius: 2 }
+      { label: 'Senior Exchange', data: seniorCos, backgroundColor: listedSeniorColors, borderRadius: 4 },
+      { label: 'Growth/Venture', data: growthCos, backgroundColor: listedGrowthColors, borderRadius: 4 }
     ]
   },
   options: {
     indexAxis: 'y',
     responsive: true,
-    plugins: { legend: { display: true, position: 'bottom', labels: { padding: 12, usePointStyle: true } } },
+    maintainAspectRatio: false,
+    plugins: { legend: { display: true, position: 'bottom', labels: { padding: 14, usePointStyle: true, font: { size: 12 } } } },
     scales: {
-      x: { stacked: true, grid: { color: 'rgba(0,0,0,0.04)' } },
-      y: { stacked: true, grid: { display: false }, ticks: { font: { size: 11, weight: ctx => ctx.tick.label === 'Canada' ? '700' : '400' }, color: ctx => ctx.tick.label === 'Canada' ? '#DC2626' : '#64748B' } }
+      x: { stacked: true, grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { font: { size: 12 } } },
+      y: { stacked: true, grid: { display: false }, ticks: {
+        autoSkip: false,
+        font: { size: 12, weight: ctx => ctx.tick.label === 'Canada' ? '700' : '400' },
+        color: ctx => ctx.tick.label === 'Canada' ? '#DC2626' : '#64748B'
+      }}
     }
   }
 });
@@ -1064,214 +1284,136 @@ new Chart(aiPieCtx, {
     labels: ['US + China', 'Rest of World', 'Canada'],
     datasets: [{
       data: [90, 8, 2],
-      backgroundColor: ['rgba(30,58,138,0.8)', 'rgba(99,102,241,0.5)', 'rgba(220,38,38,0.8)'],
-      borderWidth: 2,
-      borderColor: '#fff'
+      backgroundColor: ['rgba(79,70,229,0.8)', 'rgba(167,139,250,0.5)', 'rgba(220,38,38,0.85)'],
+      borderWidth: 2, borderColor: '#fff'
     }]
   },
   options: {
     responsive: true,
+    cutout: '55%',
     plugins: {
-      legend: { display: true, position: 'bottom', labels: { padding: 16, usePointStyle: true } },
+      legend: { display: true, position: 'bottom', labels: { padding: 16, usePointStyle: true, font: { size: 12 } } },
       tooltip: { callbacks: { label: ctx => `${ctx.label}: ~${ctx.parsed}% of global AI VC` } }
     }
   }
 });
 
 // ======================== TAX TAB ========================
-const taxCountries = ['UK SEIS','South Korea','UK EIS','France IR-PME','Australia ESIC','Canada (innovation)','US QSBS','Japan Angel'];
-const taxRates = [50, 100, 30, 25, 20, 0, 0, 40];
-const taxColors = taxCountries.map(c => c.includes('Canada') ? 'rgba(220,38,38,0.8)' : 'rgba(37,99,235,0.7)');
-const taxCtx = document.getElementById('taxReliefBar').getContext('2d');
-new Chart(taxCtx, {
-  type: 'bar',
-  data: {
-    labels: taxCountries,
-    datasets: [{ data: taxRates, backgroundColor: taxColors, borderRadius: 4 }]
-  },
-  options: {
-    responsive: true,
-    scales: {
-      y: { grid: { color: 'rgba(0,0,0,0.04)' }, title: { display: true, text: 'Relief Rate (%)' } },
-      x: { grid: { display: false }, ticks: { font: { size: 10 }, maxRotation: 45 } }
-    }
-  }
-});
+const taxCountries = ['South Korea','UK SEIS','Singapore AITD','Japan Angel Zeisei','UK EIS','France IR-PME','Australia ESIC','Canada'];
+const taxRates = [100, 50, 50, 40, 30, 25, 20, 0];
+makeVBar('taxReliefBar', taxCountries, taxRates, 'Relief Rate (%)');
 
-// Total loss
-const lossCountries = ['UK SEIS','UK EIS','Canada FTS','US QSBS','Canada (innovation)'];
+const lossCountries = ['UK SEIS','UK EIS','Canada FTS','US QSBS','Canada'];
 const lossValues = [2750, 4150, 5200, 10000, 10000];
-const lossColors = lossCountries.map(c => c.includes('Canada') ? 'rgba(220,38,38,0.8)' : 'rgba(37,99,235,0.7)');
-const lossCtx = document.getElementById('totalLossBar').getContext('2d');
-new Chart(lossCtx, {
-  type: 'bar',
-  data: {
-    labels: lossCountries,
-    datasets: [{ data: lossValues, backgroundColor: lossColors, borderRadius: 4 }]
-  },
-  options: {
-    responsive: true,
-    scales: {
-      y: { grid: { color: 'rgba(0,0,0,0.04)' }, title: { display: true, text: 'Net Loss on $10K Investment ($)' }, beginAtZero: true },
-      x: { grid: { display: false }, ticks: { font: { size: 10 } } }
-    }
-  }
-});
+makeVBar('totalLossBar', lossCountries, lossValues, 'Net Loss on $10K ($)');
 
 // ======================== INNOVATION TAB ========================
 const giiCountries = ['Sweden','US','South Korea','Singapore','UK','Finland','Netherlands','Denmark','Germany','Japan','France','Israel','Taiwan','Canada','Australia'];
 const giiRanks = [2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 16, 17, 22];
 makeHBar('giiRankBar', giiCountries, giiRanks);
 
-// Quantum
+// Quantum — includes Canada
 const quantumCountries = ['Japan','Germany','UK','France','US','Netherlands','Australia','Canada','Singapore','Israel'];
 const quantumValues = [7.4, 4.4, 3.2, 2.2, 1.8, 1.1, 0.4, 0.33, 0.22, 0.055];
 makeHBar('quantumBar', quantumCountries, quantumValues);
 
-// AI Talent
-const aiCountries = ['Israel','Singapore','Finland','Germany','Netherlands','South Korea'];
-const aiValues = [1.98, 1.64, 1.17, 1.14, 1.12, 1.06];
+// AI Talent — Canada added with note
+const aiCountries = ['Israel','Singapore','Finland','Germany','Netherlands','South Korea','Canada'];
+const aiValues = [1.98, 1.64, 1.17, 1.14, 1.12, 1.06, 0.0];
 const aiCtx = document.getElementById('aiTalentBar').getContext('2d');
 new Chart(aiCtx, {
   type: 'bar',
   data: {
     labels: aiCountries,
-    datasets: [{ data: aiValues, backgroundColor: aiCountries.map(c => getColor(c, 0.8)), borderRadius: 4 }]
+    datasets: [{
+      data: [1.98, 1.64, 1.17, 1.14, 1.12, 1.06, null],
+      backgroundColor: aiCountries.map(c => getColor(c, 0.85)),
+      borderRadius: 6,
+      label: 'AI Talent %'
+    }]
   },
   options: {
     responsive: true,
+    plugins: {
+      tooltip: { callbacks: { label: ctx => ctx.raw === null ? 'Canada: Not in global top 10' : `${ctx.parsed.y}%` } },
+      annotation: undefined
+    },
     scales: {
-      y: { grid: { color: 'rgba(0,0,0,0.04)' }, title: { display: true, text: '% of Workforce' }, beginAtZero: true },
-      x: { grid: { display: false } }
+      y: { grid: { color: 'rgba(0,0,0,0.04)' }, title: { display: true, text: '% of Workforce', font: { size: 12 } }, beginAtZero: true },
+      x: { grid: { display: false }, ticks: {
+        font: { size: 12, weight: ctx => ctx.tick.label === 'Canada' ? '700' : '400' },
+        color: ctx => ctx.tick.label === 'Canada' ? '#DC2626' : '#64748B'
+      }}
     }
   }
 });
 
-// Semiconductor
-const semiRegions = ['China','Taiwan','South Korea','Japan','US','Europe','Singapore'];
-const semiValues = [10.1, 5.8, 5.4, 4.7, 3.2, 2.7, 1.8];
+// Semiconductor — Canada added
+const semiRegions = ['China','Taiwan','South Korea','Japan','US','Europe','Singapore','Canada'];
+const semiVals = [10.1, 5.8, 5.4, 4.7, 3.2, 2.7, 1.8, 0.01];
 const semiCtx = document.getElementById('semiBar').getContext('2d');
 new Chart(semiCtx, {
   type: 'bar',
   data: {
     labels: semiRegions,
-    datasets: [{ data: semiValues, backgroundColor: semiRegions.map(r => r === 'Canada' ? 'rgba(220,38,38,0.8)' : 'rgba(37,99,235,0.7)'), borderRadius: 4 }]
+    datasets: [{
+      data: [10.1, 5.8, 5.4, 4.7, 3.2, 2.7, 1.8, null],
+      backgroundColor: semiRegions.map(r => getColor(r, 0.85)),
+      borderRadius: 6
+    }]
   },
   options: {
     responsive: true,
+    plugins: { tooltip: { callbacks: { label: ctx => ctx.raw === null ? 'Canada: No fab capacity' : `${ctx.parsed.y}M wpm` } } },
     scales: {
-      y: { grid: { color: 'rgba(0,0,0,0.04)' }, title: { display: true, text: 'Million wpm' }, beginAtZero: true },
-      x: { grid: { display: false } }
+      y: { grid: { color: 'rgba(0,0,0,0.04)' }, title: { display: true, text: 'Million wpm', font: { size: 12 } }, beginAtZero: true },
+      x: { grid: { display: false }, ticks: {
+        font: { size: 12, weight: ctx => ctx.tick.label === 'Canada' ? '700' : '400' },
+        color: ctx => ctx.tick.label === 'Canada' ? '#DC2626' : '#64748B'
+      }}
     }
   }
 });
 
 // ======================== STARTUPS TAB ========================
-const unicornCountries = ['Singapore','Sweden','Israel','US','UK','Australia','Canada','South Korea','Denmark','France','Germany','Finland','Japan','Netherlands','Taiwan'];
-const unicornValues = [6.0, 4.6, 3.75, 2.0, 1.2, 1.1, 0.8, 0.58, 0.5, 0.44, 0.36, 0.36, 0.08, 0.28, 0.08];
+const unicornCountries = ['Singapore','Sweden','Israel','US','UK','Australia','Canada','South Korea','Denmark','France','Germany','Finland','Netherlands','Japan','Taiwan'];
+const unicornValues = [6.0, 4.6, 3.75, 2.0, 1.2, 1.1, 0.8, 0.58, 0.5, 0.44, 0.36, 0.36, 0.28, 0.08, 0.08];
 makeHBar('unicornBar', unicornCountries, unicornValues);
 
-// Retention qualitative chart
-const retCountries = ['US','Israel','Sweden','Singapore','France','UK','Australia','Germany','Canada'];
-const retScores = [95, 85, 82, 88, 65, 55, 50, 60, 20];
-const retCtx = document.getElementById('retentionChart').getContext('2d');
-new Chart(retCtx, {
-  type: 'bar',
-  data: {
-    labels: retCountries,
-    datasets: [{
-      label: 'Retention Score (qualitative, 0–100)',
-      data: retScores,
-      backgroundColor: retCountries.map(c => getColor(c, 0.8)),
-      borderRadius: 4
-    }]
-  },
-  options: {
-    indexAxis: 'y',
-    responsive: true,
-    plugins: { legend: { display: false } },
-    scales: {
-      x: { grid: { color: 'rgba(0,0,0,0.04)' }, max: 100, title: { display: true, text: 'Retention Score (qualitative)', font: { size: 11 } } },
-      y: { grid: { display: false }, ticks: { font: { size: 11, weight: ctx => ctx.tick.label === 'Canada' ? '700' : '400' }, color: ctx => ctx.tick.label === 'Canada' ? '#DC2626' : '#64748B' } }
-    }
-  }
-});
+// Retention
+const retCountries = ['US','Singapore','Israel','Sweden','France','Germany','UK','Australia','Canada'];
+const retScores = [95, 88, 85, 82, 65, 60, 55, 50, 20];
+makeHBar('retentionChart', retCountries, retScores);
 
 // ======================== ANGEL TAB ========================
 const angelTaxCountries = ['South Korea','UK SEIS','Singapore AITD','Japan Angel Zeisei','UK EIS','France IR-PME','Australia ESIC','Canada'];
 const angelTaxRates = [100, 50, 50, 40, 30, 25, 20, 0];
-const angelTaxColors = angelTaxCountries.map(c => c === 'Canada' ? 'rgba(220,38,38,0.8)' : 'rgba(37,99,235,0.7)');
-const angelTaxCtx = document.getElementById('angelTaxBar').getContext('2d');
-new Chart(angelTaxCtx, {
-  type: 'bar',
-  data: {
-    labels: angelTaxCountries,
-    datasets: [{ data: angelTaxRates, backgroundColor: angelTaxColors, borderRadius: 4 }]
-  },
-  options: {
-    responsive: true,
-    scales: {
-      y: { grid: { color: 'rgba(0,0,0,0.04)' }, title: { display: true, text: 'Tax Relief Rate (%)' }, beginAtZero: true },
-      x: { grid: { display: false }, ticks: { font: { size: 10 }, maxRotation: 45 } }
-    }
-  }
-});
+makeVBar('angelTaxBar', angelTaxCountries, angelTaxRates, 'Tax Relief Rate (%)');
 
 const angelCapCountries = ['US','UK','Canada','Finland'];
 const angelCapValues = [17900, 2300, 101, 35];
 makeHBar('angelCapBar', angelCapCountries, angelCapValues);
 
 // ======================== POLICY TAB ========================
-const energyCountries = ['Quebec','Sweden','US','Finland','South Korea','Denmark','Taiwan','Israel','Australia','Netherlands','France','Japan','Singapore','UK','Germany'];
-const energyRates = [0.028, 0.08, 0.08, 0.095, 0.09, 0.11, 0.10, 0.115, 0.12, 0.135, 0.13, 0.155, 0.16, 0.18, 0.205];
-const energyCtx = document.getElementById('energyBar').getContext('2d');
-new Chart(energyCtx, {
-  type: 'bar',
-  data: {
-    labels: energyCountries,
-    datasets: [{
-      data: energyRates,
-      backgroundColor: energyCountries.map(c => c === 'Quebec' ? 'rgba(220,38,38,0.8)' : 'rgba(37,99,235,0.7)'),
-      borderRadius: 4
-    }]
-  },
-  options: {
-    responsive: true,
-    scales: {
-      y: { grid: { color: 'rgba(0,0,0,0.04)' }, title: { display: true, text: 'USD/kWh' }, beginAtZero: true },
-      x: { grid: { display: false }, ticks: { font: { size: 10 }, maxRotation: 45 } }
-    }
-  }
-});
+// Energy — Quebec and Ontario both shown
+const energyCountries = ['Quebec','Ontario','Sweden','US','South Korea','Finland','Taiwan','Denmark','Israel','Australia','France','Netherlands','Japan','Singapore','UK','Germany'];
+const energyRates = [0.028, 0.075, 0.08, 0.08, 0.09, 0.095, 0.10, 0.11, 0.115, 0.12, 0.13, 0.135, 0.155, 0.16, 0.18, 0.205];
+makeVBar('energyBar', energyCountries, energyRates, 'USD/kWh');
 
 // Corp tax
-const corpTaxCountries = ['Japan','France','Germany','Australia','Canada','South Korea','US','Netherlands','Israel','Denmark','Finland','Sweden','UK','Taiwan','Singapore'];
-const corpTaxRates = [33.58, 30.16, 29.83, 30.0, 26.5, 24.2, 25.77, 25.8, 23.0, 22.0, 20.0, 20.6, 25.0, 20.0, 17.0];
+const corpTaxCountries = ['Japan','France','Australia','Germany','Canada','Netherlands','US','UK','South Korea','Israel','Denmark','Sweden','Finland','Taiwan','Singapore'];
+const corpTaxRates = [33.58, 30.16, 30.0, 29.83, 26.5, 25.8, 25.77, 25.0, 24.2, 23.0, 22.0, 20.6, 20.0, 20.0, 17.0];
 makeHBar('corpTaxBar', corpTaxCountries, corpTaxRates);
 
 // CGT
-const cgtCountries = ['Denmark','Finland','France','Canada','Japan','Germany','Australia','Sweden','US','UK','South Korea','Israel','Netherlands','Taiwan','Singapore'];
-const cgtRates = [42, 34, 30, 26.76, 20.315, 26.375, 23.5, 30, 23.8, 20, 22, 25, 33, 20, 0];
+const cgtCountries = ['Denmark','Finland','Netherlands','France','Sweden','Canada','Germany','Israel','Australia','US','South Korea','Japan','UK','Taiwan','Singapore'];
+const cgtRates = [42, 34, 33, 30, 30, 26.76, 26.375, 25, 23.5, 23.8, 22, 20.315, 20, 20, 0];
 makeHBar('cgtBar', cgtCountries, cgtRates);
 
-// Procurement
-const procCountries = ['US SBIR/STTR','UK SBRI','Israel Yozma 2.0','Germany ZIM'];
-const procValues = [6300, 750, 700, 660];
-const procCtx = document.getElementById('procurementBar').getContext('2d');
-new Chart(procCtx, {
-  type: 'bar',
-  data: {
-    labels: procCountries,
-    datasets: [{ data: procValues, backgroundColor: 'rgba(37,99,235,0.7)', borderRadius: 4 }]
-  },
-  options: {
-    responsive: true,
-    scales: {
-      y: { grid: { color: 'rgba(0,0,0,0.04)' }, title: { display: true, text: 'USD millions' }, beginAtZero: true },
-      x: { grid: { display: false } }
-    }
-  }
-});
+// Procurement — Canada added as ISC
+const procCountries = ['US SBIR/STTR','UK SBRI','Israel Yozma 2.0','Germany ZIM','Canada ISC'];
+const procValues = [6300, 750, 700, 660, 50];
+makeVBar('procurementBar', procCountries, procValues, 'USD millions');
 
 // ======================== TAB NAVIGATION ========================
 function showTab(id) {
@@ -1279,10 +1421,40 @@ function showTab(id) {
   document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
   document.getElementById('tab-' + id).classList.add('active');
   event.target.classList.add('active');
-
-  // Trigger chart resize
   setTimeout(() => window.dispatchEvent(new Event('resize')), 50);
 }
+
+// ======================== SORTABLE TABLE ========================
+document.querySelectorAll('th.sortable').forEach(th => {
+  th.addEventListener('click', () => {
+    const table = th.closest('table');
+    const tbody = table.querySelector('tbody');
+    const col = parseInt(th.dataset.col);
+    const type = th.dataset.type;
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+
+    // Toggle sort direction
+    const isAsc = th.classList.contains('sort-asc');
+    table.querySelectorAll('th.sortable').forEach(h => h.classList.remove('sort-asc', 'sort-desc'));
+    th.classList.add(isAsc ? 'sort-desc' : 'sort-asc');
+    const dir = isAsc ? -1 : 1;
+
+    rows.sort((a, b) => {
+      const aCell = a.cells[col];
+      const bCell = b.cells[col];
+      let aVal = aCell.dataset.sort || aCell.textContent.trim();
+      let bVal = bCell.dataset.sort || bCell.textContent.trim();
+      if (type === 'num') {
+        aVal = parseFloat(aVal) || 0;
+        bVal = parseFloat(bVal) || 0;
+        return (bVal - aVal) * dir; // default: highest first
+      }
+      return aVal.localeCompare(bVal) * dir;
+    });
+
+    rows.forEach(row => tbody.appendChild(row));
+  });
+});
 </script>
 </body>
 </html>
