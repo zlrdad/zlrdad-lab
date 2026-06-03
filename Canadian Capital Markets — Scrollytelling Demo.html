@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ontario & Canadian Capital Markets — Overview</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:   #0d1e35;
+    --ink:    #1a2a3a;
+    --mid:    #4a6070;
+    --light:  #8098a8;
+    --rule:   #dde4ea;
+    --bg-l:   #f0f4f7;
+    --bg-r:   #ffffff;
+    --red:    #c0293a;
+    --amber:  #b85c00;
+    --green:  #1a5c3a;
+    --blue:   #1a4a7a;
+    --purple: #4a2880;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    color: var(--ink);
+    background: var(--bg-r);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    padding: 80px 60px 64px;
+    max-width: 900px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 0;
+  }
+  .site-header .eyebrow {
+    font-size: 11px; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--blue);
+    margin-bottom: 18px;
+  }
+  .site-header h1 {
+    font-size: clamp(32px, 4vw, 52px);
+    font-weight: 800; line-height: 1.08;
+    letter-spacing: -.03em; color: var(--navy);
+    margin-bottom: 20px;
+  }
+  .site-header .lede {
+    font-size: 18px; line-height: 1.65;
+    color: var(--mid); max-width: 620px;
+  }
+  .scroll-hint {
+    display: flex; align-items: center; gap: 8px;
+    margin-top: 40px; font-size: 11px; font-weight: 600;
+    letter-spacing: .08em; text-transform: uppercase;
+    color: var(--light);
+  }
+  .scroll-hint .arrow { animation: bounce 1.6s infinite; }
+  @keyframes bounce {
+    0%,100% { transform: translateY(0); }
+    50%      { transform: translateY(5px); }
+  }
+
+  /* ── SCROLL CONTAINER ── */
+  .scroll-wrap {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  /* LEFT: sticky graphic panel */
+  .graphic-panel {
+    position: sticky;
+    top: 0;
+    width: 50%;
+    height: 100vh;
+    background: var(--bg-l);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+    border-right: 1px solid var(--rule);
+  }
+  .graphic {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 44px;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity .45s ease, transform .45s ease;
+    pointer-events: none;
+  }
+  .graphic.active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+  .graphic svg { width: 100%; max-width: 380px; height: auto; }
+
+  /* RIGHT: scrolling steps */
+  .steps-panel {
+    width: 50%;
+    flex-shrink: 0;
+  }
+  .step {
+    min-height: 100vh;
+    padding: 80px 64px 80px 56px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-bottom: 1px solid var(--rule);
+  }
+  .step:last-child { border-bottom: none; }
+  .step .overline {
+    font-size: 10px; font-weight: 700; letter-spacing: .13em;
+    text-transform: uppercase; margin-bottom: 16px;
+  }
+  .step h2 {
+    font-size: clamp(22px, 2.4vw, 32px);
+    font-weight: 800; line-height: 1.12;
+    letter-spacing: -.025em; color: var(--navy);
+    margin-bottom: 20px;
+  }
+  .step p {
+    font-size: 16px; line-height: 1.75;
+    color: var(--mid); margin-bottom: 16px;
+    max-width: 480px;
+  }
+  .step p:last-of-type { margin-bottom: 0; }
+
+  .stat-row {
+    display: flex; gap: 24px; margin: 28px 0;
+    flex-wrap: wrap;
+  }
+  .stat-box {
+    border-left: 3px solid;
+    padding: 4px 0 4px 14px;
+  }
+  .stat-box .num {
+    font-size: 28px; font-weight: 800;
+    letter-spacing: -.03em; line-height: 1;
+  }
+  .stat-box .lbl {
+    font-size: 11px; font-weight: 600;
+    color: var(--light); margin-top: 4px;
+    letter-spacing: .04em;
+  }
+
+  .callout {
+    background: #fef3e2;
+    border-left: 3px solid var(--amber);
+    padding: 14px 18px;
+    border-radius: 0 6px 6px 0;
+    margin: 24px 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #5a3800;
+    max-width: 480px;
+  }
+  .callout strong { color: #3a2500; }
+
+  .warning {
+    background: #fef2f2;
+    border-left: 3px solid var(--red);
+    padding: 14px 18px;
+    border-radius: 0 6px 6px 0;
+    margin: 24px 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #6a1020;
+    max-width: 480px;
+  }
+
+  /* ── FOOTER ── */
+  .site-footer {
+    padding: 60px 60px;
+    border-top: 1px solid var(--rule);
+    max-width: 700px;
+  }
+  .site-footer p {
+    font-size: 13px; color: var(--light); line-height: 1.7;
+  }
+  .site-footer .source-note {
+    font-size: 11px; color: #b0bec5;
+    margin-top: 12px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── HEADER ─── -->
+<header class="site-header">
+  <div class="eyebrow">Growth Sectors Research Vault · Capital Markets</div>
+  <h1>Ontario &amp; Canadian Capital Markets</h1>
+  <p class="lede">A system that is large by global standards yet structurally misaligned with the demands of a near-frontier innovation economy. Five findings that explain why.</p>
+  <div class="scroll-hint">
+    <span class="arrow">↓</span>
+    <span>Scroll to explore</span>
+  </div>
+</header>
+
+<!-- ─── SCROLL BODY ─── -->
+<div class="scroll-wrap">
+
+  <!-- LEFT: sticky graphics -->
+  <div class="graphic-panel">
+
+    <!-- GRAPHIC 0: Overview stats -->
+    <div class="graphic active" id="g0">
+      <svg viewBox="0 0 380 360" xmlns="http://www.w3.org/2000/svg" aria-label="Ontario capital markets at a glance">
+        <rect width="380" height="360" fill="none"/>
+        <!-- Card 1 -->
+        <rect x="0" y="20" width="178" height="90" rx="10" fill="#fff" stroke="#dde4ea" stroke-width="1.2"/>
+        <rect x="0" y="20" width="4" height="90" rx="2" fill="#1a4a7a"/>
+        <text x="18" y="52" fill="#0d1e35" font-size="30" font-weight="800" font-family="-apple-system,sans-serif" letter-spacing="-1">C$6.96T</text>
+        <text x="18" y="72" fill="#8098a8" font-size="10.5" font-weight="600" font-family="-apple-system,sans-serif" letter-spacing=".06em">TOTAL MARKET CAP</text>
+        <text x="18" y="88" fill="#8098a8" font-size="10.5" font-weight="600" font-family="-apple-system,sans-serif" letter-spacing=".06em">TSX &amp; TSXV (FEB 2026)</text>
+        <!-- Card 2 -->
+        <rect x="196" y="20" width="184" height="90" rx="10" fill="#fff" stroke="#dde4ea" stroke-width="1.2"/>
+        <rect x="196" y="20" width="4" height="90" rx="2" fill="#4a2880"/>
+        <text x="214" y="52" fill="#0d1e35" font-size="30" font-weight="800" font-family="-apple-system,sans-serif" letter-spacing="-1">C$1.197T</text>
+        <text x="214" y="72" fill="#8098a8" font-size="10.5" font-weight="600" font-family="-apple-system,sans-serif" letter-spacing=".06em">ONTARIO GDP</text>
+        <text x="214" y="88" fill="#8098a8" font-size="10.5" font-weight="600" font-family="-apple-system,sans-serif" letter-spacing=".06em">38% OF CANADA (2024)</text>
+        <!-- Card 3 -->
+        <rect x="0" y="128" width="178" height="90" rx="10" fill="#fff" stroke="#dde4ea" stroke-width="1.2"/>
+        <rect x="0" y="128" width="4" height="90" rx="2" fill="#1a5c3a"/>
+        <text x="18" y="160" fill="#0d1e35" font-size="30" font-weight="800" font-family="-apple-system,sans-serif" letter-spacing="-1">2,030</text>
+        <text x="18" y="180" fill="#8098a8" font-size="10.5" font-weight="600" font-family="-apple-system,sans-serif" letter-spacing=".06em">LISTED OPERATING</text>
+        <text x="18" y="196" fill="#8098a8" font-size="10.5" font-weight="600" font-family="-apple-system,sans-serif" letter-spacing=".06em">COMPANIES</text>
+        <!-- Card 4 -->
+        <rect x="196" y="128" width="184" height="90" rx="10" fill="#fff" stroke="#dde4ea" stroke-width="1.2"/>
+        <rect x="196" y="128" width="4" height="90" rx="2" fill="#b85c00"/>
+        <text x="214" y="160" fill="#0d1e35" font-size="30" font-weight="800" font-family="-apple-system,sans-serif" letter-spacing="-1">C$93B</text>
+        <text x="214" y="180" fill="#8098a8" font-size="10.5" font-weight="600" font-family="-apple-system,sans-serif" letter-spacing=".06em">FINANCE &amp; INSURANCE</text>
+        <text x="214" y="196" fill="#8098a8" font-size="10.5" font-weight="600" font-family="-apple-system,sans-serif" letter-spacing=".06em">GDP CONTRIBUTION</text>
+        <!-- Label -->
+        <text x="190" y="264" fill="#1a4a7a" font-size="11" font-weight="700" font-family="-apple-system,sans-serif" letter-spacing=".08em" text-anchor="middle">ONTARIO IS THE CENTRE OF GRAVITY</text>
+        <text x="190" y="282" fill="#8098a8" font-size="10.5" font-family="-apple-system,sans-serif" text-anchor="middle">Toronto hosts TSX, Big Five banks,</text>
+        <text x="190" y="298" fill="#8098a8" font-size="10.5" font-family="-apple-system,sans-serif" text-anchor="middle">OSC, and majority of domestic VC &amp; PE</text>
+      </svg>
+    </div>
+
+    <!-- GRAPHIC 1: Institutional mismatch spectrum -->
+    <div class="graphic" id="g1">
+      <svg viewBox="0 0 380 340" xmlns="http://www.w3.org/2000/svg" aria-label="Institutional design spectrum">
+        <text x="190" y="28" fill="#8098a8" font-size="10" font-weight="700" font-family="-apple-system,sans-serif" text-anchor="middle" letter-spacing=".09em">AGHION &amp; HOWITT'S FRAMEWORK</text>
+
+        <!-- Spectrum bar -->
+        <defs>
+          <linearGradient id="specGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#1a4a7a"/>
+            <stop offset="100%" stop-color="#8098a8" stop-opacity=".3"/>
+          </linearGradient>
+        </defs>
+        <rect x="20" y="100" width="340" height="12" rx="6" fill="url(#specGrad)"/>
+
+        <!-- Left label -->
+        <text x="20" y="80" fill="#1a4a7a" font-size="11" font-weight="800" font-family="-apple-system,sans-serif">INNOVATION-ENHANCING</text>
+        <text x="20" y="95" fill="#4a6070" font-size="10" font-family="-apple-system,sans-serif">Easy entry · arm's-length finance</text>
+        <text x="20" y="108" fill="#4a6070" font-size="10" font-family="-apple-system,sans-serif">flexible labour · competitive markets</text>
+
+        <!-- Right label -->
+        <text x="360" y="80" fill="#8098a8" font-size="11" font-weight="800" font-family="-apple-system,sans-serif" text-anchor="end">IMITATION-ENHANCING</text>
+        <text x="360" y="95" fill="#8098a8" font-size="10" font-family="-apple-system,sans-serif" text-anchor="end">incumbent firms · relationship banking</text>
+        <text x="360" y="108" fill="#8098a8" font-size="10" font-family="-apple-system,sans-serif" text-anchor="end">concentrated capital · long tenure</text>
+
+        <!-- "Where Canada should be" marker -->
+        <line x1="60" y1="85" x2="60" y2="138" stroke="#1a4a7a" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <circle cx="60" cy="106" r="7" fill="#1a4a7a"/>
+        <text x="60" y="155" fill="#1a4a7a" font-size="10" font-weight="700" font-family="-apple-system,sans-serif" text-anchor="middle">Where Canada</text>
+        <text x="60" y="168" fill="#1a4a7a" font-size="10" font-weight="700" font-family="-apple-system,sans-serif" text-anchor="middle">should be</text>
+
+        <!-- "Where Canada is" marker -->
+        <line x1="280" y1="85" x2="280" y2="138" stroke="#c0293a" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <circle cx="280" cy="106" r="7" fill="#c0293a"/>
+        <text x="280" y="155" fill="#c0293a" font-size="10" font-weight="700" font-family="-apple-system,sans-serif" text-anchor="middle">Where Canada</text>
+        <text x="280" y="168" fill="#c0293a" font-size="10" font-weight="700" font-family="-apple-system,sans-serif" text-anchor="middle">actually is</text>
+
+        <!-- Gap arrow -->
+        <line x1="68" y1="106" x2="272" y2="106" stroke="#c0293a" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arr)"/>
+        <defs>
+          <marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="#c0293a"/>
+          </marker>
+        </defs>
+        <text x="170" y="200" fill="#4a2880" font-size="11.5" font-weight="700" font-family="-apple-system,sans-serif" text-anchor="middle">The Institutional Gap</text>
+
+        <!-- Three evidence points -->
+        <rect x="20" y="218" width="340" height="1" fill="#dde4ea"/>
+        <text x="30" y="240" fill="#4a6070" font-size="10.5" font-family="-apple-system,sans-serif">↳  Concentrated banking (Big 6 = 93% of assets)</text>
+        <text x="30" y="260" fill="#4a6070" font-size="10.5" font-family="-apple-system,sans-serif">↳  TSXV non-functional for tech/life sciences</text>
+        <text x="30" y="280" fill="#4a6070" font-size="10.5" font-family="-apple-system,sans-serif">↳  Pension funds underweight domestic growth equity</text>
+        <text x="30" y="300" fill="#4a6070" font-size="10.5" font-family="-apple-system,sans-serif">↳  No EIS/SEIS equivalent for angel investors</text>
+      </svg>
+    </div>
+
+    <!-- GRAPHIC 2: TSX concentration -->
+    <div class="graphic" id="g2">
+      <svg viewBox="0 0 380 340" xmlns="http://www.w3.org/2000/svg" aria-label="TSX market concentration">
+        <text x="190" y="28" fill="#8098a8" font-size="10" font-weight="700" font-family="-apple-system,sans-serif" text-anchor="middle" letter-spacing=".09em">TSX OPERATING COMPANIES — MARKET CAP SHARE</text>
+
+        <!-- Concentration bar -->
+        <rect x="20" y="50" width="340" height="48" rx="6" fill="#dde4ea"/>
+        <rect x="20" y="50" width="176" height="48" rx="6" fill="#1a4a7a"/>
+        <rect x="196" y="50" width="113" height="48" rx="0" fill="#457b9d"/>
+        <!-- Third section already covered by background -->
+
+        <text x="108" y="80" fill="#fff" font-size="13" font-weight="800" font-family="-apple-system,sans-serif" text-anchor="middle">51.8%</text>
+        <text x="253" y="80" fill="#fff" font-size="13" font-weight="800" font-family="-apple-system,sans-serif" text-anchor="middle">33.1%</text>
+        <text x="340" y="80" fill="#8098a8" font-size="11" font-weight="700" font-family="-apple-system,sans-serif" text-anchor="middle">15%</text>
+
+        <text x="108" y="116" fill="#1a4a7a" font-size="10" font-weight="700" font-family="-apple-system,sans-serif" text-anchor="middle">TOP 25 COMPANIES</text>
+        <text x="253" y="116" fill="#457b9d" font-size="10" font-weight="700" font-family="-apple-system,sans-serif" text-anchor="middle">NEXT 75</text>
+        <text x="340" y="116" fill="#8098a8" font-size="10" font-weight="700" font-family="-apple-system,sans-serif" text-anchor="middle">REST</text>
+
+        <!-- Divider -->
+        <rect x="20" y="140" width="340" height="1" fill="#dde4ea"/>
+        <text x="20" y="162" fill="#0d1e35" font-size="11.5" font-weight="800" font-family="-apple-system,sans-serif">TSXV Composition by Issuer Type</text>
+
+        <!-- TSXV bar -->
+        <rect x="20" y="176" width="340" height="36" rx="5" fill="#dde4ea"/>
+        <rect x="20" y="176" width="225" height="36" rx="5" fill="#b85c00" opacity=".8"/>
+        <rect x="245" y="176" width="45" height="36" rx="0" fill="#457b9d" opacity=".7"/>
+
+        <text x="122" y="199" fill="#fff" font-size="12" font-weight="800" font-family="-apple-system,sans-serif" text-anchor="middle">Mining 66.3%</text>
+        <text x="267" y="199" fill="#fff" font-size="10" font-weight="700" font-family="-apple-system,sans-serif" text-anchor="middle">Tech</text>
+        <text x="340" y="199" fill="#8098a8" font-size="10" font-family="-apple-system,sans-serif" text-anchor="middle">Other</text>
+
+        <text x="20" y="230" fill="#4a6070" font-size="10.5" font-family="-apple-system,sans-serif">Technology: 133 issuers · C$21.2B market cap</text>
+        <text x="20" y="248" fill="#4a6070" font-size="10.5" font-family="-apple-system,sans-serif">Life Sciences: 72 issuers · C$2.3B</text>
+        <text x="20" y="266" fill="#4a6070" font-size="10.5" font-family="-apple-system,sans-serif">Cleantech: 54 issuers · C$2.0B</text>
+
+        <rect x="20" y="282" width="340" height="1" fill="#dde4ea"/>
+        <text x="20" y="302" fill="#c0293a" font-size="10.5" font-weight="700" font-family="-apple-system,sans-serif">Median TSXV company: C$15M market cap</text>
+        <text x="20" y="318" fill="#8098a8" font-size="10.5" font-family="-apple-system,sans-serif">70.9% of TSXV companies are below C$50M</text>
+      </svg>
+    </div>
+
+    <!-- GRAPHIC 3: IPO collapse -->
+    <div class="graphic" id="g3">
+      <svg viewBox="0 0 380 340" xmlns="http://www.w3.org/2000/svg" aria-label="IPO market decline 2022 to 2025">
+        <text x="190" y="28" fill="#8098a8" font-size="10" font-weight="700" font-family="-apple-system,sans-serif" text-anchor="middle" letter-spacing=".09em">CANADIAN IPO COUNT — TSX, TSXV &amp; CSE</text>
+
+        <!-- Bars -->
+        <!-- Max bar = 114, scale to 220px height -->
+        <!-- 2022: 114 → 220px -->
+        <rect x="40"  y="62"  width="60" height="220" rx="4" fill="#1a4a7a"/>
+        <text x="70"  y="55"  fill="#0d1e35" font-size="20" font-weight="800" font-family="-apple-system,sans-serif" text-anchor="middle">114</text>
+        <text x="70"  y="296" fill="#4a6070" font-size="11" font-weight="600" font-family="-apple-system,sans-serif" text-anchor="middle">2022</text>
+
+        <!-- 2023: 51 → 98px -->
+        <rect x="130" y="184" width="60" height="98" rx="4" fill="#457b9d"/>
+        <text x="160" y="176" fill="#0d1e35" font-size="20" font-weight="800" font-family="-apple-system,sans-serif" text-anchor="middle">51</text>
+        <text x="160" y="296" fill="#4a6070" font-size="11" font-weight="600" font-family="-apple-system,sans-serif" text-anchor="middle">2023</text>
+
+        <!-- 2024: 25 → 48px -->
+        <rect x="220" y="234" width="60" height="48" rx="4" fill="#c0293a" opacity=".7"/>
+        <text x="250" y="226" fill="#0d1e35" font-size="20" font-weight="800" font-family="-apple-system,sans-serif" text-anchor="middle">25</text>
+        <text x="250" y="296" fill="#4a6070" font-size="11" font-weight="600" font-family="-apple-system,sans-serif" text-anchor="middle">2024</text>
+
+        <!-- 2025: 19 → 37px -->
+        <rect x="310" y="245" width="60" height="37" rx="4" fill="#c0293a"/>
+        <text x="340" y="237" fill="#0d1e35" font-size="20" font-weight="800" font-family="-apple-system,sans-serif" text-anchor="middle">19</text>
+        <text x="340" y="296" fill="#4a6070" font-size="11" font-weight="600" font-family="-apple-system,sans-serif" text-anchor="middle">2025</text>
+
+        <!-- Baseline -->
+        <rect x="20" y="282" width="340" height="1.5" fill="#dde4ea"/>
+
+        <!-- Annotation -->
+        <text x="190" y="320" fill="#c0293a" font-size="11" font-weight="700" font-family="-apple-system,sans-serif" text-anchor="middle">−83% decline in IPO count over three years</text>
+      </svg>
+    </div>
+
+    <!-- GRAPHIC 4: VC gap -->
+    <div class="graphic" id="g4">
+      <svg viewBox="0 0 380 340" xmlns="http://www.w3.org/2000/svg" aria-label="Venture capital financing gaps by stage">
+        <text x="190" y="28" fill="#8098a8" font-size="10" font-weight="700" font-family="-apple-system,sans-serif" text-anchor="middle" letter-spacing=".09em">DOMESTIC VS. FOREIGN CAPITAL — 2024</text>
+
+        <!-- Who funds Canadian VC -->
+        <text x="20" y="56" fill="#0d1e35" font-size="12" font-weight="700" font-family="-apple-system,sans-serif">Share of total VC dollars invested in Canada</text>
+
+        <!-- Canadian-only: 22% of dollars -->
+        <text x="20" y="82" fill="#4a6070" font-size="10.5" font-family="-apple-system,sans-serif">Canadian-only rounds</text>
+        <rect x="20" y="90" width="75" height="22" rx="4" fill="#1a5c3a"/>
+        <rect x="95" y="90" width="265" height="22" rx="4" fill="#dde4ea"/>
+        <text x="57"  y="105" fill="#fff" font-size="10" font-weight="700" font-family="-apple-system,sans-serif" text-anchor="middle">22%</text>
+        <text x="228" y="105" fill="#8098a8" font-size="10" font-family="-apple-system,sans-serif" text-anchor="middle">78% involves foreign investors</text>
+
+        <!-- US investors: 78% -->
+        <text x="20" y="130" fill="#4a6070" font-size="10.5" font-family="-apple-system,sans-serif">Rounds with US investor participation</text>
+        <rect x="20" y="138" width="265" height="22" rx="4" fill="#1a4a7a"/>
+        <rect x="285" y="138" width="75" height="22" rx="4" fill="#dde4ea"/>
+        <text x="152"  y="153" fill="#fff" font-size="10" font-weight="700" font-family="-apple-system,sans-serif" text-anchor="middle">78% of dollars</text>
+        <text x="322" y="153" fill="#8098a8" font-size="10" font-family="-apple-system,sans-serif" text-anchor="middle">22%</text>
+
+        <!-- Divider -->
+        <rect x="20" y="178" width="340" height="1" fill="#dde4ea"/>
+        <text x="20" y="200" fill="#0d1e35" font-size="12" font-weight="700" font-family="-apple-system,sans-serif">Capital available by stage (2025 full year)</text>
+
+        <!-- Stage bars -->
+        <text x="20"  y="226" fill="#4a6070" font-size="10" font-family="-apple-system,sans-serif">Pre-seed</text>
+        <rect x="110" y="214" width="41" height="16" rx="3" fill="#1a5c3a" opacity=".7"/>
+        <text x="157" y="226" fill="#8098a8" font-size="9.5" font-family="-apple-system,sans-serif">C$121M</text>
+
+        <text x="20"  y="248" fill="#4a6070" font-size="10" font-family="-apple-system,sans-serif">Seed</text>
+        <rect x="110" y="236" width="98" height="16" rx="3" fill="#1a5c3a" opacity=".85"/>
+        <text x="214" y="248" fill="#8098a8" font-size="9.5" font-family="-apple-system,sans-serif">C$651M</text>
+
+        <text x="20"  y="270" fill="#4a6070" font-size="10" font-family="-apple-system,sans-serif">Series A/B</text>
+        <rect x="110" y="258" width="153" height="16" rx="3" fill="#1a4a7a"/>
+        <text x="269" y="270" fill="#8098a8" font-size="9.5" font-family="-apple-system,sans-serif">C$2.1B ↓28%</text>
+
+        <text x="20"  y="292" fill="#c0293a" font-size="10" font-weight="600" font-family="-apple-system,sans-serif">Series B+ gap</text>
+        <rect x="110" y="280" width="34" height="16" rx="3" fill="#dde4ea" stroke="#c0293a" stroke-width="1.2" stroke-dasharray="4,3"/>
+        <text x="150" y="292" fill="#c0293a" font-size="9.5" font-weight="600" font-family="-apple-system,sans-serif">Domestic capital largely absent</text>
+
+        <text x="20"  y="314" fill="#c0293a" font-size="10" font-weight="600" font-family="-apple-system,sans-serif">Growth equity</text>
+        <rect x="110" y="302" width="18" height="16" rx="3" fill="#dde4ea" stroke="#c0293a" stroke-width="1.2" stroke-dasharray="4,3"/>
+        <text x="134" y="314" fill="#c0293a" font-size="9.5" font-weight="600" font-family="-apple-system,sans-serif">Near-zero Canadian institutional presence</text>
+      </svg>
+    </div>
+
+  </div><!-- /graphic-panel -->
+
+  <!-- RIGHT: scrolling text steps -->
+  <div class="steps-panel">
+
+    <!-- STEP 0 -->
+    <div class="step" data-step="0">
+      <div class="overline" style="color:#1a4a7a">The Landscape</div>
+      <h2>The Centre of Canadian Finance</h2>
+      <p>Ontario is the centre of gravity for Canadian capital markets. With a GDP of <strong>C$1.197 trillion</strong> in 2024 — roughly 38% of Canada's national output — Ontario anchors the country's financial infrastructure.</p>
+      <p>Toronto hosts the TSX and TSXV, Canada's Big Five banks, the majority of domestic VC and PE firms, and the OSC. The finance and insurance sector contributed C$93B in provincial GDP in 2024, growing 23.5% since 2019.</p>
+      <div class="stat-row">
+        <div class="stat-box" style="border-color:#1a4a7a">
+          <div class="num" style="color:#1a4a7a">C$6.96T</div>
+          <div class="lbl">Total Market Cap<br>TSX &amp; TSXV</div>
+        </div>
+        <div class="stat-box" style="border-color:#4a2880">
+          <div class="num" style="color:#4a2880">2,030</div>
+          <div class="lbl">Listed Operating<br>Companies</div>
+        </div>
+      </div>
+      <p>Understanding the overall market landscape is essential context for every sector-specific analysis — and for diagnosing the structural gaps that constrain Ontario's growth potential.</p>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="step" data-step="1">
+      <div class="overline" style="color:#4a2880">The Structural Problem</div>
+      <h2>Built for Imitation, Not Innovation</h2>
+      <p>Aghion and Howitt's distance-to-frontier framework draws a sharp distinction between institutional designs suited to near-frontier economies — easy entry, arm's-length finance, competitive markets — and those suited to catch-up economies, which benefit from concentrated incumbents and relationship banking.</p>
+      <div class="callout">
+        <strong>As a near-frontier economy, Ontario's capital markets should be optimised for innovation.</strong> Yet several features of the Canadian system more closely resemble imitation-era institutional design.
+      </div>
+      <p>Breznitz (2021) offers the sharpest diagnosis: Canada has everything academics say is needed to excel — top universities, high public R&D spending, and over 2,500 scientific papers per million inhabitants. Yet private-sector R&D has shrunk continuously to below 1% of GDP, the worst among OECD countries.</p>
+      <p>The root cause is that Canada has consistently confused innovation with invention — treating research policy as a substitute for genuine innovation policy.</p>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step" data-step="2">
+      <div class="overline" style="color:#1a4a7a">Public Markets</div>
+      <h2>A Giant Built on Concentration</h2>
+      <p>The TSX is among the 10 largest stock exchanges globally by market capitalization. But size obscures a structural problem: <strong>the top 25 TSX operating companies hold 51.8% of total operating market cap</strong>. The top 100 hold 84.9%.</p>
+      <p>The S&amp;P/TSX Composite is heavily weighted toward financials (~31%), energy (~18%), and materials (~12.5%), with information technology at only ~8% — a stark contrast to the NASDAQ-heavy US market.</p>
+      <div class="callout">
+        The TSXV, originally designed as a stepping-stone to the TSX, has become overwhelmingly a mining-finance platform. Technology, Life Sciences, and Cleantech together represent <strong>19% of operating issuers</strong> with just <strong>C$25.5B in combined market cap</strong> — 15.6% of the TSXV's operating total.
+      </div>
+      <p>The median TSXV company has a market cap of C$15M. 70.9% are below C$50M. For growth-sector companies, the venture exchange offers limited liquidity and minimal institutional sponsorship.</p>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="step" data-step="3">
+      <div class="overline" style="color:#c0293a">IPO Markets</div>
+      <h2>From 114 IPOs to 19 in Three Years</h2>
+      <p>Canada's IPO market has contracted sharply. In 2022, 114 IPOs raised C$1.7 billion. By 2025, just 19 deals raised C$1.5 billion — fewer transactions but larger, driven by three TSX deals alone. The TSXV contributed 11 IPOs for a combined C$18 million.</p>
+      <div class="warning">
+        The trend is clear: Canada's public markets are producing fewer but larger IPOs, concentrated on the TSX. The TSXV and CSE are generating minimal new listing activity for innovation companies.
+      </div>
+      <p>Canadian GDP per capita has fallen from 98% of the US level in 2010 to just <strong>61.3% in 2025</strong> — a 37-percentage-point collapse in 15 years. The IPO market's contraction is both a symptom and a cause of this divergence: fewer liquidity events reduce founder wealth recycling and the capital available for the next generation of startups.</p>
+      <p>The IMF projects Canadian GDP growth at just 1.2% in 2025 — below the G7 average and well below the US at 2.0%.</p>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="step" data-step="4">
+      <div class="overline" style="color:#c0293a">The Financing Gap</div>
+      <h2>Where Canadian Capital Runs Out</h2>
+      <p>Canadian VC activity reached C$8.0B in primary deals in 2025 — healthy by historical standards. But who provides the capital tells a different story: <strong>foreign investors participated in 78% of total VC dollars</strong>, while Canadian-only rounds accounted for just 22% of dollars despite representing 61% of deal count.</p>
+      <p>Seed-stage investment declined 45% year-over-year in 2024, and early-stage (Series A/B) suffered the sharpest contraction in 2025 — down 28% by deal count. BDC Capital was the most active investor at both seed and early stage, underscoring government-backed capital's role in filling gaps that private capital is vacating.</p>
+      <div class="warning">
+        <strong>The Series B gap is the most consequential structural problem.</strong> Companies that raise seed and Series A in Canada frequently need to raise Series B+ from US investors — who then often exert pressure to reincorporate in Delaware. Value leaks south before it can recycle into the Ontario ecosystem.
+      </div>
+      <p>Canada has no investor-side tax incentive comparable to the UK's EIS/SEIS, which channelled ~£1.8B into early-stage companies in 2023–24. The absence of demand-side incentives compounds the structural supply gap at every stage.</p>
+    </div>
+
+  </div><!-- /steps-panel -->
+</div><!-- /scroll-wrap -->
+
+<!-- ─── FOOTER ─── -->
+<footer class="site-footer">
+  <p>This scrollytelling demo draws on the <em>Ontario &amp; Canadian Capital Markets — Overview</em> page from the Growth Sectors Research Vault. Sources include TMX Group, CVCA, BDC Capital, OECD, IMF WEO (Oct 2025), World Bank Business Ready 2025, and NACO Annual Report 2025.</p>
+  <p class="source-note">Growth Sectors Research Vault · Ontario Capital Markets · For policy research purposes</p>
+</footer>
+
+<script>
+  // IntersectionObserver: activate graphic when step enters viewport
+  const graphics = document.querySelectorAll('.graphic');
+  const steps    = document.querySelectorAll('.step');
+
+  function activateGraphic(index) {
+    graphics.forEach((g, i) => {
+      g.classList.toggle('active', i === index);
+    });
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const idx = parseInt(entry.target.dataset.step, 10);
+        activateGraphic(idx);
+      }
+    });
+  }, {
+    threshold: 0.45,
+    rootMargin: '0px 0px -10% 0px'
+  });
+
+  steps.forEach(step => observer.observe(step));
+</script>
+</body>
+</html>
