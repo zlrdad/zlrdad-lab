@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Canada vs. the World — The Competitiveness Story</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#05070b; --bg2:#0a0e16; --surface:#0c121d; --grid:#0e1626;
+    --cy:#2fe6cd; --cy-dim:#1d5f59; --violet:#7c83ff; --violet-dim:#2c3070;
+    --ink:#eaf4ff; --body:#9fb0c6; --dim:#6b7d97; --slate:#26303f;
+    --warn:#ffb454;
+    --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+    --disp:'Space Grotesk','Inter',system-ui,sans-serif;
+    --sans:'Inter',system-ui,-apple-system,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--body);font-family:var(--sans);-webkit-font-smoothing:antialiased;line-height:1.65;overflow-x:hidden}
+  body::before{content:"";position:fixed;inset:0;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:54px 54px;opacity:.35;pointer-events:none;z-index:0}
+  body::after{content:"";position:fixed;inset:0;background:radial-gradient(circle at 50% 0%,rgba(47,230,205,.06),transparent 60%);pointer-events:none;z-index:0}
+  .stage{position:relative;z-index:1}
+
+  /* progress + nav */
+  .prog{position:fixed;top:0;left:0;height:2px;width:0;background:var(--cy);box-shadow:0 0 12px var(--cy);z-index:60;transition:width .15s}
+  .topbar{position:fixed;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:14px 22px;font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);z-index:55;backdrop-filter:blur(6px);background:linear-gradient(180deg,rgba(5,7,11,.82),transparent)}
+  .topbar b{color:var(--cy);font-weight:500}
+  .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--cy);box-shadow:0 0 8px var(--cy);margin-right:7px;animation:pulse 2.4s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+  section{position:relative;padding:108px 24px;max-width:980px;margin:0 auto}
+  .act-no{font-family:var(--mono);font-size:12px;letter-spacing:.28em;color:var(--cy);text-transform:uppercase;margin-bottom:18px;opacity:.9}
+  .act-no .l{color:var(--dim)}
+  h1{font-family:var(--disp);font-weight:700;color:var(--ink);letter-spacing:-.02em;line-height:1.02}
+  h2{font-family:var(--disp);font-weight:600;color:var(--ink);font-size:clamp(28px,4.4vw,46px);letter-spacing:-.018em;line-height:1.08;margin-bottom:18px;max-width:18ch}
+  .lede{font-size:clamp(16px,2.1vw,19px);color:var(--body);max-width:60ch;line-height:1.7}
+  .lede em{color:var(--ink);font-style:normal;border-bottom:1px solid var(--cy-dim)}
+
+  /* reveal */
+  .rv{opacity:0;transform:translateY(26px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
+  .rv.in{opacity:1;transform:none}
+  .rv.d1{transition-delay:.08s}.rv.d2{transition-delay:.16s}.rv.d3{transition-delay:.24s}.rv.d4{transition-delay:.32s}
+
+  /* hero */
+  #hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;max-width:1040px}
+  .boot{font-family:var(--mono);font-size:12.5px;color:var(--cy);letter-spacing:.06em;margin-bottom:26px;min-height:18px}
+  .boot .cur{display:inline-block;width:8px;height:15px;background:var(--cy);margin-left:2px;vertical-align:-2px;animation:blink 1s steps(1) infinite;box-shadow:0 0 8px var(--cy)}
+  @keyframes blink{50%{opacity:0}}
+  #hero h1{font-size:clamp(40px,8.5vw,92px)}
+  #hero .sub{font-family:var(--mono);color:var(--violet);font-size:clamp(13px,1.8vw,16px);letter-spacing:.2em;text-transform:uppercase;margin-top:24px}
+  #hero .dek{margin-top:30px;max-width:62ch;font-size:clamp(15px,1.9vw,18px);color:var(--body)}
+  .scrollcue{margin-top:64px;font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);display:flex;align-items:center;gap:10px}
+  .scrollcue .arr{width:1px;height:34px;background:linear-gradient(var(--cy),transparent);position:relative}
+
+  /* big number */
+  .bignum{font-family:var(--disp);font-weight:700;color:var(--cy);font-size:clamp(72px,15vw,168px);line-height:.9;letter-spacing:-.04em;text-shadow:0 0 42px rgba(47,230,205,.45),0 0 6px rgba(47,230,205,.6);font-variant-numeric:tabular-nums}
+  .bignum.v{color:var(--violet);text-shadow:0 0 42px rgba(124,131,255,.45)}
+  .bignum.w{color:var(--warn);text-shadow:0 0 42px rgba(255,180,84,.4)}
+  .numlab{font-size:clamp(15px,2vw,18px);color:var(--body);max-width:48ch;margin-top:14px;line-height:1.6}
+
+  .statrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:18px;margin-top:42px}
+  .stat{border:1px solid var(--slate);border-radius:12px;padding:20px 22px;background:linear-gradient(180deg,rgba(255,255,255,.015),transparent)}
+  .stat .n{font-family:var(--disp);font-weight:600;font-size:34px;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1}
+  .stat .n.cy{color:var(--cy)}.stat .n.vi{color:var(--violet)}
+  .stat .l{font-size:13px;color:var(--dim);margin-top:11px;line-height:1.5}
+
+  /* ranking */
+  .rank{margin-top:38px}
+  .rank .row{display:grid;grid-template-columns:132px 1fr 78px;align-items:center;gap:16px;margin:11px 0}
+  .rank .lab{font-family:var(--mono);font-size:12.5px;color:var(--body);text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rank .track{height:30px;border-radius:6px;background:#0b121c;box-shadow:inset 0 0 0 1px #15202f;position:relative;overflow:hidden}
+  .rank .fill{height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,var(--violet-dim),var(--violet));transition:width 1.15s cubic-bezier(.2,.7,.2,1)}
+  .rank .val{font-family:var(--mono);font-size:13px;color:var(--body);font-variant-numeric:tabular-nums;font-weight:500}
+  .rank .row.ca .fill{background:linear-gradient(90deg,#147068,var(--cy));box-shadow:0 0 18px rgba(47,230,205,.45)}
+  .rank .row.ca .lab,.rank .row.ca .val{color:var(--cy);font-weight:700}
+
+  .src{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11.5px;color:var(--cy);border:1px solid var(--cy-dim);border-radius:7px;padding:5px 11px;margin-top:26px;cursor:pointer;transition:.15s;letter-spacing:.04em;user-select:none}
+  .src:hover{background:rgba(47,230,205,.08);box-shadow:0 0 14px rgba(47,230,205,.18)}
+  .src .o{width:7px;height:7px;border-radius:50%;border:1.5px solid var(--cy)}
+
+  .pull{border-left:2px solid var(--cy);padding:6px 0 6px 22px;margin-top:38px;font-family:var(--disp);font-weight:500;font-size:clamp(20px,3vw,30px);color:var(--ink);line-height:1.32;max-width:24ch}
+  .pull b{color:var(--cy);font-weight:700}
+
+  /* map */
+  #mapsec{max-width:1080px}
+  .mapwrap{margin-top:34px;border:1px solid var(--slate);border-radius:16px;background:#070b12;padding:14px;position:relative}
+  #map{width:100%;display:block}
+  #map path.land{fill:#0d1420;stroke:#16202f;stroke-width:.4}
+  #map path.cmp{stroke:#0a0e16;stroke-width:.5;transition:fill 1.2s ease,filter 1.2s ease}
+  .maplegend{display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:12px;letter-spacing:.06em}
+  .grad{height:9px;width:130px;border-radius:5px;background:linear-gradient(90deg,#1f6f69,#2fe6cd)}
+  .mapfallback .row{grid-template-columns:140px 1fr 70px}
+  .mapnote{font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:10px}
+
+  /* explorer */
+  #explorer{max-width:1040px}
+  .exppanel{margin-top:30px;border:1px solid var(--slate);border-radius:16px;background:linear-gradient(180deg,rgba(124,131,255,.04),transparent);padding:24px}
+  .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:8px}
+  .ctl-lab{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);width:100%;margin:6px 0 2px}
+  .chip{font-family:var(--mono);font-size:12px;color:var(--body);background:#0b121c;border:1px solid var(--slate);border-radius:20px;padding:7px 14px;cursor:pointer;transition:.15s;letter-spacing:.02em}
+  .chip:hover{border-color:var(--violet-dim);color:var(--ink)}
+  .chip.on{background:rgba(124,131,255,.14);border-color:var(--violet);color:var(--violet)}
+  .chip.metric.on{background:rgba(47,230,205,.12);border-color:var(--cy);color:var(--cy)}
+  .exphead{display:flex;justify-content:space-between;align-items:baseline;margin:18px 0 6px;flex-wrap:wrap;gap:8px}
+  .exphead .t{font-family:var(--disp);font-weight:600;color:var(--ink);font-size:18px}
+  .exphead .u{font-family:var(--mono);font-size:11.5px;color:var(--dim)}
+
+  footer{max-width:980px;margin:0 auto;padding:70px 24px 110px;border-top:1px solid var(--slate);margin-top:40px}
+  footer .ft-h{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--cy);margin-bottom:16px}
+  footer p{font-size:13.5px;color:var(--dim);max-width:74ch;margin-bottom:10px;line-height:1.7}
+  footer code{font-family:var(--mono);color:var(--body);font-size:12.5px}
+
+  /* provenance drawer */
+  .drawer{position:fixed;top:0;right:0;height:100%;width:min(420px,92vw);background:#080d15;border-left:1px solid var(--cy-dim);box-shadow:-20px 0 60px rgba(0,0,0,.6);transform:translateX(100%);transition:transform .32s cubic-bezier(.2,.7,.2,1);z-index:80;padding:30px 28px;overflow-y:auto}
+  .drawer.open{transform:none}
+  .drawer .x{position:absolute;top:18px;right:20px;font-family:var(--mono);color:var(--dim);cursor:pointer;font-size:18px;background:none;border:none}
+  .drawer .dh{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--cy);margin-bottom:18px}
+  .drawer .dt{font-family:var(--disp);font-weight:600;color:var(--ink);font-size:20px;margin-bottom:14px;line-height:1.25}
+  .drawer .meta{font-family:var(--mono);font-size:12.5px;color:var(--body);line-height:1.7;background:#0b121c;border:1px solid var(--slate);border-radius:10px;padding:14px 16px;margin-bottom:14px;word-break:break-word}
+  .drawer .meta span{color:var(--dim)}
+  .conf{display:inline-block;font-family:var(--mono);font-size:11px;padding:3px 10px;border-radius:20px;letter-spacing:.05em}
+  .conf.high{color:var(--cy);border:1px solid var(--cy-dim)}
+  .conf.medium{color:var(--violet);border:1px solid var(--violet-dim)}
+  .conf.soft{color:var(--warn);border:1px solid #5a4422}
+  .scrim{position:fixed;inset:0;background:rgba(2,4,7,.55);opacity:0;pointer-events:none;transition:.3s;z-index:79}
+  .scrim.on{opacity:1;pointer-events:auto}
+
+  @media(max-width:640px){
+    section{padding:84px 18px}
+    .rank .row{grid-template-columns:96px 1fr 64px;gap:10px}
+    .rank .lab{font-size:11px}
+  }
+  @media(prefers-reduced-motion:reduce){.rv{transition:none;opacity:1;transform:none}.fill{transition:none}}
+</style>
+</head>
+<body>
+<div class="prog" id="prog"></div>
+<div class="topbar">
+  <span><span class="dot"></span>Canada vs. the world</span>
+  <span>Competitiveness intelligence · <b>POC</b></span>
+</div>
+<div class="stage">
+
+<section id="hero">
+  <div class="boot" id="boot"></div>
+  <h1>The talent stays.<br>The companies leave.</h1>
+  <div class="sub">A data briefing · Ontario growth-sectors research</div>
+  <p class="dek">Canada trains world-class founders, researchers and engineers — then watches the companies, the capital and the value relocate. This is that story, in ten figures, drawn live from the research vault. Every number traces back to its source.</p>
+  <div class="scrollcue"><span class="arr"></span>scroll to begin</div>
+</section>
+
+<section id="act1" data-rev>
+  <div class="act-no rv"><span class="l">ACT I —</span> The exodus</div>
+  <h2 class="rv d1">Two-thirds of our best startups now leave.</h2>
+  <div class="bignum rv d2" data-count="32.4" data-dec="1" data-suffix="%">0%</div>
+  <div class="numlab rv d2">of high-potential Canadian startups founded in 2024 are still headquartered in Canada — down from over <strong style="color:var(--body)">67%</strong> in 2015–19.</div>
+  <div class="statrow">
+    <div class="stat rv d2"><div class="n cy" data-count="66" data-suffix="%">0</div><div class="l">of Canadian software-engineering graduates work in the United States</div></div>
+    <div class="stat rv d3"><div class="n" data-count="4.8" data-dec="1" data-suffix="%">0</div><div class="l">Canada's global share of new high-potential startups in 2018…</div></div>
+    <div class="stat rv d4"><div class="n vi" data-count="1.5" data-dec="1" data-suffix="%">0</div><div class="l">…fell to this by 2024 — down from 4.8% in 2018, a ~70% drop</div></div>
+  </div>
+  <span class="src rv" data-prov="retention"><span class="o"></span>source</span>
+</section>
+
+<section id="act2" data-rev>
+  <div class="act-no rv"><span class="l">ACT II —</span> The financing gap</div>
+  <h2 class="rv d1">It isn't talent. It's capital.</h2>
+  <p class="lede rv d1">Venture capital deployed as a share of GDP, 2024. Canada sits mid-pack — and <em>roughly six times</em> below the leader.</p>
+  <div class="rank rv d2" id="rank-vc"></div>
+  <span class="src rv" data-prov="vc"><span class="o"></span>source</span>
+  <div class="pull rv">Israel puts <b>~6× more</b> venture capital to work per dollar of GDP than Canada.</div>
+</section>
+
+<section id="act3" data-rev>
+  <div class="act-no rv"><span class="l">ACT III —</span> Research in, value out</div>
+  <h2 class="rv d1">We invent. Others commercialise.</h2>
+  <p class="lede rv d1">Canada ranks <em>17th</em> on the Global Innovation Index — inputs 13th, outputs 20th. The research lands; the value leaks.</p>
+  <div class="statrow">
+    <div class="stat rv d2"><div class="n cy" data-count="17" data-suffix="th">0</div><div class="l">Global Innovation Index 2025 rank (inputs 13th · outputs 20th)</div></div>
+    <div class="stat rv d3"><div class="n w" data-count="660" data-prefix="US$" data-suffix="B+">0</div><div class="l">identifiable value leakage — founders abroad, foreign acquisitions, take-privates (~55 named entries)</div></div>
+    <div class="stat rv d4"><div class="n vi" data-count="1.7" data-dec="1" data-suffix="%">0</div><div class="l">R&D intensity (GERD) — second-lowest in the G7; Israel spends 6.35%</div></div>
+  </div>
+  <div class="rv" style="display:flex;gap:10px;flex-wrap:wrap">
+    <span class="src" data-prov="gii"><span class="o"></span>GII source</span>
+    <span class="src" data-prov="leakage"><span class="o"></span>leakage source</span>
+    <span class="src" data-prov="rd"><span class="o"></span>R&amp;D source</span>
+  </div>
+</section>
+
+<section id="act4" data-rev>
+  <div class="act-no rv"><span class="l">ACT IV —</span> The shrinking market</div>
+  <h2 class="rv d1">The exit door is closing too.</h2>
+  <div class="bignum rv d2" data-count="668" data-suffix="">0</div>
+  <div class="numlab rv d2">operating companies on the TSX (Feb 2026) — down <strong style="color:var(--warn)">46%</strong> from ~1,232 in 2008.</div>
+  <div class="statrow">
+    <div class="stat rv d2"><div class="n" data-count="19">0</div><div class="l">Canadian IPOs in all of 2025 (~$1.54B) — only 3 on the TSX</div></div>
+    <div class="stat rv d3"><div class="n w" data-count="0">0</div><div class="l">VC-backed IPOs in 2025 — 29 exits, all by acquisition</div></div>
+    <div class="stat rv d4"><div class="n vi" data-count="46" data-suffix="%">0</div><div class="l">decline in TSX operating issuers since 2008</div></div>
+  </div>
+  <span class="src rv" data-prov="markets"><span class="o"></span>source</span>
+</section>
+
+<section id="act5" data-rev>
+  <div class="act-no rv"><span class="l">ACT V —</span> The paradox</div>
+  <h2 class="rv d1">We have the capital. We don't deploy it here.</h2>
+  <div class="bignum v rv d2" data-count="2.5" data-dec="1" data-prefix="C$" data-suffix="T+">0</div>
+  <div class="numlab rv d2">in the "Maple 8" pension funds — among the most sophisticated institutional investors on earth — yet <strong style="color:var(--cy)">under 0.5%</strong> reaches domestic early-stage venture.</div>
+  <div class="statrow">
+    <div class="stat rv d2"><div class="n cy" data-count="0.5" data-dec="1" data-prefix="<" data-suffix="%">0</div><div class="l">of Maple 8 assets in domestic early-stage VC</div></div>
+    <div class="stat rv d3"><div class="n" data-count="5" data-suffix="%">0</div><div class="l">UK Mansion House target: DC pensions to UK assets by 2030</div></div>
+    <div class="stat rv d4"><div class="n vi" data-count="2" data-prefix="US$" data-suffix="T">0</div><div class="l">Norway's sovereign fund — deliberately invested offshore, not at home</div></div>
+  </div>
+  <span class="src rv" data-prov="pension"><span class="o"></span>source</span>
+</section>
+
+<section id="act6" data-rev>
+  <div class="act-no rv"><span class="l">ACT VI —</span> The backdrop</div>
+  <h2 class="rv d1">A standard of living, slipping.</h2>
+  <p class="lede rv d1">Canada's GDP per capita has fallen from near-parity with the US to under two-thirds — structural, not cyclical.</p>
+  <div class="exphead rv d2"><span class="t">Canada GDP per capita, as % of US level</span><span class="u">IMF WEO Oct 2025 · −36.7 pts since 2010</span></div>
+  <div class="rank rv d2" id="rank-gdp"></div>
+  <span class="src rv" data-prov="gdp"><span class="o"></span>source</span>
+  <div class="statrow">
+    <div class="stat rv d2"><div class="n" data-count="1.2" data-dec="1" data-suffix="%">0</div><div class="l">Canada real GDP growth, 2025 — below the G7 average (1.4%)</div></div>
+    <div class="stat rv d3"><div class="n w" data-count="6.9" data-dec="1" data-suffix="%">0</div><div class="l">unemployment, 2025 — highest among Anglosphere comparators</div></div>
+    <div class="stat rv d4"><div class="n vi" data-count="1.0" data-dec="1" data-prefix="−" data-suffix="%">0</div><div class="l">output gap — persistent underuse of productive capacity</div></div>
+  </div>
+  <span class="src rv" data-prov="macro"><span class="o"></span>source</span>
+</section>
+
+<section id="mapsec" data-rev>
+  <div class="act-no rv"><span class="l">THE FIELD —</span> the comparator set</div>
+  <h2 class="rv d1">Where the capital flows.</h2>
+  <p class="lede rv d1">Comparator jurisdictions lit by venture-capital intensity (% of GDP). Canada glows faintly against the leaders.</p>
+  <div class="mapwrap rv d2" id="mapwrap">
+    <svg id="map" viewBox="0 0 960 480" role="img" aria-label="World map of comparator countries shaded by venture capital as a share of GDP"></svg>
+    <div class="maplegend"><span>node size &amp; glow = VC / GDP</span><span class="grad"></span><span>low → high</span><span style="color:var(--cy)">◯ Canada (outlined · near bottom)</span></div>
+    <div class="mapnote" id="mapnote"></div>
+  </div>
+  <span class="src rv" data-prov="vc"><span class="o"></span>source</span>
+</section>
+
+<section id="explorer" data-rev>
+  <div class="act-no rv"><span class="l">THE TERMINAL —</span> explore it yourself</div>
+  <h2 class="rv d1">Run the comparison.</h2>
+  <p class="lede rv d1">Pick a metric and the jurisdictions you care about. The ranking re-sorts live; Canada stays lit.</p>
+  <div class="exppanel rv d2">
+    <div class="controls" id="metricctl">
+      <span class="ctl-lab">Metric</span>
+      <button class="chip metric on" data-metric="vc">VC / GDP</button>
+      <button class="chip metric" data-metric="uni">Unicorns / million</button>
+      <button class="chip metric" data-metric="rd">R&amp;D intensity</button>
+    </div>
+    <div class="controls" id="ctryctl">
+      <span class="ctl-lab">Jurisdictions <span style="text-transform:none;letter-spacing:0">(Canada always shown)</span></span>
+    </div>
+    <div id="exp-hint" style="font-family:var(--mono);font-size:11.5px;color:var(--warn);min-height:0;margin:2px 0 0"></div>
+    <div class="exphead">
+      <span class="t" id="exp-title">VC deployed — share of GDP</span>
+      <span class="u" id="exp-unit">% of GDP · 2024</span>
+    </div>
+    <div class="rank" id="rank-exp"></div>
+  </div>
+  <span class="src rv" data-prov="vc" id="exp-src"><span class="o"></span>source</span>
+</section>
+
+<footer>
+  <div class="ft-h">About this briefing</div>
+  <p>Generated from the <code>International Comparator Data Compendium</code> in an Obsidian research vault. Every figure is drawn from a single validated data layer; click any <code>◎ source</code> chip to see the originating section and citation, and the confidence the underlying data carries.</p>
+  <p>Confidence is graded honestly: hard government/IMF/WIPO figures are marked <span style="color:var(--cy)">high</span>; single-year VC totals and per-capita unicorn counts are marked <span style="color:var(--warn)">soft</span> because the source data itself varies by methodology. CAD conversions are approximate. This is a proof-of-concept built to demonstrate the format — not a published report.</p>
+  <p style="color:var(--slate);margin-top:18px;font-family:var(--mono);font-size:11px;letter-spacing:.1em">CANADA_VS_WORLD · v1.0 · best viewed online (interactive map loads a map library; falls back to a ranked list offline)</p>
+</footer>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <button class="x" id="drawerX" aria-label="Close">✕</button>
+  <div class="dh">◎ provenance trace</div>
+  <div class="dt" id="dDt"></div>
+  <div class="meta" id="dMeta"></div>
+  <div id="dConf"></div>
+  <p style="font-size:12.5px;color:var(--dim);margin-top:18px;line-height:1.7">Traceability is the point: in the full build, this chip links straight to the vault page and the original source URL.</p>
+</aside>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+<script>
+"use strict";
+var RM=(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+/* ---------------- DATA LAYER (validated; see provenance) ---------------- */
+var PROV = {
+  vc:       {t:"Venture capital intensity", meta:"§3.1 — Compendium\nCVCA Year-End 2024 · KPMG Venture Pulse Q4 2024 · NVCA 2025 · Startup Nation Central 2024", conf:"soft", why:"Single-year VC totals are approximate; several comparators are early-stage-only or flagged in the source."},
+  retention:{t:"Founder retention & flight", meta:"§6.3 — Compendium\nLeaders Fund 2025 · Brock University 'Reversing the Brain Drain'", conf:"high", why:"All figures stated verbatim in the source."},
+  unicorns: {t:"Unicorns per million", meta:"§6.1 — Compendium\nHigh-Growth Company Formation · Tracxn · Israel Innovation Authority 2025", conf:"soft", why:"Per-capita counts vary by methodology and timeframe (the source flags this)."},
+  gii:      {t:"Global Innovation Index 2025", meta:"§5.1 — Compendium\nWIPO Global Innovation Index 2025", conf:"high", why:"Ranks stated verbatim; Taiwan rank approximate."},
+  rd:       {t:"R&D intensity (GERD)", meta:"§5.2 — Compendium\nOECD MSTI 2025 · OECD Economic Survey Canada 2025", conf:"medium", why:"Leader figures exact; several comparators approximate."},
+  markets:  {t:"Public-market decline", meta:"§2.1 — Compendium\nTMX Group Feb 2026 · Fraser Institute Dec 2025 · EY Global IPO Trends 2025", conf:"high", why:"Counts stated verbatim in the source."},
+  leakage:  {t:"Value leakage", meta:"§9.2–9.4 — Compendium\nValue Capture & IP Loss (company-level tables)", conf:"medium", why:"Totals verbatim; the dominant component rests on a stated education-to-value methodology."},
+  pension:  {t:"The pension paradox", meta:"§8 / CF.6 — Compendium\nCPP/CDPQ/OTPP reports · ABI Mansion House Oct 2025 · IMF Norway Article IV 2025", conf:"high", why:">C$2.5T AUM and <0.5% domestic VC stated verbatim."},
+  gdp:      {t:"GDP per capita vs. the US", meta:"§1.1b — Compendium\nIMF World Economic Outlook, October 2025", conf:"high", why:"98%→63.3%→61.3% stated verbatim."},
+  macro:    {t:"Canada macro outlook 2025", meta:"§1.1b — Compendium\nIMF World Economic Outlook, October 2025", conf:"high", why:"Growth 1.2%, unemployment 6.9%, output gap −1.0% verbatim."}
+};
+
+var METRICS = {
+  vc:  {title:"VC deployed — share of GDP", unit:"% of GDP · 2024", prov:"vc", suffix:"%", dec:2,
+        rows:[["Israel",2.15,"~2.0–2.3%"],["United States",0.70],["South Korea",0.50],["Taiwan",0.36],["Singapore",0.40],["Canada",0.35,null,true],["Sweden",0.30],["United Kingdom",0.28],["Netherlands",0.25,"~0.20–0.30%"],["France",0.14],["Denmark",0.14],["Japan",0.12],["Australia",0.10],["Germany",0.09],["Finland",0.08]]},
+  uni: {title:"Unicorns per million people", unit:"cumulative 2005–2025", prov:"unicorns", suffix:"",dec:1,
+        rows:[["Singapore",5.8],["Sweden",4.6],["Israel",3.9],["Finland",2.7],["United States",2.0],["United Kingdom",1.2,"~1.0–1.4"],["Australia",1.1],["Canada",0.8,null,true],["Netherlands",0.8],["Denmark",0.5],["France",0.4],["Germany",0.35,"~0.3–0.4"],["South Korea",0.3],["Japan",0.1],["Taiwan",0.1]]},
+  rd:  {title:"R&D intensity (GERD)", unit:"% of GDP · 2023", prov:"rd", suffix:"%",dec:2,
+        rows:[["Israel",6.35],["South Korea",4.96],["Taiwan",3.80],["Sweden",3.60],["United States",3.45],["Japan",3.44],["Switzerland",3.30],["Germany",3.11],["Finland",3.09],["Denmark",2.99],["United Kingdom",2.70],["Netherlands",2.30],["France",2.20],["Estonia",2.00],["Singapore",1.85],["Norway",1.80],["Australia",1.70],["Canada",1.70,null,true],["Ireland",1.00]]}
+};
+
+/* GDP-per-capita-vs-US trajectory (Act VI) — rendered as a labelled descent */
+var GDPTRAJ=[["2010",98.0],["2024",63.3],["2025p",61.3]];
+
+/* ---------------- helpers ---------------- */
+function fmt(v,dec,prefix,suffix){
+  var s=(dec?v.toFixed(dec):Math.round(v).toString());
+  return (prefix||"")+s+(suffix||"");
+}
+function countUp(el){
+  var target=parseFloat(el.getAttribute("data-count"));
+  var dec=parseInt(el.getAttribute("data-dec")||"0",10);
+  var prefix=el.getAttribute("data-prefix")||"";
+  var suffix=el.getAttribute("data-suffix")||"";
+  if(isNaN(target)){return;}
+  if(RM){ el.textContent=fmt(target,dec,prefix,suffix); return; }
+  var dur=1150, t0=null;
+  function step(ts){
+    if(!t0)t0=ts;
+    var p=Math.min(1,(ts-t0)/dur), e=1-Math.pow(1-p,3);
+    el.textContent=fmt(target*e,dec,prefix,suffix);
+    if(p<1){requestAnimationFrame(step);} else {el.textContent=fmt(target,dec,prefix,suffix);}
+  }
+  requestAnimationFrame(step);
+}
+
+/* ranking renderer (shared) */
+function renderRank(host, rows, opts){
+  opts=opts||{};
+  var suffix=opts.suffix!==undefined?opts.suffix:"";
+  var dec=opts.dec!==undefined?opts.dec:2;
+  if(!opts.noSort){ rows=rows.slice().sort(function(a,b){ return b[1]-a[1]; }); }
+  var max=0; rows.forEach(function(r){ if(r[1]>max)max=r[1]; });
+  if(max<=0)max=1;
+  host.innerHTML="";
+  rows.forEach(function(r){
+    var name=r[0], n=r[1], label=r[2], ca=r[3];
+    var row=document.createElement("div");
+    row.className="row"+(ca?" ca":"");
+    var disp=label?label:fmt(n,dec,"",suffix);
+    row.innerHTML='<div class="lab">'+name+'</div>'+
+      '<div class="track"><div class="fill" data-w="'+(n/max*100).toFixed(1)+'"></div></div>'+
+      '<div class="val">'+disp+'</div>';
+    host.appendChild(row);
+  });
+  if(opts.instant){ host.querySelectorAll(".fill").forEach(function(f){ f.style.transition="none"; f.style.width=f.getAttribute("data-w")+"%"; void f.offsetWidth; f.style.transition=""; }); }
+}
+function animateFills(host){
+  var fills=host.querySelectorAll(".fill");
+  fills.forEach(function(f,i){ setTimeout(function(){ f.style.width=f.getAttribute("data-w")+"%"; }, 90+i*55); });
+}
+
+/* GDP descent as a simple ranking-style visual (value = % of US) */
+function gdpRows(){
+  return GDPTRAJ.map(function(d,i){ return [d[0], d[1], d[1].toFixed(1)+"%", i===GDPTRAJ.length-1]; });
+}
+
+/* ---------------- boot typing ---------------- */
+(function(){
+  var el=document.getElementById("boot");
+  var txt="> initializing comparator dataset … 18 comparators + Canada · 10 dimensions · sources verified";
+  if(RM){ el.innerHTML=txt+'<span class="cur"></span>'; return; }
+  var i=0;
+  function type(){ if(i<=txt.length){ el.innerHTML=txt.slice(0,i)+'<span class="cur"></span>'; i++; setTimeout(type, 18+Math.random()*26);} else { el.innerHTML=txt+'<span class="cur"></span>'; } }
+  type();
+})();
+
+/* ---------------- scroll reveal + counters + rank animation ---------------- */
+var revObserver=new IntersectionObserver(function(entries){
+  entries.forEach(function(en){
+    if(!en.isIntersecting)return;
+    var sec=en.target;
+    sec.querySelectorAll(".rv").forEach(function(el){ el.classList.add("in"); });
+    sec.querySelectorAll("[data-count]").forEach(function(c){ if(!c.dataset.done){ c.dataset.done="1"; countUp(c);} });
+    var ranks=sec.querySelectorAll(".rank");
+    ranks.forEach(function(rk){ if(rk.dataset.anim){ return;} rk.dataset.anim="1"; setTimeout(function(){ animateFills(rk); }, 250); });
+    revObserver.unobserve(sec);
+  });
+},{threshold:.22});
+
+/* pre-render the static narrative rankings */
+renderRank(document.getElementById("rank-vc"), METRICS.vc.rows, {suffix:"%",dec:2});
+renderRank(document.getElementById("rank-gdp"), gdpRows(), {suffix:"%",dec:1,noSort:true});
+
+document.querySelectorAll("section[data-rev]").forEach(function(s){ revObserver.observe(s); });
+/* hero reveals immediately */
+document.querySelectorAll("#hero .rv").forEach(function(e){ e.classList.add("in"); });
+
+/* ---------------- progress bar ---------------- */
+var prog=document.getElementById("prog");
+window.addEventListener("scroll",function(){
+  var h=document.documentElement;
+  var sc=h.scrollTop/(h.scrollHeight-h.clientHeight);
+  prog.style.width=(sc*100)+"%";
+},{passive:true});
+
+/* ---------------- provenance drawer ---------------- */
+var drawer=document.getElementById("drawer"), scrim=document.getElementById("scrim"), lastTrigger=null;
+function openProv(key,trigger){
+  var p=PROV[key]; if(!p)return;
+  lastTrigger=trigger||null;
+  document.getElementById("dDt").textContent=p.t;
+  document.getElementById("dMeta").innerHTML=p.meta.replace(/\n/g,"<br><span>")+"</span>";
+  document.getElementById("dConf").innerHTML='<span class="conf '+p.conf+'">confidence: '+p.conf+'</span><p style="font-size:12.5px;color:var(--dim);margin-top:12px;line-height:1.7">'+p.why+'</p>';
+  drawer.classList.add("open"); scrim.classList.add("on"); drawer.setAttribute("aria-hidden","false");
+  document.getElementById("drawerX").focus();
+}
+function closeProv(){ drawer.classList.remove("open"); scrim.classList.remove("on"); drawer.setAttribute("aria-hidden","true"); if(lastTrigger&&lastTrigger.focus){ lastTrigger.focus(); lastTrigger=null; } }
+document.querySelectorAll(".src").forEach(function(s){
+  s.setAttribute("role","button"); s.setAttribute("tabindex","0");
+  s.addEventListener("click",function(){ openProv(s.getAttribute("data-prov"),s); });
+  s.addEventListener("keydown",function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); openProv(s.getAttribute("data-prov"),s); } });
+});
+document.getElementById("drawerX").addEventListener("click",closeProv);
+scrim.addEventListener("click",closeProv);
+document.addEventListener("keydown",function(e){ if(e.key==="Escape")closeProv(); });
+
+/* ---------------- explorer ---------------- */
+var EXP={metric:"vc", selected:{}};
+(function initChips(){
+  /* build country chips from the union of metric rows (excluding Canada) */
+  var names={};
+  Object.keys(METRICS).forEach(function(m){ METRICS[m].rows.forEach(function(r){ if(!r[3]) names[r[0]]=true; }); });
+  var ctl=document.getElementById("ctryctl");
+  var defaultOn={"Israel":1,"United States":1,"South Korea":1,"Singapore":1,"Sweden":1,"United Kingdom":1};
+  Object.keys(names).sort().forEach(function(n){
+    var b=document.createElement("button");
+    b.className="chip"+(defaultOn[n]?" on":"");
+    b.textContent=n; b.setAttribute("data-ctry",n);
+    if(defaultOn[n])EXP.selected[n]=true;
+    b.addEventListener("click",function(){ b.classList.toggle("on"); EXP.selected[n]=b.classList.contains("on"); drawExp(); });
+    ctl.appendChild(b);
+  });
+})();
+document.querySelectorAll("#metricctl .chip").forEach(function(b){
+  b.addEventListener("click",function(){
+    document.querySelectorAll("#metricctl .chip").forEach(function(x){x.classList.remove("on");});
+    b.classList.add("on"); EXP.metric=b.getAttribute("data-metric"); drawExp();
+  });
+});
+function drawExp(){
+  var M=METRICS[EXP.metric];
+  var rows=M.rows.filter(function(r){ return r[3] || EXP.selected[r[0]]; });
+  var hint=document.getElementById("exp-hint");
+  var comparators=rows.filter(function(r){ return !r[3]; }).length;
+  if(comparators===0){
+    var leader=M.rows.slice().sort(function(a,b){ return b[1]-a[1]; })[0];
+    if(leader && !leader[3]){ rows=rows.concat([leader]); }
+    if(hint){ hint.textContent="Showing the leader for context — select jurisdictions above to compare."; }
+  } else if(hint){ hint.textContent=""; }
+  document.getElementById("exp-title").textContent=M.title;
+  document.getElementById("exp-unit").textContent=M.unit;
+  document.getElementById("exp-src").setAttribute("data-prov",M.prov);
+  var host=document.getElementById("rank-exp");
+  renderRank(host, rows, {suffix:M.suffix,dec:M.dec,instant:true});
+  host.dataset.anim="1";
+}
+drawExp();
+
+/* ---------------- comparator map (D3) with graceful fallback ---------------- */
+(function(){
+  var note=document.getElementById("mapnote");
+  function fallback(msg){
+    var wrap=document.getElementById("mapwrap");
+    var svg=document.getElementById("map"); if(svg)svg.style.display="none";
+    var leg=wrap.querySelector(".maplegend"); if(leg)leg.style.display="none";
+    var box=document.createElement("div");
+    box.className="rank mapfallback"; box.style.marginTop="6px";
+    box.setAttribute("role","img"); box.setAttribute("aria-label","Comparator jurisdictions ranked by venture capital as a share of GDP");
+    wrap.insertBefore(box, note);
+    renderRank(box, METRICS.vc.rows, {suffix:"%",dec:2});
+    requestAnimationFrame(function(){ animateFills(box); });
+    note.textContent=msg||"Map library offline — showing the ranked comparator list instead.";
+  }
+  if(typeof d3==="undefined"||typeof topojson==="undefined"){ fallback("Map library unavailable — showing ranked comparators instead."); return; }
+  var VC=[
+    ["Israel",2.15,[34.8,31.0]],
+    ["United States",0.70,[-98.5,39.5]],
+    ["South Korea",0.50,[127.8,36.5]],
+    ["Singapore",0.40,[103.8,1.35]],
+    ["Taiwan",0.36,[121.0,23.8]],
+    ["Canada",0.35,[-106,56],true],
+    ["Sweden",0.30,[15.5,62.0]],
+    ["United Kingdom",0.28,[-1.8,52.8]],
+    ["Netherlands",0.25,[5.3,52.2]],
+    ["France",0.14,[2.4,46.6]],
+    ["Denmark",0.14,[9.5,56.0]],
+    ["Japan",0.12,[138.5,37.0]],
+    ["Australia",0.10,[134.0,-25.0]],
+    ["Germany",0.09,[10.4,51.2]],
+    ["Finland",0.08,[26.0,62.5]]
+  ];
+  var maxv=0; VC.forEach(function(r){ if(r[1]>maxv)maxv=r[1]; });
+  var wrap=document.getElementById("mapwrap");
+  var color=d3.scaleSqrt().domain([0,maxv]).range(["#2a8f86","#2fe6cd"]);
+  var rscale=d3.scaleSqrt().domain([0,maxv]).range([4,17]);
+  var proj=d3.geoNaturalEarth1().scale(178).translate([480,250]);
+  var path=d3.geoPath(proj);
+  var svg=d3.select("#map");
+  var URL="https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
+  var done=false;
+  var timer=setTimeout(function(){ if(!done){ fallback("Map data timed out — showing ranked comparators instead."); } },9000);
+  var tip=document.createElement("div");
+  tip.style.cssText="position:absolute;pointer-events:none;opacity:0;transition:opacity .12s;background:#0b1521;border:1px solid #1d6b66;border-radius:8px;padding:7px 11px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#eaf4ff;z-index:6;white-space:nowrap;box-shadow:0 6px 20px rgba(0,0,0,.55)";
+  wrap.appendChild(tip);
+  function showTip(ev,name,v,ca){ var rb=wrap.getBoundingClientRect(); tip.innerHTML='<b style="color:'+(ca?"#2fe6cd":"#cfe0f2")+'">'+name+'</b> · '+v.toFixed(2)+'% of GDP'; tip.style.left=(ev.clientX-rb.left+14)+"px"; tip.style.top=(ev.clientY-rb.top+14)+"px"; tip.style.opacity=1; }
+  d3.json(URL).then(function(world){
+    if(done)return; done=true; clearTimeout(timer);
+    var feats=topojson.feature(world,world.objects.countries).features;
+    svg.selectAll("path.base").data(feats).join("path")
+      .attr("class","base").attr("d",path)
+      .attr("fill","#0d1420").attr("stroke","#16202f").attr("stroke-width",.4);
+    var g=svg.append("g");
+    VC.forEach(function(r,i){
+      var p=proj(r[2]); if(!p)return;
+      var name=r[0], v=r[1], ca=!!r[3];
+      g.append("circle").attr("cx",p[0]).attr("cy",p[1]).attr("r",0)
+        .attr("fill",ca?"#2fe6cd":color(v)).attr("fill-opacity",ca?.95:.85)
+        .attr("stroke",ca?"#eafffb":"none").attr("stroke-width",ca?1.3:0)
+        .style("filter","drop-shadow(0 0 "+(ca?9:5)+"px rgba(47,230,205,"+(ca?.95:.6)+"))")
+        .on("mousemove",function(ev){ showTip(ev,name,v,ca); })
+        .on("mouseout",function(){ tip.style.opacity=0; })
+        .transition().duration(800).delay(160+i*45).attr("r",rscale(v));
+      if(ca){
+        g.append("circle").attr("cx",p[0]).attr("cy",p[1]).attr("r",rscale(v)+7).attr("fill","none").attr("stroke","#2fe6cd").attr("stroke-width",1).attr("opacity",.8).style("pointer-events","none");
+        g.append("text").attr("x",p[0]).attr("y",p[1]-rscale(v)-10).attr("text-anchor","middle").attr("fill","#2fe6cd").attr("font-family","'JetBrains Mono',monospace").attr("font-size","11").attr("letter-spacing","1").style("pointer-events","none").text("CANADA · 0.35%");
+      }
+    });
+    note.textContent="Each comparator is a node sized and lit by VC/GDP. Israel and the US dominate the field; Canada (outlined) sits near the bottom. Hover any node for its value.";
+  }).catch(function(){ if(done)return; done=true; clearTimeout(timer); fallback("Map data unavailable — showing ranked comparators instead."); });
+})();
+</script>
+</body>
+</html>
