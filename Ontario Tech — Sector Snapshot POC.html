@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ontario Technology Sector — A Snapshot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#05070b;--bg2:#0a0e16;--surface:#0c121d;--grid:#0e1626;
+    --cy:#2fe6cd;--violet:#7c83ff;--ink:#eaf4ff;--body:#9fb0c6;--dim:#6b7d97;--slate:#26303f;
+    --teal:#5dcaa5;--blue:#5aa9ff;--amber:#ffb454;--pink:#e08bd0;
+    --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+    --disp:'Space Grotesk','Inter',system-ui,sans-serif;
+    --sans:'Inter',system-ui,-apple-system,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--body);font-family:var(--sans);-webkit-font-smoothing:antialiased;line-height:1.65;overflow-x:hidden}
+  body::before{content:"";position:fixed;inset:0;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:54px 54px;opacity:.35;pointer-events:none;z-index:0}
+  body::after{content:"";position:fixed;inset:0;background:radial-gradient(circle at 50% 0%,rgba(47,230,205,.06),transparent 60%);pointer-events:none;z-index:0}
+  .stage{position:relative;z-index:1}
+  .prog{position:fixed;top:0;left:0;height:2px;width:0;background:var(--cy);box-shadow:0 0 12px var(--cy);z-index:60;transition:width .15s}
+  .topbar{position:fixed;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:14px 22px;font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);z-index:55;backdrop-filter:blur(6px);background:linear-gradient(180deg,rgba(5,7,11,.82),transparent)}
+  .topbar b{color:var(--cy);font-weight:500}
+  .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--cy);box-shadow:0 0 8px var(--cy);margin-right:7px;animation:pulse 2.4s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  section{position:relative;padding:100px 24px;max-width:980px;margin:0 auto}
+  .act-no{font-family:var(--mono);font-size:12px;letter-spacing:.28em;color:var(--cy);text-transform:uppercase;margin-bottom:18px}
+  .act-no .l{color:var(--dim)}
+  h1{font-family:var(--disp);font-weight:700;color:var(--ink);letter-spacing:-.02em;line-height:1.02}
+  h2{font-family:var(--disp);font-weight:600;color:var(--ink);font-size:clamp(28px,4.4vw,44px);letter-spacing:-.018em;line-height:1.1;margin-bottom:16px;max-width:22ch}
+  .lede{font-size:clamp(16px,2.1vw,19px);color:var(--body);max-width:64ch;line-height:1.7}
+  .lede em{color:var(--ink);font-style:normal;border-bottom:1px solid var(--cy)}
+  .rv{opacity:0;transform:translateY(26px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
+  .rv.in{opacity:1;transform:none}
+  .rv.d1{transition-delay:.07s}.rv.d2{transition-delay:.14s}.rv.d3{transition-delay:.21s}.rv.d4{transition-delay:.28s}
+  #hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;max-width:1040px}
+  .boot{font-family:var(--mono);font-size:12.5px;color:var(--cy);letter-spacing:.06em;margin-bottom:26px;min-height:18px}
+  .boot .cur{display:inline-block;width:8px;height:15px;background:var(--cy);margin-left:2px;vertical-align:-2px;animation:blink 1s steps(1) infinite;box-shadow:0 0 8px var(--cy)}
+  @keyframes blink{50%{opacity:0}}
+  #hero h1{font-size:clamp(38px,8vw,86px)}
+  #hero .sub{font-family:var(--mono);color:var(--violet);font-size:clamp(13px,1.8vw,16px);letter-spacing:.2em;text-transform:uppercase;margin-top:24px}
+  #hero .dek{margin-top:30px;max-width:64ch;font-size:clamp(15px,1.9vw,18px);color:var(--body)}
+  .scrollcue{margin-top:56px;font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);display:flex;align-items:center;gap:10px}
+  .scrollcue .arr{width:1px;height:34px;background:linear-gradient(var(--cy),transparent)}
+  .numlab{font-size:clamp(15px,2vw,18px);color:var(--body);max-width:54ch;margin-top:14px;line-height:1.6}
+  .statrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;margin-top:34px}
+  .stat{border:1px solid var(--slate);border-radius:12px;padding:20px 22px;background:linear-gradient(180deg,rgba(255,255,255,.015),transparent)}
+  .stat .n{font-family:var(--disp);font-weight:600;font-size:32px;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1}
+  .stat .n.cy{color:var(--cy)}.stat .n.vi{color:var(--violet)}
+  .stat .l{font-size:13px;color:var(--dim);margin-top:11px;line-height:1.5}
+  .rank{margin-top:28px}
+  .rank .row{display:grid;grid-template-columns:170px 1fr 120px;align-items:center;gap:16px;margin:11px 0}
+  .rank .lab{font-family:var(--mono);font-size:12.5px;color:var(--body);text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rank .track{height:30px;border-radius:6px;background:#0b121c;box-shadow:inset 0 0 0 1px #15202f;overflow:hidden}
+  .rank .fill{height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,#147068,var(--cy));transition:width 1.1s cubic-bezier(.2,.7,.2,1)}
+  .rank .val{font-family:var(--mono);font-size:12px;color:var(--body);font-variant-numeric:tabular-nums}
+  .rank .row.alt .fill{background:linear-gradient(90deg,#2c3070,var(--violet))}
+  .src{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11.5px;color:var(--cy);border:1px solid #1d5f59;border-radius:7px;padding:5px 11px;margin-top:22px;cursor:pointer;transition:.15s;letter-spacing:.04em;user-select:none}
+  .src:hover{background:rgba(47,230,205,.08)}
+  .src .o{width:7px;height:7px;border-radius:50%;border:1.5px solid var(--cy)}
+  /* pillar / generic cards */
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:16px;margin-top:24px}
+  .card{border:1px solid var(--slate);border-radius:14px;padding:20px 22px;background:linear-gradient(180deg,rgba(124,131,255,.04),transparent)}
+  .card .ct{font-family:var(--disp);font-weight:600;color:var(--ink);font-size:17px;margin-bottom:6px}
+  .card .ch{font-size:13.5px;color:var(--body);line-height:1.55;margin-bottom:12px}
+  .card ul{list-style:none;display:flex;flex-direction:column;gap:7px}
+  .card li{font-size:13px;color:var(--body);padding-left:16px;position:relative;line-height:1.5}
+  .card li::before{content:"›";position:absolute;left:0;color:var(--cy)}
+  /* subsector cards */
+  .sub{border:1px solid var(--slate);border-radius:14px;padding:22px;background:linear-gradient(180deg,rgba(255,255,255,.015),transparent)}
+  .sub .sname{font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--cy)}
+  .sub .sbig{font-family:var(--disp);font-weight:700;font-size:40px;color:var(--ink);line-height:1;margin:12px 0 4px;font-variant-numeric:tabular-nums}
+  .sub .ssub{font-size:13px;color:var(--body);line-height:1.5}
+  .sub .snote{font-size:12px;color:var(--dim);margin-top:12px;line-height:1.5;border-top:1px solid var(--slate);padding-top:10px}
+  /* company gallery */
+  .filterbar{display:flex;flex-wrap:wrap;gap:9px;margin:26px 0 6px}
+  .fchip{font-family:var(--mono);font-size:12px;color:var(--body);background:#0b121c;border:1px solid var(--slate);border-radius:20px;padding:7px 14px;cursor:pointer;transition:.15s}
+  .fchip:hover{color:var(--ink)}.fchip.on{color:var(--ink)}
+  .gal{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:14px}
+  .co{border:1px solid #16202f;border-left:3px solid var(--cy);border-radius:11px;padding:15px 16px;background:#0b121c;cursor:pointer;transition:.15s}
+  .co:hover{background:#0f1826;transform:translateY(-2px)}
+  .co.dim{opacity:.26;filter:grayscale(.4)}
+  .co .cn{font-family:var(--disp);font-weight:600;font-size:16px;color:var(--ink)}
+  .co .cc{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;margin-top:3px}
+  .co .cs{font-size:12.5px;color:var(--dim);margin-top:9px;line-height:1.5}
+  /* journey stages */
+  .stagecard{border:1px solid var(--slate);border-radius:14px;padding:20px 24px;margin:14px 0;background:linear-gradient(180deg,rgba(124,131,255,.04),transparent)}
+  .stagecard .sn{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--violet)}
+  .stagecard h3{font-family:var(--disp);font-weight:600;color:var(--ink);font-size:18px;margin:5px 0 9px}
+  .stagecard p{font-size:14px;color:var(--body);line-height:1.6}
+  .stagecard p b{color:var(--ink);font-weight:600}
+  .pull{border-left:2px solid var(--cy);padding:6px 0 6px 22px;margin-top:34px;font-family:var(--disp);font-weight:500;font-size:clamp(19px,2.7vw,28px);color:var(--ink);line-height:1.34;max-width:28ch}
+  .pull b{color:var(--cy);font-weight:700}
+  footer{max-width:980px;margin:0 auto;padding:60px 24px 110px;border-top:1px solid var(--slate);margin-top:30px}
+  footer .ft-h{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--cy);margin-bottom:16px}
+  footer p{font-size:13.5px;color:var(--dim);max-width:74ch;margin-bottom:10px;line-height:1.7}
+  footer code{font-family:var(--mono);color:var(--body);font-size:12.5px}
+  .drawer{position:fixed;top:0;right:0;height:100%;width:min(440px,93vw);background:#080d15;border-left:1px solid #1d5f59;box-shadow:-20px 0 60px rgba(0,0,0,.6);transform:translateX(100%);transition:transform .32s cubic-bezier(.2,.7,.2,1);z-index:80;padding:30px 28px;overflow-y:auto}
+  .drawer.open{transform:none}
+  .drawer .x{position:absolute;top:18px;right:20px;font-family:var(--mono);color:var(--dim);cursor:pointer;font-size:18px;background:none;border:none}
+  .drawer .dh{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--cy);margin-bottom:16px}
+  .drawer .dt{font-family:var(--disp);font-weight:600;color:var(--ink);font-size:21px;margin-bottom:6px;line-height:1.25}
+  .drawer .dwhat{font-size:13.5px;color:var(--body);margin-bottom:14px;line-height:1.6}
+  .cbadge{display:inline-block;font-family:var(--mono);font-size:11px;padding:3px 11px;border-radius:20px;letter-spacing:.06em;margin-bottom:14px}
+  .drawer .meta{font-family:var(--mono);font-size:12px;color:var(--body);line-height:1.7;background:#0b121c;border:1px solid var(--slate);border-radius:10px;padding:13px 15px;margin-top:8px;word-break:break-word}
+  .drawer .meta span{color:var(--dim)}
+  .conf{display:inline-block;font-family:var(--mono);font-size:11px;padding:3px 10px;border-radius:20px;letter-spacing:.05em;margin-top:10px}
+  .conf.high{color:var(--cy);border:1px solid #1d5f59}
+  .conf.medium{color:var(--violet);border:1px solid #2c3070}
+  .conf.soft{color:var(--amber);border:1px solid #5a4422}
+  .scrim{position:fixed;inset:0;background:rgba(2,4,7,.55);opacity:0;pointer-events:none;transition:.3s;z-index:79}
+  .scrim.on{opacity:1;pointer-events:auto}
+  @media(max-width:640px){section{padding:80px 18px}.rank .row{grid-template-columns:120px 1fr 92px;gap:10px}}
+  @media(prefers-reduced-motion:reduce){.rv{transition:none;opacity:1;transform:none}.fill{transition:none}.cur,.dot{animation:none}.prog{transition:none}}
+</style>
+</head>
+<body>
+<div class="prog" id="prog"></div>
+<div class="topbar"><span><span class="dot"></span>Ontario technology sector</span><span>An informative snapshot · <b>POC</b></span></div>
+<div class="stage">
+
+<section id="hero">
+  <div class="boot" id="boot"></div>
+  <h1>The sector Ontario<br>builds the future on.</h1>
+  <div class="sub">A data snapshot · technology &amp; AI</div>
+  <p class="dek">Ontario sits on an unusually deep set of foundations for a technology economy: a tenth of the world's leading AI minds, a clean and abundant power grid, world-class universities, and a maturing capital base. This is an at-a-glance tour of what the sector is, how big it is, and what it's built on. Click any <span style="color:var(--cy)">◎ source</span> for the figure behind it.</p>
+  <div class="scrollcue"><span class="arr"></span>scroll to begin</div>
+</section>
+
+<section id="overview" data-rev>
+  <div class="act-no rv"><span class="l">01 —</span> The sector at a glance</div>
+  <h2 class="rv d1">Canada's most strategic growth sector — and Ontario is its engine.</h2>
+  <p class="lede rv d1">Canada launched the world's <em>first national AI strategy</em> in 2017, and the field's founding figures — Hinton, Bengio, Sutton — built their work here. Information-and-communications technology has climbed from 3.2% to <em>5.4% of GDP</em> since 2000, and Ontario accounts for roughly half of Canada's entire AI economic contribution.</p>
+  <div class="statrow">
+    <div class="stat rv d1"><div class="n cy" data-count="10" data-prefix="~" data-suffix="%">0</div><div class="l">of the world's top-tier AI researchers are in Canada</div></div>
+    <div class="stat rv d2"><div class="n" data-count="140000" data-suffix="+">0</div><div class="l">AI professionals in Canada, growing 29% year-over-year</div></div>
+    <div class="stat rv d3"><div class="n vi" data-count="12.2" data-dec="1" data-suffix="%">0</div><div class="l">of Canadian businesses now use AI — double a year earlier</div></div>
+    <div class="stat rv d4"><div class="n">2017</div><div class="l">year Canada launched the world's first national AI strategy</div></div>
+  </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap"><span class="src" data-prov="talent"><span class="o"></span>talent source</span><span class="src" data-prov="adoption"><span class="o"></span>adoption source</span><span class="src" data-prov="oecd"><span class="o"></span>GDP-share source</span></div>
+</section>
+
+<section id="scale" data-rev>
+  <div class="act-no rv"><span class="l">02 —</span> How big it is</div>
+  <h2 class="rv d1">A knowledge economy worth six figures of billions.</h2>
+  <p class="lede rv d1">Ontario's official accounts track the sector through knowledge-service proxies. Together they exceed <em>16% of provincial GDP</em> — and the centre of gravity has shifted decisively from hardware to software and services.</p>
+  <div class="rank rv d2" id="oeabar"></div>
+  <div class="numlab rv">Proxy sectors from the Ontario Economic Accounts (2024). The hardware-manufacturing line has contracted ~21% since 2019 as value moved to software and services.</div>
+  <span class="src rv" data-prov="oea"><span class="o"></span>source</span>
+  <div class="statrow">
+    <div class="stat rv d2"><div class="n cy">$42–52B</div><div class="l">AI's cumulative contribution to Ontario GDP, 2019–24 (employment-impact estimate)</div></div>
+    <div class="stat rv d3"><div class="n" data-count="39327">0</div><div class="l">Ontario AI jobs (2025); 17,000+ added in the prior year</div></div>
+    <div class="stat rv d4"><div class="n vi" data-count="149" data-suffix="%">0</div><div class="l">growth in Ontario companies investing in AI since 2019</div></div>
+  </div>
+  <span class="src rv" data-prov="vector"><span class="o"></span>AI GDP/jobs source</span>
+</section>
+
+<section id="foundations" data-rev>
+  <div class="act-no rv"><span class="l">03 —</span> The foundations</div>
+  <h2 class="rv d1">What the sector is built on.</h2>
+  <p class="lede rv d1">Five structural strengths give Ontario a starting position most economies its size can't match.</p>
+  <div class="cards" id="pillars"></div>
+  <div style="margin-top:18px"><span class="src" data-prov="foundations"><span class="o"></span>sources</span></div>
+</section>
+
+<section id="subsectors" data-rev>
+  <div class="act-no rv"><span class="l">04 —</span> The sub-sectors</div>
+  <h2 class="rv d1">Four frontiers, one ecosystem.</h2>
+  <p class="lede rv d1">Beyond software, Ontario is building positions in the deep-tech frontiers that depend on its research and energy foundations.</p>
+  <div class="cards" id="subs"></div>
+  <div style="margin-top:18px"><span class="src" data-prov="subsectors"><span class="o"></span>sources</span></div>
+</section>
+
+<section id="companies" data-rev>
+  <div class="act-no rv"><span class="l">05 —</span> The company landscape</div>
+  <h2 class="rv d1">Who's building here.</h2>
+  <p class="lede rv d1">A cross-section of the sector — from a global commerce platform to frontier AI, quantum, and robotics. <em>Click any company</em> for detail; filter by category.</p>
+  <div class="filterbar rv d2" id="filters"></div>
+  <div class="gal rv d2" id="gal"></div>
+  <div class="numlab rv">Valuations and figures as stated in the vault; private-company marks are last-priced and drift over time.</div>
+  <span class="src rv" data-prov="casestudies"><span class="o"></span>source — case studies &amp; profile</span>
+</section>
+
+<section id="capital" data-rev>
+  <div class="act-no rv"><span class="l">06 —</span> The capital-raising journey</div>
+  <h2 class="rv d1">From lab bench to growth round.</h2>
+  <p class="lede rv d1">How a Canadian tech company gets funded, stage by stage — and where the money concentrated in 2025.</p>
+  <div id="stages"></div>
+  <div class="act-no rv" style="margin-top:38px;color:var(--violet)">Ontario's largest venture rounds, 2025</div>
+  <div class="rank rv" id="topdeals"></div>
+  <div class="pull rv">Information technology drew <b>64%</b> of all Canadian venture capital in 2025 — C$5.1B across 269 deals.</div>
+  <span class="src rv" data-prov="cvca"><span class="o"></span>source</span>
+</section>
+
+<section id="investors" data-rev>
+  <div class="act-no rv"><span class="l">07 —</span> The investor landscape</div>
+  <h2 class="rv d1">Who funds the sector.</h2>
+  <p class="lede rv d1">A mix of domestic venture capital, angel networks, sophisticated pension capital, foreign strategic investors — and an unusually large slate of public programs.</p>
+  <div class="cards rv d2" id="invtypes"></div>
+  <div class="act-no rv" style="margin-top:40px;color:var(--violet)">Federal capital commitments for tech &amp; deep tech</div>
+  <div class="rank rv" id="programs"></div>
+  <div class="numlab rv">Multi-year federal commitments (Budget 2025 and related). Bars scaled for readability; values as announced.</div>
+  <span class="src rv" data-prov="programs"><span class="o"></span>source</span>
+</section>
+
+<section id="momentum" data-rev>
+  <div class="act-no rv"><span class="l">08 —</span> Momentum</div>
+  <h2 class="rv d1">The direction of travel.</h2>
+  <div class="cards rv d2" id="momentumCards"></div>
+  <span class="src rv" data-prov="momentum"><span class="o"></span>sources</span>
+</section>
+
+<footer>
+  <div class="ft-h">About this snapshot</div>
+  <p>Generated from the <code>Technology</code> sector profile and supporting sub-sector pages in an Obsidian research vault. Every figure is drawn from a single validated data layer; click any <code>◎ source</code> chip or company card to see its origin and confidence grade.</p>
+  <p>Confidence is graded honestly: hard government figures (Ontario Economic Accounts, StatCan, IESO, NRC, SIA, TMX) are marked <span style="color:var(--cy)">high</span>; venture and angel data (CVCA, NACO) <span style="color:var(--violet)">medium</span>; the AI-GDP/jobs and AI-talent-share figures trace to advocacy/consultancy research (Vector/Deloitte, OECD.AI) and are marked <span style="color:var(--amber)">soft</span>. The source notes there is no single comparable measure of "AI sector size." Quantum's headline is the direct-contribution figure. CAD conversions ~US$1 = C$1.44. A proof-of-concept, not a published report.</p>
+  <p style="color:var(--dim);margin-top:18px;font-family:var(--mono);font-size:11px;letter-spacing:.1em">ONTARIO_TECH · SECTOR_SNAPSHOT · v1.0 · best viewed online (web fonts); fully readable offline</p>
+</footer>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-hidden="true"><button class="x" id="drawerX" aria-label="Close">✕</button><div id="drawerBody"></div></aside>
+
+<script>
+"use strict";
+var RM=(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+
+var PROV={
+  talent:{t:"AI research talent",meta:"Technology.md — OECD.AI; Vector Institute Ontario AI ecosystem report",conf:"soft",why:"~10% of top-tier researchers; talent-growth figures from ecosystem/advocacy reporting."},
+  adoption:{t:"AI business adoption",meta:"Technology.md — Statistics Canada (June 2025)",conf:"high",why:"12.2% Q2 2025, doubled from 6.1%; official government survey."},
+  oecd:{t:"ICT share of GDP",meta:"Technology.md — OECD 2025 Economic Survey of Canada (pp. 99, 107–108)",conf:"high",why:"ICT 3.2%→5.4% of GDP since 2000."},
+  oea:{t:"Sector scale (Ontario Economic Accounts)",meta:"Technology.md — Ontario Economic Accounts, Table 16 (2024)",conf:"high",why:"Knowledge-service proxies; official provincial accounts."},
+  vector:{t:"AI GDP & employment",meta:"Technology.md — Vector Institute / Deloitte (Nov 2025)",conf:"soft",why:"Employment-impact methodology; the source warns it is NOT comparable with revenue-based estimates."},
+  foundations:{t:"Sector foundations",meta:"Technology.md & AI Data Centres.md — OECD.AI, Vector, IESO 2024, Hydro-Québec, TMX (Mar 2026)",conf:"medium",why:"Mix of hard (IESO grid, TMX listings) and advocacy (talent share) sources; see each pillar."},
+  subsectors:{t:"Sub-sector figures",meta:"Quantum Computing.md (NRC/ISED), AI Data Centres.md (Next Move, ISED), Semiconductors.md (SIA, CMC)",conf:"medium",why:"Quantum/programs hard (NRC, ISED); data-centre market-size soft (consultancy)."},
+  casestudies:{t:"Company landscape",meta:"Themes/Case Studies/ and Technology.md — each company individually sourced",conf:"medium",why:"Public figures hard; private valuations last-priced/self-reported."},
+  cvca:{t:"Venture capital flows",meta:"Technology.md — CVCA 2025 (pp. 25–27, 35)",conf:"medium",why:"Industry-association data; ICT VC C$5.1B / 269 deals / 64%."},
+  programs:{t:"Federal capital programs",meta:"Technology.md, AI Data Centres.md, Quantum Computing.md, Semiconductors.md — Budget 2025 / ISED",conf:"high",why:"Announced multi-year federal commitments."},
+  momentum:{t:"Momentum signals",meta:"Technology.md (StatCan; Nature/HPCwire Apr 2025); AI Data Centres.md (Microsoft Dec 2025; Canada.ca Dec 2024)",conf:"medium",why:"Adoption & investment figures hard; inbound-talent figure (soft)."}
+};
+
+var OEABAR=[["Prof. & admin. services",105.4,"C$105.4B",false],["Information & culture",38.7,"C$38.7B",false],["Electronic mfg (declining)",4.5,"C$4.5B",false]];
+var TOPDEALS=[["Waabi (Series C)",1.034,"C$1.034B",false],["Cohere (growth)",0.689,"C$689M",false],["Wealthsimple",0.550,"C$550M",false],["Beacon Software",0.352,"C$352M",false]];
+var PROGRAMS=[["Sovereign AI Compute",2000,"$2.0B"],["Sovereign Canadian Cloud",925.6,"$925.6M"],["Quantum (CQCP)",334.3,"$334.3M"],["Regional dev. AI",200,"$200M"],["Semiconductors (FABrIC)",120,"$120M"],["IRAP AI Assist",100,"$100M"]];
+
+var PILLARS=[
+  {ct:"AI research talent",ch:"Foundational AI was invented here, and the talent base keeps deepening.",li:["~10% of the world's top-tier AI researchers","Hinton (U of T), Bengio (Mila), Sutton (Amii)","Leads the G7 in AI talent growth & papers per capita","+67% growth in women in AI (2022–23), highest globally"]},
+  {ct:"Research institutions",ch:"A dense institutional base anchors the Toronto–Waterloo corridor.",li:["Vector Institute (Toronto) · Mila (Montréal) · Amii (Edmonton)","Institute for Quantum Computing & Perimeter (Waterloo)","Top universities: U of T, Waterloo, UBC"]},
+  {ct:"Clean, cheap power",ch:"A largely emissions-free grid positions Ontario for AI compute.",li:["Ontario grid 84% emissions-free (nuclear 51% + hydro 24%)","Québec industrial hydro ~C$0.04/kWh — among world's lowest","Natural cooling cuts data-centre cooling energy 20–40%"]},
+  {ct:"Capital-markets depth",ch:"Sophisticated institutional capital and a real public-market footprint.",li:["185 listed tech companies (TSX C$385.2B + TSXV C$21.2B)","World-leading pension funds: CPP, OTPP, OMERS, CDPQ","Shopify the sole tech name in the TSX top 10"]},
+  {ct:"Adoption momentum",ch:"Domestic uptake of AI is accelerating quickly.",li:["12.2% of businesses using AI (Q2 2025) — doubled YoY","Ontario firms investing in AI up 149% since 2019"]}
+];
+
+var SUBS=[
+  {sname:"Artificial intelligence",big:"$42–52B",ssub:"AI's cumulative contribution to Ontario GDP, 2019–24",note:"Adoption doubling YoY; the core of the sector. Size is an employment-impact estimate, not comparable to revenue-based figures.",color:"var(--cy)"},
+  {sname:"Quantum computing",big:"17.7",bigp:"$",bigs:"B",bigd:1,ssub:"projected direct GDP by 2045; 157,000+ jobs (NRC)",note:"Backed by the $334.3M Canadian Quantum Champions Program. Broader incl. indirect effects: ~$139B / 200,000+ jobs.",color:"var(--pink)"},
+  {sname:"AI data centres",big:"42.8",bigp:"US$",bigs:"B",bigd:1,ssub:"projected Canadian market by 2030 (from US$21.1B in 2025)",note:">10 GW of capacity in the pipeline; Microsoft committed $7.5B in Dec 2025. Market-size figures are consultancy estimates.",color:"var(--blue)"},
+  {sname:"Semiconductors",big:"100",bigs:"+",ssub:"design firms; 5 fabs; 30 applied-research labs",note:"Strategy is design + specialty fab, not volume foundry. FABrIC network: $120M federal within a $220M+ project.",color:"var(--amber)"}
+];
+
+var CATC={"AI":"#2fe6cd","Software":"#7c83ff","Fintech":"#5dcaa5","Security":"#5aa9ff","Hardware":"#ffb454","Quantum":"#e08bd0","Robotics":"#7c83ff"};
+var COMPANIES=[
+  {name:"Shopify",cat:"Software",what:"Ottawa-founded global commerce/SaaS platform, increasingly AI-integrated.",scale:"~C$202B market cap — the sole tech name in the TSX top 10.",conf:"high"},
+  {name:"Constellation Software",cat:"Software",what:"Toronto acquirer of vertical-market software businesses (TSX: CSU).",scale:"~C$62B market cap (June 2026); built entirely on the TSX.",conf:"high"},
+  {name:"Cohere",cat:"AI",what:"Toronto enterprise large-language-model company.",scale:"US$7B valuation (Sep 2025); revenue >US$200M annualized; clients incl. RBC, Bell, SAP.",conf:"medium"},
+  {name:"Waabi",cat:"AI",what:"Toronto autonomous-driving ('physical AI') company for trucks and robotaxis.",scale:"C$1.034B Series C in 2025 — the year's largest Ontario venture round.",conf:"medium"},
+  {name:"Wealthsimple",cat:"Fintech",what:"Toronto AI-enhanced consumer fintech and investing platform.",scale:"Passed $100B in assets under administration in 2025; C$550M growth round.",conf:"medium"},
+  {name:"1Password",cat:"Security",what:"Toronto cybersecurity company; password & credential management.",scale:"US$6.8B valuation (last priced Jan 2022); bootstrapped ~14 years before raising.",conf:"medium"},
+  {name:"Tenstorrent",cat:"Hardware",what:"AI-accelerator / RISC-V chip company led by Jim Keller.",scale:"Reached unicorn status in 2021; >US$693M Series D (2024) at ~US$2B; re-domiciled HQ to the US in 2023.",conf:"medium"},
+  {name:"Xanadu",cat:"Quantum",what:"Toronto photonic quantum-computing company; developed PennyLane.",scale:"Public via SPAC (~US$3.0–3.1B); trades on TSX + Nasdaq as XNDU.",conf:"medium"},
+  {name:"Magnet Forensics",cat:"Security",what:"Waterloo digital-forensics software for investigators.",scale:"TSX IPO 2021 (~C$100M); taken private by Thoma Bravo (US PE) in 2023.",conf:"high"},
+  {name:"Clearpath Robotics",cat:"Robotics",what:"Waterloo industrial & autonomous robotics (incl. OTTO Motors).",scale:"Acquired by Rockwell Automation (US) in 2023 — a landmark Canadian robotics exit.",conf:"high"}
+];
+
+var STAGES=[
+  {sn:"Stage 1 · Origins",h:"Lab spinouts",p:"AI and quantum companies typically begin as university research or lab spinouts, then move through pre-seed and seed (angels, micro-VCs, accelerators, government grants)."},
+  {sn:"Stage 2 · Angel & seed",h:"The early on-ramp",p:"National angel investment was <b>C$113.79M</b> in 2025, with Ontario and Québec accounting for ~76% of deals. The median Canadian AI venture deal over the past decade was <b>$1.17M</b> (average $7.92M)."},
+  {sn:"Stage 3 · Series A",h:"Scaling up",p:"A Canadian Series A averages <b>~C$10M</b>, versus <b>~US$30M</b> for US peers — which is why many companies raise growth capital from US and global investors."},
+  {sn:"Stage 4 · Growth",h:"Where the capital concentrates",p:"Information technology drew <b>C$5.1B across 269 deals</b> in 2025 — 64% of all Canadian venture capital and a three-year high, at a record C$18.82M average deal size."}
+];
+
+var INVTYPES=[
+  {ct:"Domestic venture capital",ch:"Radical Ventures (Toronto) — Canada's leading AI VC, a C$800M+ dedicated fund and early backer of Cohere and Waabi. Also Inovia, Georgian ($1B+ AUM), BDC Deep Tech, Kensington."},
+  {ct:"Angel networks",ch:"NACO-affiliated networks active in Ontario — Angel One, York Angel Investors, Maple Leaf Angels — have cumulatively invested C$1.8B+ across 2,000+ ventures."},
+  {ct:"Pension & institutional",ch:"CPP Investments (a backer of Radical Ventures), OMERS Ventures, CDPQ and BCI are active in AI and deep tech, with deep balance sheets to deploy."},
+  {ct:"Foreign / strategic",ch:"US and global investors anchor many marquee rounds — NVIDIA in Waabi, AMD/Oracle/Salesforce in Cohere, Samsung/Hyundai in Tenstorrent — a key channel for scale-up capital."}
+];
+
+var MOMENTUM=[
+  {ct:"AI adoption doubling",ch:"Canadian business AI adoption doubled in a year — 12.2% in Q2 2025, up from 6.1% in Q2 2024."},
+  {ct:"Inbound talent interest",ch:"Applications from US scientists to Canadian roles rose 41% in early 2025 amid US research cuts — a recruitment window for the ecosystem."},
+  {ct:"Major investment landing",ch:"Microsoft committed $7.5B to Toronto + Québec AI infrastructure (Dec 2025); the Cohere/CoreWeave Toronto centre is Canada's largest AI facility."}
+];
+
+function fmt(v,dec,prefix,suffix){var s=(dec?v.toFixed(dec):Math.round(v).toLocaleString());return (prefix||"")+s+(suffix||"");}
+function countUp(el){
+  var target=parseFloat(el.getAttribute("data-count"));if(isNaN(target))return;
+  var dec=parseInt(el.getAttribute("data-dec")||"0",10),prefix=el.getAttribute("data-prefix")||"",suffix=el.getAttribute("data-suffix")||"";
+  if(RM){el.textContent=fmt(target,dec,prefix,suffix);return;}
+  var dur=1150,t0=null;
+  function step(ts){if(!t0)t0=ts;var p=Math.min(1,(ts-t0)/dur),e=1-Math.pow(1-p,3);el.textContent=fmt(target*e,dec,prefix,suffix);if(p<1)requestAnimationFrame(step);else el.textContent=fmt(target,dec,prefix,suffix);}
+  requestAnimationFrame(step);
+}
+function renderRank(host,rows,opts){
+  opts=opts||{};var max=0;rows.forEach(function(r){if(r[1]>max)max=r[1];});if(max<=0)max=1;
+  host.innerHTML="";
+  rows.forEach(function(r){
+    var w=opts.sqrt?(Math.sqrt(r[1])/Math.sqrt(max)*100):(r[1]/max*100);
+    var row=document.createElement("div");row.className="row"+(r[3]?" alt":"");
+    row.innerHTML='<div class="lab">'+r[0]+'</div><div class="track"><div class="fill" data-w="'+w.toFixed(1)+'"></div></div><div class="val">'+r[2]+'</div>';
+    host.appendChild(row);
+  });
+}
+function animateFills(host){host.querySelectorAll(".fill").forEach(function(f,i){var go=function(){f.style.width=f.getAttribute("data-w")+"%";};if(RM){go();}else{setTimeout(go,90+i*60);}});}
+
+/* render cards */
+(function(){
+  var p=document.getElementById("pillars");
+  PILLARS.forEach(function(c){var d=document.createElement("div");d.className="card";d.innerHTML='<div class="ct">'+c.ct+'</div><div class="ch">'+c.ch+'</div><ul>'+c.li.map(function(x){return "<li>"+x+"</li>";}).join("")+'</ul>';p.appendChild(d);});
+  var s=document.getElementById("subs");
+  SUBS.forEach(function(c){
+    var big=c.bigp||c.bigs?('<span data-count="'+c.big+'" data-prefix="'+(c.bigp||"")+'" data-suffix="'+(c.bigs||"")+'" data-dec="'+(c.bigd||0)+'">0</span>'):c.big;
+    var d=document.createElement("div");d.className="sub";d.style.borderTop="2px solid "+c.color;
+    d.innerHTML='<div class="sname" style="color:'+c.color+'">'+c.sname+'</div><div class="sbig">'+big+'</div><div class="ssub">'+c.ssub+'</div><div class="snote">'+c.note+'</div>';
+    s.appendChild(d);
+  });
+  var it=document.getElementById("invtypes");
+  INVTYPES.forEach(function(c){var d=document.createElement("div");d.className="card";d.innerHTML='<div class="ct">'+c.ct+'</div><div class="ch">'+c.ch+'</div>';it.appendChild(d);});
+  var mo=document.getElementById("momentumCards");
+  MOMENTUM.forEach(function(c){var d=document.createElement("div");d.className="card";d.innerHTML='<div class="ct">'+c.ct+'</div><div class="ch">'+c.ch+'</div>';mo.appendChild(d);});
+  var st=document.getElementById("stages");
+  STAGES.forEach(function(c){var d=document.createElement("div");d.className="stagecard rv";d.innerHTML='<div class="sn">'+c.sn+'</div><h3>'+c.h+'</h3><p>'+c.p+'</p>';st.appendChild(d);});
+})();
+
+/* company gallery + filter */
+var activeCat=null;
+function renderGal(){
+  var g=document.getElementById("gal");g.innerHTML="";
+  COMPANIES.forEach(function(c,i){
+    var col=CATC[c.cat]||"var(--cy)";var dim=(activeCat&&activeCat!==c.cat)?" dim":"";
+    var d=document.createElement("div");d.className="co"+dim;d.style.borderLeftColor=col;
+    d.setAttribute("role","button");d.setAttribute("tabindex","0");d.setAttribute("aria-label",c.name+" — "+c.cat);d.setAttribute("data-i",i);
+    d.innerHTML='<div class="cn">'+c.name+'</div><div class="cc" style="color:'+col+'">'+c.cat+'</div><div class="cs">'+c.scale+'</div>';
+    g.appendChild(d);
+  });
+  g.querySelectorAll(".co").forEach(function(t){
+    t.addEventListener("click",function(){openCompany(+t.getAttribute("data-i"),t);});
+    t.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();openCompany(+t.getAttribute("data-i"),t);}});
+  });
+}
+(function(){
+  var cats=["All"];COMPANIES.forEach(function(c){if(cats.indexOf(c.cat)<0)cats.push(c.cat);});
+  var fb=document.getElementById("filters");
+  cats.forEach(function(cat){
+    var b=document.createElement("button");b.className="fchip"+(cat==="All"?" on":"");b.textContent=cat;
+    var col=cat==="All"?"var(--body)":(CATC[cat]||"var(--cy)");b.style.color=col;if(cat!=="All")b.style.borderColor=col;
+    b.addEventListener("click",function(){activeCat=(cat==="All")?null:cat;fb.querySelectorAll(".fchip").forEach(function(x){x.classList.remove("on");});b.classList.add("on");renderGal();});
+    fb.appendChild(b);
+  });
+})();
+renderGal();
+
+/* drawer */
+var drawer=document.getElementById("drawer"),scrim=document.getElementById("scrim"),lastTrigger=null;
+function openDrawer(html,trigger){document.getElementById("drawerBody").innerHTML=html;lastTrigger=trigger||null;drawer.classList.add("open");scrim.classList.add("on");drawer.setAttribute("aria-hidden","false");document.getElementById("drawerX").focus();}
+function closeDrawer(){drawer.classList.remove("open");scrim.classList.remove("on");drawer.setAttribute("aria-hidden","true");if(lastTrigger&&lastTrigger.focus){lastTrigger.focus();lastTrigger=null;}}
+function openProv(key,trigger){var p=PROV[key];if(!p)return;var html='<div class="dh">◎ provenance trace</div><div class="dt">'+p.t+'</div><div class="meta">'+p.meta.replace(/\n/g,"<br>")+'</div><span class="conf '+p.conf+'">confidence: '+p.conf+'</span><p style="font-size:12.5px;color:var(--dim);margin-top:12px;line-height:1.7">'+p.why+'</p>';openDrawer(html,trigger);}
+function openCompany(i,trigger){
+  var c=COMPANIES[i];if(!c)return;var col=CATC[c.cat]||"var(--cy)";
+  var html='<div class="dh">◎ company</div><div class="dt">'+c.name+'</div>'
+    +'<span class="cbadge" style="color:'+col+';border:1px solid '+col+'55;background:'+col+'14">'+c.cat+'</span>'
+    +'<div class="dwhat">'+c.what+'</div>'
+    +'<div class="meta"><span>scale</span><br>'+c.scale+'</div>'
+    +'<span class="conf '+c.conf+'">confidence: '+c.conf+'</span>'
+    +'<div class="meta" style="margin-top:12px"><span>source</span><br>Themes/Case Studies/ &amp; Sectors/Technology.md (vault)</div>';
+  openDrawer(html,trigger);
+}
+document.getElementById("drawerX").addEventListener("click",closeDrawer);
+scrim.addEventListener("click",closeDrawer);
+document.addEventListener("keydown",function(e){if(e.key==="Escape")closeDrawer();});
+
+/* provenance chips */
+document.querySelectorAll(".src").forEach(function(s){
+  s.setAttribute("role","button");s.setAttribute("tabindex","0");
+  s.addEventListener("click",function(){openProv(s.getAttribute("data-prov"),s);});
+  s.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();openProv(s.getAttribute("data-prov"),s);}});
+});
+
+/* pre-render bars */
+renderRank(document.getElementById("oeabar"),OEABAR,{});
+renderRank(document.getElementById("topdeals"),TOPDEALS.map(function(d){return [d[0],d[1],d[2],true];}),{});
+renderRank(document.getElementById("programs"),PROGRAMS.map(function(d){return [d[0],d[1],d[2],false];}),{sqrt:true});
+
+/* boot */
+(function(){
+  var el=document.getElementById("boot");var txt="> loading Ontario technology sector profile … foundations · scale · companies · capital";
+  if(RM){el.innerHTML=txt+'<span class="cur"></span>';return;}
+  var i=0;function type(){if(i<=txt.length){el.innerHTML=txt.slice(0,i)+'<span class="cur"></span>';i++;setTimeout(type,17+Math.random()*24);}else{el.innerHTML=txt+'<span class="cur"></span>';}}type();
+})();
+
+/* scroll reveal */
+var io=new IntersectionObserver(function(entries){
+  entries.forEach(function(en){
+    if(!en.isIntersecting)return;var sec=en.target;
+    sec.querySelectorAll(".rv").forEach(function(el){el.classList.add("in");});
+    sec.querySelectorAll("[data-count]").forEach(function(c){if(!c.dataset.done){c.dataset.done="1";countUp(c);}});
+    sec.querySelectorAll(".rank").forEach(function(rk){if(rk.dataset.anim)return;rk.dataset.anim="1";setTimeout(function(){animateFills(rk);},220);});
+    io.unobserve(sec);
+  });
+},{threshold:.16});
+document.querySelectorAll("section[data-rev]").forEach(function(s){io.observe(s);});
+document.querySelectorAll("#hero .rv").forEach(function(e){e.classList.add("in");});
+
+/* progress */
+var prog=document.getElementById("prog");
+window.addEventListener("scroll",function(){var h=document.documentElement;prog.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+"%";},{passive:true});
+</script>
+</body>
+</html>
