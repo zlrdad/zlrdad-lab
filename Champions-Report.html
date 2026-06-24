@@ -1,0 +1,1229 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scaling & Retaining Canada's Champions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+<style>
+/* Scaling & Retaining Canada's Champions — shared design system
+   Base: the Ontario Tech cinematic "observatory" look, refined with a champion-gold signature accent.
+   Used by every page in champions-report/. */
+
+:root{
+  /* surfaces */
+  --bg:#05070b; --bg2:#0a0e16; --surface:#0c121d; --grid:#0e1626; --slate:#26303f;
+  /* ink */
+  --ink:#eaf4ff; --body:#9fb0c6; --dim:#6b7d97;
+  /* accents */
+  --cy:#2fe6cd; --violet:#7c83ff; --gold:#f4b942; --blue:#5aa9ff; --amber:#ffb454; --pink:#e08bd0; --teal:#5dcaa5;
+  /* semantic (used across charts/cards) */
+  --stay:#2fe6cd; --left:#ffb454; --acq:#9d8bff; --fail:#ff5d6c;
+  /* type */
+  --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+  --disp:'Space Grotesk','Inter',system-ui,sans-serif;
+  --sans:'Inter',system-ui,-apple-system,sans-serif;
+  --maxw:1040px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--body);font-family:var(--sans);-webkit-font-smoothing:antialiased;line-height:1.65;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:54px 54px;opacity:.35;pointer-events:none;z-index:0}
+body::after{content:"";position:fixed;inset:0;background:radial-gradient(circle at 50% -10%,rgba(47,230,205,.07),transparent 55%),radial-gradient(circle at 85% 8%,rgba(90,169,255,.06),transparent 45%);pointer-events:none;z-index:0}
+.stage{position:relative;z-index:1}
+.prog{position:fixed;top:0;left:0;height:2px;width:0;background:linear-gradient(90deg,var(--blue),var(--cy));box-shadow:0 0 12px var(--cy);z-index:60;transition:width .15s}
+
+/* ===== persistent cross-page nav ===== */
+.nav{position:fixed;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;gap:18px;
+  padding:12px 22px;z-index:55;backdrop-filter:blur(8px);background:linear-gradient(180deg,rgba(5,7,11,.9),rgba(5,7,11,.55));border-bottom:1px solid rgba(38,48,63,.6)}
+.nav .brand{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);white-space:nowrap}
+.nav .brand b{color:var(--ink);font-weight:600}
+.nav .brand .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--cy);box-shadow:0 0 8px var(--cy);margin-right:8px;animation:pulse 2.4s infinite;vertical-align:middle}
+.nav .links{display:flex;gap:3px;flex-wrap:wrap;justify-content:flex-end}
+.nav a{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--body);text-decoration:none;padding:6px 10px;border-radius:7px;transition:.15s;white-space:nowrap}
+.nav a:hover{color:var(--ink);background:rgba(255,255,255,.04)}
+.nav a.on{color:var(--bg);background:var(--cy);font-weight:600}
+.nav a.soon{color:var(--dim);opacity:.6;cursor:default}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* ===== layout primitives ===== */
+section{position:relative;padding:96px 24px;max-width:var(--maxw);margin:0 auto}
+.act-no{font-family:var(--mono);font-size:12px;letter-spacing:.28em;color:var(--cy);text-transform:uppercase;margin-bottom:18px}
+.act-no .l{color:var(--dim)}
+.act-no.vi{color:var(--violet)} .act-no.gd{color:var(--gold)}
+h1{font-family:var(--disp);font-weight:700;color:var(--ink);letter-spacing:-.02em;line-height:1.02}
+h2{font-family:var(--disp);font-weight:600;color:var(--ink);font-size:clamp(28px,4.4vw,46px);letter-spacing:-.018em;line-height:1.08;margin-bottom:16px;max-width:24ch}
+h3{font-family:var(--disp);font-weight:600;color:var(--ink)}
+.lede{font-size:clamp(16px,2.1vw,19px);color:var(--body);max-width:66ch;line-height:1.7}
+.lede em{color:var(--ink);font-style:normal;border-bottom:1px solid var(--cy)}
+.grad{background:linear-gradient(100deg,var(--violet),var(--blue));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+
+/* scroll reveal */
+.rv{opacity:0;transform:translateY(26px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
+.rv.in{opacity:1;transform:none}
+.rv.d1{transition-delay:.07s}.rv.d2{transition-delay:.14s}.rv.d3{transition-delay:.21s}.rv.d4{transition-delay:.28s}.rv.d5{transition-delay:.35s}
+
+/* hero */
+#hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;max-width:1080px;padding-top:120px}
+.boot{font-family:var(--mono);font-size:12.5px;color:var(--cy);letter-spacing:.06em;margin-bottom:26px;min-height:18px}
+.boot .cur{display:inline-block;width:8px;height:15px;background:var(--cy);margin-left:2px;vertical-align:-2px;animation:blink 1s steps(1) infinite;box-shadow:0 0 8px var(--cy)}
+@keyframes blink{50%{opacity:0}}
+#hero h1{font-size:clamp(40px,8.4vw,92px)}
+#hero .sub{font-family:var(--mono);color:var(--violet);font-size:clamp(13px,1.8vw,16px);letter-spacing:.2em;text-transform:uppercase;margin-top:24px}
+#hero .dek{margin-top:30px;max-width:66ch;font-size:clamp(15px,1.9vw,18px);color:var(--body)}
+.scrollcue{margin-top:54px;font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);display:flex;align-items:center;gap:10px}
+.scrollcue .arr{width:1px;height:34px;background:linear-gradient(var(--cy),transparent)}
+
+/* stat band */
+.statrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-top:34px}
+.stat{border:1px solid var(--slate);border-radius:12px;padding:20px 22px;background:linear-gradient(180deg,rgba(255,255,255,.015),transparent)}
+.stat .n{font-family:var(--disp);font-weight:600;font-size:clamp(28px,4vw,34px);color:var(--ink);font-variant-numeric:tabular-nums;line-height:1}
+.stat .n.cy{color:var(--cy)}.stat .n.vi{color:var(--violet)}.stat .n.gd{color:var(--gold)}.stat .n.rd{color:var(--fail)}
+.stat .l{font-size:13px;color:var(--dim);margin-top:11px;line-height:1.5}
+
+/* section-nav cards (cover "what's inside") */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:16px;margin-top:24px}
+.navcard{display:block;text-decoration:none;border:1px solid var(--slate);border-radius:14px;padding:22px;background:linear-gradient(180deg,rgba(124,131,255,.04),transparent);transition:.18s}
+.navcard:hover{transform:translateY(-3px);border-color:#33506b;background:linear-gradient(180deg,rgba(47,230,205,.06),transparent)}
+.navcard .k{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--cy)}
+.navcard .t{font-family:var(--disp);font-weight:600;color:var(--ink);font-size:19px;margin:8px 0 7px}
+.navcard .d{font-size:13.5px;color:var(--body);line-height:1.55}
+.navcard.soon{opacity:.5}.navcard.soon:hover{transform:none}
+
+/* status tags (Champions gallery) */
+.tag{display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:20px;border:1px solid;white-space:nowrap}
+.tag.stay{color:var(--stay);border-color:#1d5f59}
+.tag.dom{color:var(--gold);border-color:#5a4422}
+.tag.risk{color:var(--violet);border-color:#2c3070}
+.tag.acq{color:var(--acq);border-color:#2c3070}
+.tag.left{color:var(--left);border-color:#5a4422}
+.tag.fail{color:var(--fail);border-color:#5a2230}
+.co{border:1px solid var(--slate);border-left:3px solid var(--slate);border-radius:13px;padding:16px 18px;background:linear-gradient(180deg,rgba(255,255,255,.015),transparent)}
+.co .cn{font-family:var(--disp);font-weight:600;font-size:16px;color:var(--ink);display:flex;justify-content:space-between;align-items:center;gap:8px}
+.co .cs{font-size:12.5px;color:var(--body);margin-top:8px;line-height:1.5}
+
+/* generic card */
+.card{border:1px solid var(--slate);border-radius:14px;padding:20px 22px;background:linear-gradient(180deg,rgba(124,131,255,.04),transparent)}
+.card .ct{font-family:var(--disp);font-weight:600;color:var(--ink);font-size:17px;margin-bottom:6px}
+.card .ch{font-size:13.5px;color:var(--body);line-height:1.55}
+
+/* rank bars */
+.rank{margin-top:26px}
+.rank .row{display:grid;grid-template-columns:180px 1fr 120px;align-items:center;gap:16px;margin:11px 0}
+.rank .lab{font-family:var(--mono);font-size:12.5px;color:var(--body);text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rank .track{height:30px;border-radius:6px;background:#0b121c;box-shadow:inset 0 0 0 1px #15202f;overflow:hidden}
+.rank .fill{height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,#147068,var(--cy));transition:width 1.1s cubic-bezier(.2,.7,.2,1)}
+.rank .row.alt .fill{background:linear-gradient(90deg,#2c3070,var(--violet))}
+.rank .row.gd .fill{background:linear-gradient(90deg,#7a5a16,var(--gold))}
+.rank .val{font-family:var(--mono);font-size:12px;color:var(--body);font-variant-numeric:tabular-nums}
+
+/* source chip + pull quote */
+.src{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11.5px;color:var(--cy);border:1px solid #1d5f59;border-radius:7px;padding:5px 11px;margin-top:20px;cursor:pointer;transition:.15s;letter-spacing:.04em;user-select:none}
+.src:hover{background:rgba(47,230,205,.08)}
+.src .o{width:7px;height:7px;border-radius:50%;border:1.5px solid var(--cy)}
+.pull{border-left:2px solid var(--gold);padding:6px 0 6px 22px;margin-top:34px;font-family:var(--disp);font-weight:500;font-size:clamp(19px,2.7vw,28px);color:var(--ink);line-height:1.34;max-width:30ch}
+.pull b{color:var(--gold);font-weight:700}
+.numlab{font-size:clamp(14px,1.9vw,16px);color:var(--dim);max-width:60ch;margin-top:14px;line-height:1.6}
+
+/* footer */
+footer{max-width:var(--maxw);margin:0 auto;padding:60px 24px 110px;border-top:1px solid var(--slate);margin-top:30px}
+footer .ft-h{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--cy);margin-bottom:16px}
+footer p{font-size:13.5px;color:var(--dim);max-width:78ch;margin-bottom:10px;line-height:1.7}
+footer code{font-family:var(--mono);color:var(--body);font-size:12.5px}
+
+/* embeds (content pages) */
+.embed{width:100%;border:1px solid var(--slate);border-radius:14px;background:var(--surface);min-height:520px;margin-top:24px}
+
+@media(max-width:760px){.nav .links{display:none}.nav .links.m{display:flex}}
+@media(max-width:640px){section{padding:74px 18px}.rank .row{grid-template-columns:118px 1fr 90px;gap:10px}}
+@media(prefers-reduced-motion:reduce){.rv{transition:none;opacity:1;transform:none}.fill{transition:none}.cur,.dot{animation:none}.prog{transition:none}}
+
+
+/* ---- bundle: tab panels ---- */
+.page{display:none}
+.page.active{display:block;animation:bfade .45s ease}
+@keyframes bfade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.nav .links a{cursor:pointer}
+@media (prefers-reduced-motion:reduce){.page.active{animation:none}}
+
+/* ---- page-specific styles ---- */
+
+  /* page-specific: comparator map */
+  #mapsec{max-width:1100px}
+  .mapwrap{margin-top:26px;border:1px solid var(--slate);border-radius:16px;background:#070b12;padding:14px;position:relative}
+  #map{width:100%;display:block}
+  #map path.land{fill:#0d1420;stroke:#16202f;stroke-width:.4}
+  #map path.cmp{stroke:#0a0e16;stroke-width:.5;cursor:pointer;transition:fill .9s ease,filter .25s ease,stroke .15s ease}
+  #map path.cmp:hover{stroke:var(--cy);stroke-width:1.1}
+  #map path.cmp.sel{stroke:var(--cy);stroke-width:1.3}
+  .maplegend{display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:12px;letter-spacing:.06em}
+  .maplegend .ramp{height:9px;width:130px;border-radius:5px;background:linear-gradient(90deg,#11343a,#1a8f86,#2fe6cd)}
+  .maptip{position:absolute;pointer-events:none;opacity:0;transform:translateY(6px);transition:opacity .15s,transform .15s;background:#080d15;border:1px solid var(--cy);border-radius:11px;
+    padding:13px 15px;max-width:300px;z-index:20;box-shadow:0 16px 50px rgba(0,0,0,.6)}
+  .maptip.show{opacity:1;transform:none}
+  .maptip .tn{font-family:var(--disp);font-weight:600;color:var(--ink);font-size:16px;margin-bottom:4px}
+  .maptip .tm{font-family:var(--mono);font-size:11.5px;color:var(--cy);letter-spacing:.04em;margin-bottom:9px}
+  .maptip .tp{font-size:12.5px;color:var(--body);line-height:1.55}
+  .maptip .tl{font-size:12px;color:var(--ink);line-height:1.5;margin-top:9px;border-top:1px solid var(--slate);padding-top:9px}
+  .mapnote{font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:12px;line-height:1.6}
+  /* clicked-panel default state */
+  #mappanel{margin-top:18px;border:1px solid var(--slate);border-radius:14px;padding:18px 20px;background:linear-gradient(180deg,rgba(124,131,255,.04),transparent)}
+  #mappanel .pn{font-family:var(--disp);font-weight:600;color:var(--ink);font-size:18px}
+  #mappanel .pm{font-family:var(--mono);font-size:11.5px;color:var(--cy);letter-spacing:.04em;margin:5px 0 10px}
+  #mappanel .pp{font-size:13.5px;color:var(--body);line-height:1.6}
+  #mappanel .pl{font-size:13.5px;color:var(--ink);line-height:1.55;margin-top:10px;border-top:1px solid var(--slate);padding-top:10px}
+  #mappanel .empty{font-size:13.5px;color:var(--dim)}
+
+</style>
+</head>
+<body>
+<div class="prog" id="prog"></div>
+
+<nav class="nav">
+  <span class="brand"><span class="dot"></span><b>Canada's Champions</b> &middot; capital-markets synthesis</span>
+  <span class="links">
+    <a href="#page-overview" data-nav="page-overview" class="on">Overview</a>
+    <a href="#page-public-markets" data-nav="page-public-markets">Public Markets</a>
+    <a href="#page-financing-gap" data-nav="page-financing-gap">Financing Gap</a>
+    <a href="#page-champions" data-nav="page-champions">Champions</a>
+    <a href="#page-what-works" data-nav="page-what-works">What Works</a>
+    <a href="#page-recommendations" data-nav="page-recommendations">Recommendations</a>
+    <a href="#page-methodology" data-nav="page-methodology">Methodology</a>
+  </span>
+</nav>
+
+<div class="page" id="page-overview">
+<div class="stage">
+
+
+<section id="hero">
+  <div class="boot"  data-boot="› loading synthesis · 34 case studies · 4 data workbooks · 18 policy levers"></div>
+  <h1>Canada builds<br>world-class companies.<br><span class="grad">It struggles to keep them.</span></h1>
+  <div class="sub">A capital-markets research synthesis · 2026</div>
+  <p class="dek">Canada produces a tenth of the world's top AI researchers, a deep university base, and a steady supply of globally competitive companies. Yet its scale-up capital is overwhelmingly foreign, its champions are acquired or list abroad, and its public markets have thinned. This report traces the problem from the exchanges to the companies — and sets out what to do about it.</p>
+  <div class="scrollcue"><span class="arr"></span>scroll to begin</div>
+</section>
+
+<section id="stakes">
+  <div class="act-no rv"><span class="l">00 —</span> The stakes, in four numbers</div>
+  <h2 class="rv d1">A gap between what Canada <span class="grad">creates</span> and what it <span class="grad">keeps</span>.</h2>
+  <div class="statrow">
+    <div class="stat rv d1"><div class="n cy" data-count="10" data-prefix="~" data-suffix="%">0</div><div class="l">of the world's top-tier AI researchers are in Canada</div></div>
+    <div class="stat rv d2"><div class="n vi">&lt;2%</div><div class="l">of global AI venture capital is captured here</div></div>
+    <div class="stat rv d3"><div class="n gd">C$5&ndash;11B</div><div class="l">estimated annual scale-up financing gap vs. peer markets</div></div>
+    <div class="stat rv d4"><div class="n rd" data-count="86" data-suffix="%">0</div><div class="l">of $50M+ growth-round capital comes from foreign investors</div></div>
+  </div>
+  <div class="numlab rv">Figures synthesised from the vault's financing-gap, capital-mobilization and public-markets work; sourced and caveated on the Methodology page. CAD ~US$1.44.</div>
+</section>
+
+<section id="inside">
+  <div class="act-no vi rv"><span class="l">— </span> What's inside</div>
+  <h2 class="rv d1">Six movements, one argument.</h2>
+  <p class="lede rv d1">From the structure of the exchanges, to the financing gap, to the companies themselves, to what peer jurisdictions did differently — and finally, the levers.</p>
+  <div class="cards">
+    <a href="#page-public-markets" data-nav="page-public-markets" class="navcard rv d1"><div class="k">01 · Diagnosis I</div><div class="t">Public Markets</div><div class="d">Three boards, three worlds — the TSX's champions, the TSXV's roll-ups, the CSE's penny tail — and why liquidity, not listing cost, is the binding constraint.</div></a>
+    <a href="#page-financing-gap" data-nav="page-financing-gap" class="navcard rv d2"><div class="k">02 · Diagnosis II</div><div class="t">The Financing Gap</div><div class="d">A C$5&ndash;11B/yr scale-up gap, sized against peers and seen company-by-company as US capital fills the rounds Canada won't.</div></a>
+    <a href="#page-champions" data-nav="page-champions" class="navcard rv d3"><div class="k">03 · Evidence</div><div class="t">The Champions</div><div class="d">34 case studies — who stays, who's acquired, who lists abroad — and the seven patterns that decide which.</div></a>
+    <a href="#page-what-works" data-nav="page-what-works" class="navcard rv d1"><div class="k">04 · Comparators</div><div class="t">What Works Abroad</div><div class="d">Korea, Israel, France, the UK, Italy, Sweden — the programs and market designs that built and kept champions.</div></a>
+    <a href="#page-recommendations" data-nav="page-recommendations" class="navcard rv d2"><div class="k">05 · Prescription</div><div class="t">The Recommendations</div><div class="d">Four levers: a Growth Capital Compact, a costed innovation-investment tax scheme, retention architecture, and liquidity reform.</div></a>
+    <a href="#page-methodology" data-nav="page-methodology" class="navcard rv d3"><div class="k">06 · Appendix</div><div class="t">Methodology & Sources</div><div class="d">The data, vintages, confidence grades and caveats behind every figure in the report.</div></a>
+  </div>
+  <div class="numlab rv">Pages build out one at a time — this overview is the design checkpoint.</div>
+</section>
+
+<section id="thesis">
+  <div class="pull rv">Canada produces a tenth of the world's top AI talent and captures under a <b>fiftieth</b> of its AI capital. The distance between what we <b>create</b> and what we <b>keep</b> is the whole story.</div>
+</section>
+
+<footer>
+  <div class="ft-h">About this report</div>
+  <p>A cinematic synthesis of a multi-month capital-markets research program held in an Obsidian research vault — public-markets structure, the financing gap, ~34 company case studies, international comparators, and a costed policy toolkit. Every headline figure traces to a single validated data layer; the Methodology page grades each by confidence (government/regulatory = high; industry/CVCA/NACO = medium; advocacy/aggregator and private valuations = soft) and states its caveats.</p>
+  <p style="color:var(--dim);margin-top:18px;font-family:var(--mono);font-size:11px;letter-spacing:.1em">CHAMPIONS_REPORT · v0.1 (cover / design checkpoint) · best viewed online (web fonts) · fully readable offline</p>
+</footer>
+
+</div>
+</div>
+
+<div class="page" id="page-public-markets">
+<div class="stage">
+
+
+<section id="intro" style="padding-top:128px">
+  <div class="boot"  data-boot="› diagnosis I · public markets · TSX · TSXV · CSE"></div>
+  <div class="act-no"><span class="l">01 —</span> The Diagnosis · Public Markets</div>
+  <h1 style="font-size:clamp(34px,6.4vw,68px)">Three boards.<br><span class="grad">Three different worlds.</span></h1>
+  <p class="dek" style="margin-top:28px;max-width:64ch;font-size:clamp(15px,1.9vw,18px);color:var(--body)">Canada lists companies on three exchanges — the senior <b style="color:var(--ink)">TSX</b>, the <b style="color:var(--ink)">TSX Venture</b> board, and the <b style="color:var(--ink)">CSE</b>. Up close they are not one market at different sizes; they are three different animals. Understanding the difference is the first step to seeing why the public-market pathway has thinned — and why the fix is not cheaper listings.</p>
+  <div class="scrollcue"><span class="arr"></span>scroll</div>
+</section>
+
+<section id="boards">
+  <div class="act-no rv"><span class="l">— </span> The three boards at a glance</div>
+  <h2 class="rv d1">From global champions to the penny tail.</h2>
+  <p class="lede rv d1">Each board occupies a different rung. The senior board carries genuine global operating companies; the venture board is mining-and-roll-ups; the CSE is a lighter-regime venue dominated by pre-revenue names. <em>Figures as at Feb 28 2026 (TSX/TSXV) and end-2025 (CSE).</em></p>
+  <div class="cards">
+    <div class="card rv d1" style="border-left:3px solid var(--cy)">
+      <div class="ct">TSX <span style="font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.08em">· SENIOR</span></div>
+      <div class="ch">Global-scale operating champions — banks, miners, and the country's biggest tech names.</div>
+      <div class="statrow" style="margin-top:16px;grid-template-columns:1fr 1fr">
+        <div class="stat"><div class="n cy" data-count="668">0</div><div class="l">operating companies</div></div>
+        <div class="stat"><div class="n">C$6.8T</div><div class="l">total market cap</div></div>
+      </div>
+      <div class="numlab" style="margin-top:12px">Largest tech: <b style="color:var(--ink)">Shopify ~C$202B</b>. Top 25 issuers = <b style="color:var(--ink)">51.8%</b> of operating market cap.</div>
+    </div>
+    <div class="card rv d2" style="border-left:3px solid var(--violet)">
+      <div class="ct">TSXV <span style="font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.08em">· VENTURE</span></div>
+      <div class="ch">Mining by the hundred, plus the Constellation-lineage software roll-ups — and a long thin tail.</div>
+      <div class="statrow" style="margin-top:16px;grid-template-columns:1fr 1fr">
+        <div class="stat"><div class="n vi" data-count="1362">0</div><div class="l">operating companies</div></div>
+        <div class="stat"><div class="n">C$164B</div><div class="l">total market cap</div></div>
+      </div>
+      <div class="numlab" style="margin-top:12px">Largest tech: <b style="color:var(--ink)">Topicus C$7.8B</b> &amp; <b style="color:var(--ink)">Lumine C$5.5B</b> — both Constellation spin-offs. 165 CPC shells.</div>
+    </div>
+    <div class="card rv d3" style="border-left:3px solid var(--gold)">
+      <div class="ct">CSE <span style="font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.08em">· LIGHTER REGIME</span></div>
+      <div class="ch">Cannabis, crypto-treasury and pre-revenue stories — nominal caps that detach from fundamentals.</div>
+      <div class="statrow" style="margin-top:16px;grid-template-columns:1fr 1fr">
+        <div class="stat"><div class="n gd" data-count="601">0</div><div class="l">active equity issuers</div></div>
+        <div class="stat"><div class="n">C$16.3B</div><div class="l">total equity market cap</div></div>
+      </div>
+      <div class="numlab" style="margin-top:12px">Largest "tech": <b style="color:var(--ink)">HydroGraph C$879M</b> — on ~US$43k of revenue. <b style="color:var(--ink)">89%</b> of priced equities &lt; C$50M.</div>
+    </div>
+  </div>
+  <div class="numlab rv">Sources: TMX listed-companies data (Feb 2026); CSE listed-companies API + annual market summary (end-2025). See the Exchange Market-Cap Leaders and CSE/TMX analysis pages.</div>
+</section>
+
+<section id="velocity">
+  <div class="act-no rv"><span class="l">— </span> Liquidity is the binding constraint</div>
+  <h2 class="rv d1">The number that predicts everything: <span class="grad">turnover velocity</span>.</h2>
+  <p class="lede rv d1">Across a 79-exchange study, <em>turnover velocity</em> — annual value traded ÷ market cap — is the single most robust determinant of how many companies list. And on this measure the Asian markets are in a different league, while Canada's junior board sits near the bottom.</p>
+  <div class="rank rv d2" id="velrank">
+    <div class="row gd"><div class="lab">South Korea</div><div class="track"><div class="fill" data-w="100%"></div></div><div class="val">~201%</div></div>
+    <div class="row"><div class="lab">Taiwan</div><div class="track"><div class="fill" data-w="62%"></div></div><div class="val">~125%</div></div>
+    <div class="row"><div class="lab">Japan</div><div class="track"><div class="fill" data-w="50%"></div></div><div class="val">~100%</div></div>
+    <div class="row"><div class="lab">Hong Kong</div><div class="track"><div class="fill" data-w="46%"></div></div><div class="val">~92%</div></div>
+    <div class="row alt"><div class="lab">Canada — TSX</div><div class="track"><div class="fill" data-w="36%"></div></div><div class="val">~73%</div></div>
+    <div class="row"><div class="lab">Australia</div><div class="track"><div class="fill" data-w="24%"></div></div><div class="val">~49%</div></div>
+    <div class="row alt"><div class="lab">Canada — TSXV</div><div class="track"><div class="fill" data-w="22%"></div></div><div class="val">~45%</div></div>
+    <div class="row"><div class="lab">Europe (growth)</div><div class="track"><div class="fill" data-w="19%"></div></div><div class="val">~37–39%</div></div>
+  </div>
+  <div class="numlab rv">Turnover velocity, annualised. The TSX is mid-pack; the TSXV is thin with a severe tail (~24% of names traded under C$100K over two months; ~10% didn't trade at all).</div>
+  <div class="pull rv">The Asian outliers run on <b>retail</b>: Korea ~64% and Taiwan ~54% of all turnover is retail order flow. Canada has neither that day-trading base nor a mandatory domestic-equity savings pool.</div>
+  <div class="numlab rv">Sources: WFE (Demir, Ghofrani &amp; Liu 2025); OECD Asia Capital Markets Report; vault computation from TMX issuer data. Asian retail-share figures are the leading explanation, not proven causation — see Methodology.</div>
+</section>
+
+<section id="ipo">
+  <div class="act-no rv"><span class="l">— </span> The IPO drought</div>
+  <h2 class="rv d1">The on-ramp to public markets has nearly closed.</h2>
+  <p class="lede rv d1">New operating-company listings across all Canadian exchanges have fallen year after year. The trickle that remains is mostly small and mostly mining.</p>
+  <div class="rv d2" style="border:1px solid var(--slate);border-radius:14px;padding:22px 20px 12px;margin-top:24px;background:linear-gradient(180deg,rgba(255,255,255,.015),transparent)">
+    <canvas id="ipoChart" height="150"></canvas>
+  </div>
+  <div class="numlab rv">Operating-company IPOs, all Canadian exchanges (Private Capital Journal / CPE Analytics). 2025: 19 IPOs raising C$1.54B — but only <b style="color:var(--gold)">3</b> were operating-company IPOs on the TSX.</div>
+  <div class="pull rv">Beware the headline count: TMX records <b>257 "TSX IPOs"</b> in 2025 — but almost all are CDRs and ETFs. The number of actual operating companies that IPO'd on the TSX was <b>three</b>. VC-backed IPO exits in 2024: <b>zero</b>.</div>
+  <div class="numlab rv">Sources: Private Capital Journal 2025 Canadian IPO Highlights; TMX Equity Financing Statistics (Dec 2025); CVCA Year-End 2024.</div>
+</section>
+
+<section id="raised">
+  <div class="act-no rv"><span class="l">— </span> What a financing is worth, by board</div>
+  <h2 class="rv d1">A clean size gradient down the boards.</h2>
+  <p class="lede rv d1">Average capital raised per financing in 2025 falls off sharply from senior to venture to CSE — the same gradient as everything else.</p>
+  <div class="rank rv d2">
+    <div class="row gd"><div class="lab">TSX</div><div class="track"><div class="fill" data-w="100%"></div></div><div class="val">~C$39.6M</div></div>
+    <div class="row alt"><div class="lab">TSXV</div><div class="track"><div class="fill" data-w="19%"></div></div><div class="val">~C$7.4M</div></div>
+    <div class="row"><div class="lab">CSE</div><div class="track"><div class="fill" data-w="7%"></div></div><div class="val">~C$2.6M</div></div>
+  </div>
+  <div class="numlab rv">Average per financing = total equity capital raised ÷ number of financings, 2025. Sources: TMX Equity Financing Statistics (Dec 2025); CSE 2025 performance figures.</div>
+</section>
+
+<section id="middle">
+  <div class="act-no vi rv"><span class="l">— </span> The missing middle</div>
+  <h2 class="rv d1">The barbell — and the gap where champions belong.</h2>
+  <p class="lede rv d1">The TSX is a barbell: a cluster of mega-caps at one end, a long small-cap tail at the other, and a <em>thin C$2–10B mid-cap waist</em> in between. That waist is exactly where Canada's private champions would land if they listed at home.</p>
+  <div class="statrow rv d2">
+    <div class="stat"><div class="n" data-count="51.8" data-dec="1" data-suffix="%">0</div><div class="l">of TSX operating market cap sits in the top 25 issuers</div></div>
+    <div class="stat"><div class="n" data-count="84.9" data-dec="1" data-suffix="%">0</div><div class="l">in the top 100 — the rest is a long, thin tail</div></div>
+    <div class="stat"><div class="n gd">C$2–10B</div><div class="l">the thin mid-cap tier — where Cohere, Waabi, Xanadu, Tenstorrent would sit</div></div>
+  </div>
+  <div class="pull rv">A single Cohere listing (~C$10B) would instantly be one of the largest technology names on the TSX. The champions that would thicken the middle are precisely the ones being acquired or listing abroad.</div>
+</section>
+
+<section id="read">
+  <div class="act-no gd rv"><span class="l">— </span> The read</div>
+  <h2 class="rv d1">The constraint is quality and liquidity — not listing cost.</h2>
+  <p class="lede rv d1">The junior boards are not short of <em>listings</em>; they are short of <em>quality issuers and trading</em>. Canada actually has the highest median free float in the OECD's growth-market study (82%) — the shares are available to trade, but under-traded and under-covered. The lever, then, is market-making and research coverage (and a retail/again-domestic demand base), not cheaper admission.</p>
+  <p class="lede rv d1" style="margin-top:18px">Which raises the next question: if the public on-ramp has narrowed, where is the capital that would scale these companies — and who is providing it?</p>
+  <div style="margin-top:30px"><a href="#page-financing-gap" data-nav="page-financing-gap" class="navcard" style="max-width:420px"><div class="k">Next · Diagnosis II</div><div class="t">The Financing Gap →</div><div class="d">The C$5–11B/yr scale-up gap — and the company-by-company evidence that US capital fills the rounds Canada won't.</div></a></div>
+</section>
+
+<footer>
+  <div class="ft-h">Diagnosis I · Public Markets</div>
+  <p>Figures synthesised from the vault's public-markets work — TMX and CSE listed-companies data, TMX/CSE financing statistics, the WFE listings study, and the OECD growth-markets and Asia capital-markets reports. Market caps are point-in-time (TSX/TSXV Feb 28 2026; CSE end-2025). Confidence grades and full citations on the Methodology page.</p>
+  <p style="color:var(--dim);margin-top:14px;font-family:var(--mono);font-size:11px;letter-spacing:.1em">CHAMPIONS_REPORT · 01_PUBLIC_MARKETS · v0.1</p>
+</footer>
+
+</div>
+</div>
+
+<div class="page" id="page-financing-gap">
+<div class="stage">
+
+
+<section id="intro" style="padding-top:128px">
+  <div class="boot"  data-boot="› diagnosis II · the financing gap · VC/GDP · scale-up · domestic vs foreign"></div>
+  <div class="act-no"><span class="l">02 —</span> The Diagnosis · The Financing Gap</div>
+  <h1 style="font-size:clamp(34px,6.4vw,68px)">Canada under-invests<br>in its own companies —<br><span class="grad">and foreign capital fills the gap.</span></h1>
+  <p class="dek" style="margin-top:28px;max-width:64ch;font-size:clamp(15px,1.9vw,18px);color:var(--body)">If the public on-ramp has narrowed, the private one is where champions are actually built. But Canada deploys far less venture capital — relative to the size of its economy — than its peers, and the gap is sharpest exactly where it matters most: the scale-up rounds. What's missing gets supplied by US investors.</p>
+  <div class="scrollcue"><span class="arr"></span>scroll</div>
+</section>
+
+<section id="vcgdp">
+  <div class="act-no rv"><span class="l">— </span> The gap, normalised</div>
+  <h2 class="rv d1">Venture capital as a share of GDP — the clean comparison.</h2>
+  <p class="lede rv d1">On the one apples-to-apples measure (OECD market statistics, 2024), Canada invests <em>0.20% of GDP</em> in venture capital — barely a third of the US level and well below the comparator median of 0.355%.</p>
+  <div class="rank rv d2">
+    <div class="row"><div class="lab">Israel</div><div class="track"><div class="fill" data-w="100%"></div></div><div class="val">1.81%</div></div>
+    <div class="row"><div class="lab">United States</div><div class="track"><div class="fill" data-w="29%"></div></div><div class="val">0.53%</div></div>
+    <div class="row gd"><div class="lab">Canada</div><div class="track"><div class="fill" data-w="11%"></div></div><div class="val">0.20%</div></div>
+    <div class="row"><div class="lab">United Kingdom</div><div class="track"><div class="fill" data-w="10%"></div></div><div class="val">0.18%</div></div>
+    <div class="row"><div class="lab">Sweden</div><div class="track"><div class="fill" data-w="6%"></div></div><div class="val">0.11%</div></div>
+  </div>
+  <div class="numlab rv">VC / GDP, 2024 (OECD Entrepreneurship Financing DB). Comparator median (US/UK/Israel/Sweden) = 0.355%.</div>
+  <div class="statrow rv d2">
+    <div class="stat"><div class="n gd">~C$5B</div><div class="l">/ yr — additional VC to reach the comparator median (≈C$3.7–5.1B)</div></div>
+    <div class="stat"><div class="n gd">~C$11B</div><div class="l">/ yr — to reach the US level (≈C$9.4–10.8B)</div></div>
+    <div class="stat"><div class="n">~US$138</div><div class="l">VC per capita — vs US ~$634 and Israel ~$1,022</div></div>
+  </div>
+  <div class="numlab rv">The gap is our calculation on Canada GDP ≈ US$2.27T; the range reflects the CVCA vs OECD base. CAD ~US$1.44. Source: financing-gaps workbook + Ontario Financing Gap Landscape.</div>
+</section>
+
+<section id="scaleup">
+  <div class="act-no rv"><span class="l">— </span> Where the gap bites: the scale-up stage</div>
+  <h2 class="rv d1">Domestic capital evaporates exactly where the cheques get large.</h2>
+  <p class="lede rv d1">The deficit isn't spread evenly. Canadian investors fund the seed rounds — but at the growth stage, where companies are made or lost, the capital is overwhelmingly foreign.</p>
+  <div class="cards rv d2" style="grid-template-columns:1.1fr 1fr;align-items:center">
+    <div class="card" style="text-align:center">
+      <div style="max-width:320px;margin:0 auto"><canvas id="growthDonut" height="220"></canvas></div>
+      <div class="numlab" style="margin-top:6px">$50M+ growth rounds, by lead-investor base</div>
+    </div>
+    <div>
+      <div class="statrow" style="grid-template-columns:1fr">
+        <div class="stat"><div class="n rd" data-count="86" data-suffix="%">0</div><div class="l">of $50M+ growth-round capital comes from foreign (mostly US) investors</div></div>
+        <div class="stat"><div class="n cy" data-count="40" data-suffix="%">0</div><div class="l">of <b>seed</b> rounds are funded by Canadian-only syndicates…</div></div>
+        <div class="stat"><div class="n vi" data-count="13.9" data-dec="1" data-suffix="%">0</div><div class="l">…but only this share of <b>growth-stage</b> rounds are</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="numlab rv">Source: CVCA foreign-participation analysis; BDC VC Landscape 2026 (which calls the scale-up gap "a sovereignty issue").</div>
+</section>
+
+<section id="reported">
+  <div class="act-no vi rv"><span class="l">— </span> What others report</div>
+  <h2 class="rv d1">The gap is independently flagged — by the industry itself.</h2>
+  <div class="cards">
+    <div class="card rv d1"><div class="ct">NACO &amp; Startup Genome</div><div class="ch">~US$323M/yr early-stage shortfall (~US$1.6B over five years) vs comparable US cities; the ecosystem lost ~US$66B of value, 2019–24.</div></div>
+    <div class="card rv d2"><div class="ct">NACO — Angel Investing 2026</div><div class="ch">Angel investment fell to a five-year low of C$113.79M in 2025 — 57% below the 2021 peak. The seed engine is contracting.</div></div>
+    <div class="card rv d3"><div class="ct">BDC — VC Landscape 2026</div><div class="ch">Frames the scale-up gap as "now a sovereignty issue"; foreign investors supply 80–90% of capital in $50M+ rounds.</div></div>
+  </div>
+  <div class="numlab rv">Industry/advocacy sources (Tier 4) — directionally consistent with, and triangulated against, the OECD-anchored computation above. See Methodology.</div>
+</section>
+
+<section id="company">
+  <div class="act-no rv"><span class="l">— </span> The gap, company by company</div>
+  <h2 class="rv d1">US capital leads the rounds that define the winners.</h2>
+  <p class="lede rv d1">The macro gap shows up in the cap tables of the strongest scale-ups: the value-defining later rounds are led from the US, with domestic capital at seed or in the minority.</p>
+  <div class="cards rv d2">
+    <div class="card"><div class="ct">Clio</div><div class="ch">~US$5B legal-tech leader — Series G <b style="color:var(--ink)">led by NEA (US)</b>; OMERS the lone Canadian institution.</div></div>
+    <div class="card"><div class="ct">Ada</div><div class="ch">Toronto applied-AI — growth rounds <b style="color:var(--ink)">led by Spark, Accel, Tiger (US)</b>; domestic only at seed/A.</div></div>
+    <div class="card"><div class="ct">Tailscale</div><div class="ch">~US$1.45B — Series C <b style="color:var(--ink)">led by Accel (US)</b>; Inovia only in the early rounds.</div></div>
+    <div class="card"><div class="ct">1Password</div><div class="ch">~US$6.8B — <b style="color:var(--ink)">Accel / ICONIQ (US)</b>-led from the Series A onward.</div></div>
+  </div>
+  <div class="pull rv">The exception proves the rule: <b>StackAdapt's</b> 2025 round was led by Ontario Teachers' — a domestic pension anchoring a Canadian champion. It stands out precisely because it is rare.</div>
+</section>
+
+<section id="read">
+  <div class="act-no gd rv"><span class="l">— </span> The read</div>
+  <h2 class="rv d1">A multi-billion-dollar, stage-specific supply gap.</h2>
+  <p class="lede rv d1">Canada's venture under-investment is real, large (~C$5–11B/yr), and concentrated at the scale-up stage — and what's missing is supplied by US capital that ultimately pulls control and upside south. The lever is to mobilise <em>domestic</em> growth capital and crowd it in, not to compel it.</p>
+  <p class="lede rv d1" style="margin-top:18px">But a gap is an abstraction. To see what's actually at stake, look at the companies themselves.</p>
+  <div style="margin-top:30px"><a href="#page-champions" data-nav="page-champions" class="navcard" style="max-width:420px"><div class="k">Next · Evidence</div><div class="t">The Champions →</div><div class="d">34 case studies — who stays, who's acquired, who lists abroad — and the patterns that decide which.</div></a></div>
+</section>
+
+<footer>
+  <div class="ft-h">Diagnosis II · The Financing Gap</div>
+  <p>Figures synthesised from the financing-gaps and capital-mobilization workbooks, the Ontario Financing Gap Landscape, CVCA/NACO/BDC reporting, and the OECD Entrepreneurship Financing database. The headline gap is a computation (Canada vs comparator-median and vs US VC/GDP); private-company cap-table tags reflect lead/notable investors. Confidence grades and citations on the Methodology page.</p>
+  <p style="color:var(--dim);margin-top:14px;font-family:var(--mono);font-size:11px;letter-spacing:.1em">CHAMPIONS_REPORT · 02_FINANCING_GAP · v0.1</p>
+</footer>
+
+</div>
+</div>
+
+<div class="page" id="page-champions">
+<div class="stage">
+
+
+<section id="intro" style="padding-top:128px">
+  <div class="boot"  data-boot="› evidence · ~34 case studies · stay · scale · acquired · leaked"></div>
+  <div class="act-no"><span class="l">03 —</span> The Evidence · The Champions</div>
+  <h1 style="font-size:clamp(34px,6.4vw,68px)">Who stays, who's bought,<br><span class="grad">who lists abroad.</span></h1>
+  <p class="dek" style="margin-top:28px;max-width:64ch;font-size:clamp(15px,1.9vw,18px);color:var(--body)">The diagnosis comes alive in the companies. We traced ~34 case studies — the top-10 technology issuers on each exchange, the marquee private champions, and the leakage cases — and the same patterns recur. Here is the roster, by outcome.</p>
+  <div class="scrollcue"><span class="arr"></span>scroll</div>
+</section>
+
+<section id="roster">
+  <div class="act-no rv"><span class="l">— </span> The roster, by outcome</div>
+  <h2 class="rv d1">Champions and what became of them.</h2>
+  <p class="lede rv d1">Colour-coded by status: <span style="color:var(--stay)">stayed &amp; Canadian-listed</span>, <span style="color:var(--gold)">domestically anchored</span>, <span style="color:var(--violet)">independent but at risk / cross-listed</span>, <span style="color:var(--left)">scaling on US capital</span>, <span style="color:var(--fail)">acquired / taken private / lost</span>.</p>
+  <div class="cards rv d2">
+    <div class="co" style="border-left-color:var(--stay)"><div class="cn">Shopify <span class="tag stay">Stayed</span></div><div class="cs">TSX-listed; founder control kept it independent and Canadian — the retention archetype.</div></div>
+    <div class="co" style="border-left-color:var(--stay)"><div class="cn">Constellation <span class="tag stay">Stayed</span></div><div class="cs">The serial-acquirer compounder; spawned Topicus &amp; Lumine (still controlled).</div></div>
+    <div class="co" style="border-left-color:var(--stay)"><div class="cn">Kinaxis <span class="tag stay">Stayed</span></div><div class="cs">Ottawa SaaS that IPO'd on the TSX and stayed independent.</div></div>
+    <div class="co" style="border-left-color:var(--stay)"><div class="cn">MDA Space <span class="tag stay">Repatriated</span></div><div class="cs">Was US-owned (Maxar); brought back and re-IPO'd on the TSX in 2021 — the reverse of flight.</div></div>
+    <div class="co" style="border-left-color:var(--gold)"><div class="cn">Wealthsimple <span class="tag dom">Domestic</span></div><div class="cs">Private; Power-Corp-anchored at ~C$10B; a Canadian-controlled IPO candidate.</div></div>
+    <div class="co" style="border-left-color:var(--gold)"><div class="cn">StackAdapt <span class="tag dom">Domestic</span></div><div class="cs">2025 round led by Ontario Teachers' — the domestic-capital exemplar.</div></div>
+    <div class="co" style="border-left-color:var(--violet)"><div class="cn">Cohere <span class="tag risk">At risk</span></div><div class="cs">Independent national AI champion (~C$10B) — but US-strategic capital; listing venue TBD.</div></div>
+    <div class="co" style="border-left-color:var(--violet)"><div class="cn">Xanadu <span class="tag risk">Cross-listed</span></div><div class="cs">SPAC on Nasdaq + TSX; US PIPE capital but kept its Canadian listing, HQ &amp; founder control.</div></div>
+    <div class="co" style="border-left-color:var(--acq)"><div class="cn">Tenstorrent <span class="tag acq">In play</span></div><div class="cs">In Qualcomm acquisition talks at US$8–10B — the flagship at the exit door.</div></div>
+    <div class="co" style="border-left-color:var(--left)"><div class="cn">Clio <span class="tag left">US capital</span></div><div class="cs">~US$5B legal-tech leader; NEA-led; IPO most likely on a US exchange.</div></div>
+    <div class="co" style="border-left-color:var(--fail)"><div class="cn">Element AI <span class="tag fail">Acquired</span></div><div class="cs">→ ServiceNow (US, 2020) at a fraction of peak — textbook value leakage.</div></div>
+    <div class="co" style="border-left-color:var(--fail)"><div class="cn">Magnet Forensics <span class="tag fail">Take-private</span></div><div class="cs">TSX → US private equity barely two years after IPO — the public-market exit.</div></div>
+  </div>
+  <div class="numlab rv">Illustrative, not statistical — the case studies show mechanisms and archetypes. Full set (30 public-issuer + private champions + leakage cases) in the vault's Case Studies and the Cross-Case Synthesis.</div>
+</section>
+
+<section id="patterns">
+  <div class="act-no vi rv"><span class="l">— </span> What the roster teaches</div>
+  <h2 class="rv d1">Four patterns that decide the outcome.</h2>
+  <div class="cards">
+    <div class="card rv d1"><div class="ct">Exit is by acquisition</div><div class="ch">The credible champions leave chiefly by being <b style="color:var(--ink)">bought</b> (Tenstorrent, Element AI, Untether) or taken private (Magnet) — at the growth/public stage, by US buyers.</div></div>
+    <div class="card rv d2"><div class="ct">Foreign control = exit by another name</div><div class="ch">Fullscript and PointClickCare keep Canadian HQs but are US-PE-controlled. Control and upside leave before the jobs do — so intervene <b style="color:var(--ink)">earlier</b>.</div></div>
+    <div class="card rv d3"><div class="ct">Retention is achievable</div><div class="ch">StackAdapt, Wealthsimple, Neo, bootstrapped Geotab/Jane, repatriated MDA — domestic capital and control <b style="color:var(--ink)">do</b> anchor champions. They're just rare.</div></div>
+    <div class="card rv d1"><div class="ct">Control cuts both ways</div><div class="ch">Dual-class let Shopify stay independent — and let Magnet's controllers <b style="color:var(--ink)">sell</b> to US PE. Governance preserves the option; it doesn't compel staying.</div></div>
+  </div>
+</section>
+
+<section id="lineage">
+  <div class="act-no rv"><span class="l">— </span> A caveat worth naming</div>
+  <h2 class="rv d1">Canada's one public-market success is, so far, one family.</h2>
+  <p class="lede rv d1">The serial-acquirer model is the standout — but Topicus and Lumine are <em>controlled spin-offs</em> of Constellation, not independent successes. The public-market win is concentrated in a single lineage <b style="color:var(--ink)">(Constellation → Topicus → Lumine)</b>, with Descartes the one unrelated parallel. The model is replicable; the ecosystem hasn't yet replicated it.</p>
+</section>
+
+<section id="read">
+  <div class="act-no gd rv"><span class="l">— </span> The read</div>
+  <h2 class="rv d1">The companies confirm the diagnosis.</h2>
+  <p class="lede rv d1">Stays are possible but exceptional; the default trajectory is acquisition or a US listing, and foreign growth capital is the mechanism. If retention is achievable when domestic capital and control align, the question becomes: what did the jurisdictions that <em>built and kept</em> champions actually do?</p>
+  <div style="margin-top:30px"><a href="#page-what-works" data-nav="page-what-works" class="navcard" style="max-width:420px"><div class="k">Next · Comparators</div><div class="t">What Works Abroad →</div><div class="d">An interactive map of the comparators — and the programs (KVIC, Yozma, Tibi, STAR, ISK) that built and kept champions.</div></a></div>
+</section>
+
+<footer>
+  <div class="ft-h">The Evidence · The Champions</div>
+  <p>Drawn from ~34 company case studies in the vault (Themes/Case Studies/) and the Cross-Case Synthesis. Status labels are analytic summaries; private valuations are point-in-time/last-priced and flagged in the underlying pages. Confidence grades and citations on the Methodology page.</p>
+  <p style="color:var(--dim);margin-top:14px;font-family:var(--mono);font-size:11px;letter-spacing:.1em">CHAMPIONS_REPORT · 03_CHAMPIONS · v0.1</p>
+</footer>
+
+</div>
+</div>
+
+<div class="page" id="page-what-works">
+<div class="stage">
+
+
+<section id="intro" style="padding-top:128px">
+  <div class="boot"  data-boot="› comparators · programs · the asian liquidity model"></div>
+  <div class="act-no"><span class="l">04 —</span> What Works Abroad</div>
+  <h1 style="font-size:clamp(34px,6.4vw,68px)">What the jurisdictions that<br><span class="grad">kept their champions</span> did.</h1>
+  <p class="dek" style="margin-top:28px;max-width:64ch;font-size:clamp(15px,1.9vw,18px);color:var(--body)">Canada's problem — under-invested venture, under-traded public markets, champions sold or scaled abroad — is not unique. Other middle powers faced the same gravity and built mechanisms to resist it: permanent fund-of-funds, contractual domestic reinvestment, retail tax wrappers, designated market-makers, mandatory savings pools. This is the comparator field, the working program toolkit, and the one model — Asian retail liquidity — that looks like magic but comes with an honest caveat.</p>
+  <div class="scrollcue"><span class="arr"></span>scroll</div>
+</section>
+
+<section id="mapsec">
+  <div class="act-no rv"><span class="l">— </span> The comparator field</div>
+  <h2 class="rv d1">Where the capital flows — and where it stays.</h2>
+  <p class="lede rv d1">Comparator jurisdictions lit by <em>venture-capital intensity</em> (% of GDP) where known. Hover or tap a lit country to read its signature program, turnover velocity and the one-line lesson. Canada is highlighted differently — the subject, not a model.</p>
+  <div class="mapwrap rv d2" id="mapwrap">
+    <svg id="map" viewBox="0 0 960 480" role="img" aria-label="World map of comparator jurisdictions shaded by venture capital as a share of GDP"></svg>
+    <div class="maptip" id="maptip"></div>
+    <div class="maplegend"><span>VC / GDP</span><span class="ramp"></span><span>low → high</span><span style="color:var(--gold)">● Canada (subject)</span><span style="color:var(--dim)">· grey = program-only, no VC/GDP shading</span></div>
+    <div class="mapnote" id="mapnote">Loading comparator map…</div>
+  </div>
+  <div id="mappanel" class="rv">
+    <div class="empty">Click a lit jurisdiction on the map to pin its detail here.</div>
+  </div>
+  <div class="numlab rv">VC/GDP from OECD Entrepreneurship Financing DB / national-source compilation in the vault comparator compendium. Velocity figures are annualised turnover (value traded ÷ market cap). Several jurisdictions appear for their program or liquidity model only and carry no VC/GDP shading.</div>
+</section>
+
+<section id="toolkit">
+  <div class="act-no vi rv"><span class="l">— </span> The program toolkit</div>
+  <h2 class="rv d1">Eight mechanisms that actually moved capital.</h2>
+  <p class="lede rv d1">Strip away the labels and the toolkit is small. Two families dominate: <em>supply-side leverage</em> (state co-investment that pulls in private capital, then exits) and <em>demand-side anchoring</em> (a standing domestic bid — pensions, retail, insurers). The cleanest causal liquidity fix is neither — it is market-making plus mandated coverage.</p>
+  <div class="cards">
+    <div class="card rv d1" style="border-left:3px solid var(--cy)">
+      <div class="ct">KVIC Mother Fund · Korea</div>
+      <div class="ch">A permanent ₩10.9T state fund-of-funds (~3:1 private leverage). The Global Fund tranche <b style="color:var(--ink)">requires ≥1× reinvestment back into Korea</b>.</div>
+      <div class="numlab" style="margin-top:10px">Lesson: a permanent FoF plus contractual domestic reinvestment keeps the value at home.</div>
+    </div>
+    <div class="card rv d1" style="border-left:3px solid var(--cy)">
+      <div class="ct">Yozma · Israel</div>
+      <div class="ch">1993 government VC: <b style="color:var(--ink)">40% public equity + a cheap buyout option</b> for the private side. Fully privatized by 1998.</div>
+      <div class="numlab" style="margin-top:10px">Lesson: seed a VC industry, build in the exit, then get out.</div>
+    </div>
+    <div class="card rv d2" style="border-left:3px solid var(--violet)">
+      <div class="ct">Initiative Tibi · France</div>
+      <div class="ch">A <b style="color:var(--ink)">voluntary charter</b> mobilizing insurer and institutional capital — €15B+ committed across two waves.</div>
+      <div class="numlab" style="margin-top:10px">Lesson: a charter can mobilize insurer capital — but soft pledges leak.</div>
+    </div>
+    <div class="card rv d2" style="border-left:3px solid var(--violet)">
+      <div class="ct">Mansion House Accord · UK</div>
+      <div class="ch">Voluntary DC-pension pledge to domestic assets, backed by a statutory <b style="color:var(--ink)">reserve power</b> to mandate.</div>
+      <div class="numlab" style="margin-top:10px">Lesson: voluntary pledges underdeliver — ~0.6% achieved against a 5% goal.</div>
+    </div>
+    <div class="card rv d3" style="border-left:3px solid var(--gold)">
+      <div class="ct">STAR Segment · Italy</div>
+      <div class="ch"><b style="color:var(--ink)">Designated market-makers + mandated analyst coverage</b> for qualifying mid-caps.</div>
+      <div class="numlab" style="margin-top:10px">Lesson: coverage + market-making is the cleanest causal liquidity fix — spreads down 15–40%.</div>
+    </div>
+    <div class="card rv d3" style="border-left:3px solid var(--cy)">
+      <div class="ct">ISK Account · Sweden</div>
+      <div class="ch">A retail <b style="color:var(--ink)">flat-tax investment wrapper</b> now held by ~40% of the population.</div>
+      <div class="numlab" style="margin-top:10px">Lesson: a simple retail tax wrapper builds a deep domestic equity base.</div>
+    </div>
+    <div class="card rv d4" style="border-left:3px solid var(--cy)">
+      <div class="ct">SBIC · United States</div>
+      <div class="ch">SBA debenture leverage at <b style="color:var(--ink)">2:1</b> over private capital — decades-old plumbing under US venture debt.</div>
+      <div class="numlab" style="margin-top:10px">Lesson: cheap public leverage scales private deployment — but needs deep private capital first.</div>
+    </div>
+    <div class="card rv d4" style="border-left:3px solid var(--violet)">
+      <div class="ct">Superannuation · Australia</div>
+      <div class="ch"><b style="color:var(--ink)">A$4.2T of mandatory retirement savings</b> — a standing institutional bid that finances domestic markets.</div>
+      <div class="numlab" style="margin-top:10px">Lesson: mandatory savings create a permanent domestic institutional demand base.</div>
+    </div>
+  </div>
+
+  <div class="act-no rv" style="margin-top:54px"><span class="l">— </span> Public : private leverage, where there is public money</div>
+  <h2 class="rv d1" style="font-size:clamp(24px,3.6vw,36px)">Leverage ratios — and the voluntary outliers.</h2>
+  <p class="lede rv d1">The state-co-investment programs differ mainly in how much private capital each public dollar pulls in. The charter programs (Tibi, Mansion House) commit <em>no public money at all</em> — they rely on persuasion, which is exactly why they underdeliver.</p>
+  <div class="rank rv d2">
+    <div class="row gd"><div class="lab">NZ Elevate</div><div class="track"><div class="fill" data-w="100%"></div></div><div class="val">~3:1</div></div>
+    <div class="row"><div class="lab">KVIC (Korea)</div><div class="track"><div class="fill" data-w="100%"></div></div><div class="val">~3:1</div></div>
+    <div class="row alt"><div class="lab">SBIC (US)</div><div class="track"><div class="fill" data-w="67%"></div></div><div class="val">2:1</div></div>
+    <div class="row alt"><div class="lab">Yozma (Israel)</div><div class="track"><div class="fill" data-w="50%"></div></div><div class="val">~1.5:1</div></div>
+    <div class="row"><div class="lab">Tibi (France)</div><div class="track"><div class="fill" data-w="3%"></div></div><div class="val">voluntary</div></div>
+    <div class="row"><div class="lab">Mansion House (UK)</div><div class="track"><div class="fill" data-w="3%"></div></div><div class="val">voluntary</div></div>
+  </div>
+  <div class="numlab rv">Private capital pulled in per public dollar. NZ Elevate and KVIC pull ~C$3 of private money per public dollar; SBIC 2:1; Yozma ~1.5:1. Tibi and Mansion House deploy no public capital — bars shown nominally. Sources: KVIC / NZGCP / SBA program materials; IIA (Yozma).</div>
+</section>
+
+<section id="asian">
+  <div class="act-no gd rv"><span class="l">— </span> The Asian liquidity model</div>
+  <h2 class="rv d1">Retail turnover drives the velocity outliers — but read it carefully.</h2>
+  <p class="lede rv d1">The exchanges with the highest turnover velocity run on retail order flow: <em>Korea ~64% and Taiwan ~54% of all turnover is retail</em>. They pair that demand base with a dedicated high-growth board and a graduation pipeline — KOSDAQ in Korea, the TSE Growth Market in Japan — so scaling companies have a venue with depth before they reach the senior board.</p>
+  <div class="rank rv d2">
+    <div class="row gd"><div class="lab">South Korea</div><div class="track"><div class="fill" data-w="100%"></div></div><div class="val">~201%</div></div>
+    <div class="row"><div class="lab">Taiwan</div><div class="track"><div class="fill" data-w="62%"></div></div><div class="val">~125%</div></div>
+    <div class="row"><div class="lab">Japan</div><div class="track"><div class="fill" data-w="50%"></div></div><div class="val">~100%</div></div>
+    <div class="row"><div class="lab">Hong Kong</div><div class="track"><div class="fill" data-w="46%"></div></div><div class="val">~92%</div></div>
+    <div class="row alt"><div class="lab">Canada — TSX</div><div class="track"><div class="fill" data-w="36%"></div></div><div class="val">~73%</div></div>
+    <div class="row"><div class="lab">Australia</div><div class="track"><div class="fill" data-w="24%"></div></div><div class="val">~49%</div></div>
+    <div class="row alt"><div class="lab">Canada — TSXV</div><div class="track"><div class="fill" data-w="22%"></div></div><div class="val">~45%</div></div>
+  </div>
+  <div class="numlab rv">Turnover velocity, annualised (value traded ÷ market cap). Sources: OECD Asia Capital Markets Report; vault capital-mobilization workbook.</div>
+  <div class="pull rv">The retail→liquidity link is <b>correlational, not proven causation</b>. The cleanest causal lever is Italy's <b>STAR</b> — market-making plus mandated coverage. And Japan's <b>NISA</b> shows a retail wrapper can misfire: much of its flow went into <i>foreign</i> index funds, financing other countries' markets, not Japan's.</div>
+  <div class="numlab rv">The lesson is not "import day-trading." It is: build a domestic demand base (retail wrapper <i>or</i> mandatory savings), give scaling companies a real growth board, and guarantee liquidity at the security level through market-making and coverage. A wrapper that funds foreign funds (NISA) buys you nothing at home.</div>
+</section>
+
+<section id="read">
+  <div class="act-no gd rv"><span class="l">— </span> The read</div>
+  <h2 class="rv d1">The fixes exist. None is a single switch.</h2>
+  <p class="lede rv d1">No comparator solved retention with one instrument. The ones that worked stacked a supply-side leverage program, a domestic demand anchor, and security-level liquidity support — and, where the value mattered most, made domestic reinvestment <em>contractual</em> rather than voluntary. That stack is the raw material for the recommendations.</p>
+  <div style="margin-top:30px"><a class="navcard" href="#page-recommendations" data-nav="page-recommendations" style="max-width:440px"><div class="k">Next · Prescription</div><div class="t">The Recommendations →</div><div class="d">From comparator mechanisms to an Ontario program design — what to copy, what to adapt, and what to make mandatory.</div></a></div>
+</section>
+
+<footer>
+  <div class="ft-h">What Works Abroad</div>
+  <p>Comparator field, program toolkit and the Asian liquidity model, synthesised from the vault's international comparator work. VC/GDP and turnover-velocity figures are from the OECD Entrepreneurship Financing Database, the OECD Asia Capital Markets Report, national program sources (KVIC, Israel Innovation Authority, DG Trésor, ABI, SBA), and the vault capital-mobilization workbook. The retail→liquidity relationship is reported as correlational; see the Methodology page for confidence grades and full citations. CAD conversions approximate (~US$1 = C$1.44).</p>
+  <p style="color:var(--dim);margin-top:14px;font-family:var(--mono);font-size:11px;letter-spacing:.1em">CHAMPIONS_REPORT · 04_WHAT_WORKS · v0.1</p>
+</footer>
+
+</div>
+</div>
+
+<div class="page" id="page-recommendations">
+<div class="stage">
+
+
+<section id="intro" style="padding-top:128px">
+  <div class="boot"  data-boot="› prescription · four levers · costed"></div>
+  <div class="act-no gd"><span class="l">05 —</span> The Recommendations</div>
+  <h1 style="font-size:clamp(34px,6.4vw,68px)">Four levers to <span class="grad">build, scale, and keep</span> Canadian champions.</h1>
+  <p class="dek" style="margin-top:28px;max-width:66ch;font-size:clamp(15px,1.9vw,18px);color:var(--body)">The levers follow directly from the diagnosis — <b style="color:var(--ink)">under-investment at the scale-up stage</b>, <b style="color:var(--ink)">exit by acquisition or US listing</b>, and <b style="color:var(--ink)">thin liquidity</b> — and from what works abroad. They lead with <em style="color:var(--ink);font-style:normal;border-bottom:1px solid var(--cy)">incentives, not mandates</em>: the aim is to make backing, scaling, and keeping Canadian companies the rational private choice, not a compelled one.</p>
+  <div class="scrollcue"><span class="arr"></span>scroll</div>
+</section>
+
+<section id="lever1">
+  <div class="act-no rv"><span class="l">— </span> Lever ① · supply of growth capital</div>
+  <h2 class="rv d1">A Canadian <span class="grad">Growth Capital Compact</span>.</h2>
+  <p class="lede rv d1">Tests hypotheses <em>H-S1 / H-S2</em>. The scale-up rounds Canada won't write are the binding supply constraint. The fix is an anchor fund-of-funds at market terms, with the matching, sweetener, and prudential carve-outs that crowd private money <em>in</em> — not a mandate that pushes it out.</p>
+  <div class="card rv d2" style="border-left:3px solid var(--cy);margin-top:24px">
+    <div class="ct">Make the Growth VCCI permanent and scale it to C$3–5B</div>
+    <div class="ch">An anchor fund-of-funds deploying at market terms — the KVIC (Korea), Tesi (Finland) and NZ Growth Fund model. Four design bolts make it work:</div>
+    <div class="cards" style="margin-top:18px">
+      <div class="card" style="border-left:3px solid var(--violet)">
+        <div class="ct" style="font-size:15px">0.3 : 1 government match</div>
+        <div class="ch">A co-investment match on institutional and insurer commitments — concessional enough to move capital, lean enough not to subsidise it.</div>
+      </div>
+      <div class="card" style="border-left:3px solid var(--violet)">
+        <div class="ct" style="font-size:15px">Yozma-style sweetener</div>
+        <div class="ch">A buyout-at-cost + 5–7% / 5yr call option on the public stake (Israel's Yozma) — caps government upside, hands the winners to private GPs.</div>
+      </div>
+      <div class="card" style="border-left:3px solid var(--violet)">
+        <div class="ct" style="font-size:15px">≥ 1× "reinvest in Canada" clause</div>
+        <div class="ch">A contractual condition that foreign VCs accessing the FoF redeploy at least 1× of drawn capital domestically — the Korea Global Fund mechanism.</div>
+      </div>
+      <div class="card" style="border-left:3px solid var(--violet)">
+        <div class="ct" style="font-size:15px">OSFI LICAT carve-out</div>
+        <div class="ch">Cut the 40% capital factor toward 30% for qualifying domestic VC — mirroring Canada's own July-2025 infrastructure carve-out, freeing insurer balance sheets.</div>
+      </div>
+    </div>
+    <div class="numlab" style="margin-top:18px">At VCCI's realised <b style="color:var(--ink)">~3:1</b> leverage, a C$3–5B FoF deploying ~C$1B/yr mobilises <b style="color:var(--gold)">~C$4B/yr total</b> — about the size of the median scale-up gap.</div>
+  </div>
+  <div class="pull rv">Mandate verdict: <b>against a hard pension mandate.</b> Cumming calls it "a tax on pensioners"; the UK's Mansion House pledge under-delivered at <b>0.6%</b> vs a 5% target; Korea's pure-structure approach crowds private capital out. Make domestic VC the <b>rational</b> choice instead.</div>
+  <div class="numlab rv">Sources: VCCI program data; KVIC / Tesi / NZ Growth Fund design; Yozma & Korea Global Fund mechanisms; OSFI LICAT 2025 with the July-2025 infrastructure carve-out; Cumming (2026).</div>
+</section>
+
+<section id="lever2">
+  <div class="act-no rv"><span class="l">— </span> Lever ② · demand-side capital</div>
+  <h2 class="rv d1">A Canadian <span class="grad">Innovation Investment</span> tax scheme.</h2>
+  <p class="lede rv d1">Tests <em>H-C1</em>. A SEIS/EIS-style investor credit — roughly <b style="color:var(--ink)">~50% at seed, ~30% at growth</b> — pulls private angel and early-growth money into qualifying Canadian companies. The UK's design is proven; copy it rather than reinvent it.</p>
+  <div class="statrow rv d2">
+    <div class="stat"><div class="n gd">~C$430m</div><div class="l">gross central cost to mobilise ~C$1B/yr (range C$215–645m)</div></div>
+    <div class="stat"><div class="n">~C$0.43</div><div class="l">gross cost per dollar mobilised; ~C$1.10–1.70 per net-new dollar after a ⅓ additionality haircut</div></div>
+    <div class="stat"><div class="n cy">below mining</div><div class="l">under Canada's existing flow-through envelope (~C$600–690m/yr)</div></div>
+  </div>
+  <div class="card rv d2" style="border-left:3px solid var(--cy);margin-top:24px">
+    <div class="ct">Copy the proven SEIS design</div>
+    <div class="ch">High-rate relief, a tight seed band, a risk-to-capital screen, a domestic-content requirement, and evaluation built in from day one. <b style="color:var(--ink)">Avoid a broad patent box</b> — it leaks to incumbents and rewards activity that would have happened anyway.</div>
+  </div>
+  <div class="pull rv">At <b>~C$0.43 per gross dollar</b> mobilised, the scheme sits <b>below</b> the mining flow-through envelope Canada already funds every year — a costed, precedented ask, not a leap.</div>
+  <div class="numlab rv">Sources: HM Revenue & Customs SEIS/EIS statistics (2025); vault tax-incentive workbook; Canada flow-through shares cost estimate. Additionality haircut applied per the workbook methodology.</div>
+</section>
+
+<section id="lever3">
+  <div class="act-no rv"><span class="l">— </span> Lever ③ · retention</div>
+  <h2 class="rv d1">Retention <span class="grad">architecture</span>.</h2>
+  <p class="lede rv d1">Tests <em>H-R2 / R3 / R4 / R6</em>. Supplying capital isn't enough if champions are sold or relisted abroad the moment they scale. Four interlocking pieces keep pre-IPO companies — and their IP, HQ and hiring — anchored in Canada.</p>
+  <div class="cards rv d2">
+    <div class="card" style="border-left:3px solid var(--gold)">
+      <div class="ct" style="font-size:16px">Pre-IPO liquidity venue</div>
+      <div class="ch">A PISCES-style private-secondary market plus a Canadian LTAF — letting founders and early employees realise liquidity without a sale or a US listing.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--gold)">
+      <div class="ct" style="font-size:16px">Retention conditionality</div>
+      <div class="ch">Attach Canadian-HQ / IP / hiring conditions to public grants — à la Quebec's CQCP and Israel's §19A IP-transfer levy.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--gold)">
+      <div class="ct" style="font-size:16px">Governance & control</div>
+      <div class="ch">Benefit-company form, facilitative dual-class with sunset-renewal, and steward-ownership structures. Necessary but <b style="color:var(--ink)">not sufficient</b> on their own.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--gold)">
+      <div class="ct" style="font-size:16px">Anti-take-private scoping</div>
+      <div class="ch">Scope measures against opportunistic take-privates — design-constrained by CUSMA and Canada's investment treaties, so calibrate carefully.</div>
+    </div>
+  </div>
+  <div class="pull rv">Governance tools alone don't keep a company home. Retention works only as an <b>architecture</b> — liquidity, conditionality, control and defence reinforcing one another.</div>
+  <div class="numlab rv">Sources: UK PISCES framework; LTAF design; Quebec CQCP conditionality; Israel Innovation Authority §19A; benefit-company & dual-class governance literature; CUSMA investment-chapter constraints.</div>
+</section>
+
+<section id="lever4">
+  <div class="act-no rv"><span class="l">— </span> Lever ④ · liquidity & coverage</div>
+  <h2 class="rv d1">Fix the <span class="grad">trading and the research</span>.</h2>
+  <p class="lede rv d1">Tests <em>H-S3 + H-C2</em>. The diagnosis identified turnover velocity as the binding public-market constraint. The cleanest causal fixes are designated market-making, mandated coverage, and a retail demand base routed at <em>domestic</em> growth equity.</p>
+  <div class="cards rv d2">
+    <div class="card" style="border-left:3px solid var(--cy)">
+      <div class="ct" style="font-size:16px">STAR-style market-maker + coverage</div>
+      <div class="ch">A Borsa Italiana STAR-style designated-market-maker and mandated analyst-coverage obligation for the TSXV / CSE — the cleanest causal liquidity fix in the evidence.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--cy)">
+      <div class="ct" style="font-size:16px">ISK-style retail account</div>
+      <div class="ch">A Swedish-ISK-style retail savings account designed to route to <b style="color:var(--ink)">domestic</b> growth equity — learning from Japan's NISA misfire, which leaked savings offshore.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--cy)">
+      <div class="ct" style="font-size:16px">Graduation escalator</div>
+      <div class="ch">Reinforce the TSXV → TSX graduation escalator so junior-board winners have a clear, low-friction path up to the senior board.</div>
+    </div>
+  </div>
+  <div class="numlab rv">Sources: Borsa Italiana STAR segment rules; Sweden ISK account design; Japan NISA evaluation; TMX graduation framework. Causal claim per the WFE / OECD liquidity evidence — see Methodology.</div>
+</section>
+
+<section id="crosswalk">
+  <div class="act-no vi rv"><span class="l">— </span> Situation → lever</div>
+  <h2 class="rv d1">Which lever fits which company.</h2>
+  <p class="lede rv d1">The levers aren't a menu — they're matched to the situation a champion is actually in. Six recurring profiles, each pointing to a different combination.</p>
+  <div class="cards rv d2">
+    <div class="card" style="border-left:3px solid var(--cy)">
+      <div class="ct" style="font-size:15px">Independent at IPO-candidate scale</div>
+      <div class="ch" style="color:var(--dim);font-size:12.5px;margin-bottom:6px">Cohere · Wealthsimple</div>
+      <div class="ch">PISCES / LTAF + TSX-listing incentives + the FoF — keep them liquid and home until they list.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--violet)">
+      <div class="ct" style="font-size:15px">Acquisition-in-play</div>
+      <div class="ch" style="color:var(--dim);font-size:12.5px;margin-bottom:6px">Tenstorrent</div>
+      <div class="ch">Anti-take-private scoping + retention conditionality — raise the friction on an opportunistic sale.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--cy)">
+      <div class="ct" style="font-size:15px">Growth scaling on US capital</div>
+      <div class="ch" style="color:var(--dim);font-size:12.5px;margin-bottom:6px">Clio · Ada · Tailscale</div>
+      <div class="ch">FoF + match + tax scheme to crowd domestic capital into rounds US investors currently own.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--gold)">
+      <div class="ct" style="font-size:15px">Domestic-capital exemplar</div>
+      <div class="ch" style="color:var(--dim);font-size:12.5px;margin-bottom:6px">StackAdapt · Neo</div>
+      <div class="ch">Scale it / make it routine — these are proof the model works; the job is to make them ordinary.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--violet)">
+      <div class="ct" style="font-size:15px">Foreign-PE-controlled mature</div>
+      <div class="ch" style="color:var(--dim);font-size:12.5px;margin-bottom:6px">Fullscript · PointClickCare</div>
+      <div class="ch">Intervene earlier — the leverage is in the growth round before control passes offshore.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--gold)">
+      <div class="ct" style="font-size:15px">Public, depressed, takeover-exposed</div>
+      <div class="ch" style="color:var(--dim);font-size:12.5px;margin-bottom:6px">Coveo · D2L</div>
+      <div class="ch">Anti-take-private + liquidity measures — thin trading is what makes them cheap to take.</div>
+    </div>
+  </div>
+</section>
+
+<section id="numbers">
+  <div class="act-no gd rv"><span class="l">— </span> The numbers that anchor it</div>
+  <h2 class="rv d1">Costed, leveraged, and within reach.</h2>
+  <p class="lede rv d1">The package is sized against the gap it's meant to close — and against pools of domestic capital that already exist.</p>
+  <div class="statrow rv d2">
+    <div class="stat"><div class="n rd">C$5–11B</div><div class="l">/yr — the scale-up financing gap the package targets</div></div>
+    <div class="stat"><div class="n cy">~C$4B</div><div class="l">/yr mobilised by the Compact at VCCI's ~3:1 leverage</div></div>
+    <div class="stat"><div class="n gd">~C$430m</div><div class="l">gross central cost of the tax scheme</div></div>
+    <div class="stat"><div class="n vi" data-count="2.63" data-dec="2" data-prefix="C$" data-suffix="T">0</div><div class="l">Maple-8 AUM — moving &lt;0.5% → 1% adds ~C$26B of domestic-VC headroom</div></div>
+  </div>
+  <div class="numlab rv">The headroom dwarfs the ask: a half-point shift in Maple-8 allocation toward domestic growth equity is several times the entire annual gap. Sources: CVCA / VCCI leverage; vault tax workbook; Maple-8 AUM (2025 annual reports).</div>
+</section>
+
+<section id="close">
+  <div class="act-no gd rv"><span class="l">— </span> The objective</div>
+  <h2 class="rv d1">Make the exception the rule.</h2>
+  <div class="pull rv" style="max-width:34ch">The goal is to make the retention <b>exceptions</b> — StackAdapt, Wealthsimple, MDA — the <b>rule</b>.</div>
+  <p class="lede rv d1" style="margin-top:30px">Each company that stayed, scaled and listed at home did so against the grain of the system. The four levers are an attempt to bend the system the other way — so that staying is the default, not the act of defiance.</p>
+  <div style="margin-top:30px"><a class="navcard" href="#page-methodology" data-nav="page-methodology" style="max-width:440px"><div class="k">Appendix · Methodology</div><div class="t">Methodology & Sources →</div><div class="d">The hypothesis scaffold, costing workbooks, confidence grades, and the full source register behind every figure in this report.</div></a></div>
+</section>
+
+<footer>
+  <div class="ft-h">The Recommendations</div>
+  <p>The four levers map to the Domestic Champions hypotheses scaffold (H-S1/S2/S3, H-C1/C2, H-R2/R3/R4/R6). Costings draw on the tax-incentive and capital-mobilization workbooks; the OSFI LICAT carve-out follows Canada's own July-2025 infrastructure precedent; the mandate verdict follows Cumming (2026). Comparator designs: KVIC, Tesi, NZ Growth Fund, Yozma, Korea Global Fund, SEIS/EIS, PISCES, Borsa Italiana STAR, Sweden ISK, Quebec CQCP, Israel §19A. CAD conversions at ~US$1 = C$1.44. Confidence grades and full citations on the Methodology page.</p>
+  <p style="color:var(--dim);margin-top:14px;font-family:var(--mono);font-size:11px;letter-spacing:.1em">CHAMPIONS_REPORT · 05_RECOMMENDATIONS · v0.1</p>
+</footer>
+
+</div>
+</div>
+
+<div class="page" id="page-methodology">
+<div class="stage">
+
+
+<section id="intro" style="padding-top:128px">
+  <div class="boot"  data-boot="› appendix · data layers · confidence grades · caveats"></div>
+  <div class="act-no"><span class="l">06 —</span> Methodology &amp; Sources</div>
+  <h1 style="font-size:clamp(34px,6.4vw,68px)">How to read<br><span class="grad">these numbers.</span></h1>
+  <p class="dek" style="margin-top:28px;max-width:64ch;font-size:clamp(15px,1.9vw,18px);color:var(--body)">This report draws on a single validated research vault. Every figure is graded by confidence and caveated honestly: point-in-time market caps are flagged, private valuations are marked, and computed estimates carry a stated range. Below are the data layers behind the charts, the grading scheme, the caveats that matter, and the source-authority hierarchy that governs what gets cited.</p>
+  <div class="scrollcue"><span class="arr"></span>scroll</div>
+</section>
+
+<section id="layers">
+  <div class="act-no rv"><span class="l">— </span> Data layers &amp; vintages</div>
+  <h2 class="rv d1">What the charts are built on — and as at when.</h2>
+  <p class="lede rv d1">Every quantitative claim resolves to one of these layers. Each carries a <em>vintage</em> — the as-at or reporting date — because market data ages fast and several figures have already moved since the snapshot.</p>
+  <div class="cards">
+    <div class="card rv d1" style="border-left:3px solid var(--cy)">
+      <div class="ct">TMX listed-companies &amp; financing</div>
+      <div class="ch">TSX / TSXV issuer counts, market caps, and equity-financing statistics. The backbone of the public-markets diagnosis.</div>
+      <div class="numlab" style="margin-top:12px">As at <b style="color:var(--ink)">Feb 28 2026</b> (listed companies) · <b style="color:var(--ink)">FY2025</b> (financing).</div>
+    </div>
+    <div class="card rv d2" style="border-left:3px solid var(--cy)">
+      <div class="ct">CSE listed-companies + market summary</div>
+      <div class="ch">CSE listed-companies API plus the annual market summary — issuer counts, equity market cap, financing.</div>
+      <div class="numlab" style="margin-top:12px">As at <b style="color:var(--ink)">end-2025</b>.</div>
+    </div>
+    <div class="card rv d3" style="border-left:3px solid var(--cy)">
+      <div class="ct">OECD Entrepreneurship Financing DB</div>
+      <div class="ch">VC investment as a share of GDP across OECD members — the comparator base for the financing-gap computation.</div>
+      <div class="numlab" style="margin-top:12px">Vintage <b style="color:var(--ink)">2024</b>.</div>
+    </div>
+    <div class="card rv d1" style="border-left:3px solid var(--violet)">
+      <div class="ct">The four vault workbooks</div>
+      <div class="ch">The structured research store: <b style="color:var(--ink)">public-markets</b>, <b style="color:var(--ink)">financing-gaps</b>, <b style="color:var(--ink)">capital-mobilization</b>, and <b style="color:var(--ink)">tax-incentives</b>.</div>
+      <div class="numlab" style="margin-top:12px">Validated working data; cross-checked against primary sources.</div>
+    </div>
+    <div class="card rv d2" style="border-left:3px solid var(--violet)">
+      <div class="ct">CVCA / NACO / BDC reporting</div>
+      <div class="ch">Venture &amp; growth financing volumes, angel activity, and deal counts — the industry view of the private market.</div>
+      <div class="numlab" style="margin-top:12px">Reporting years <b style="color:var(--ink)">2024–2026</b>.</div>
+    </div>
+    <div class="card rv d3" style="border-left:3px solid var(--gold)">
+      <div class="ct">Case studies &amp; secondary studies</div>
+      <div class="ch">~<b style="color:var(--ink)">34 company case studies</b>; the <b style="color:var(--ink)">WFE</b> listings study (2025); and the <b style="color:var(--ink)">OECD</b> growth-markets and Asia capital-markets reports (2025).</div>
+      <div class="numlab" style="margin-top:12px">Illustrative and analytical, not statistical samples.</div>
+    </div>
+  </div>
+</section>
+
+<section id="grades">
+  <div class="act-no rv"><span class="l">— </span> Confidence grading</div>
+  <h2 class="rv d1">Three grades, colour-keyed — <span class="grad">so you know how hard a number is</span>.</h2>
+  <p class="lede rv d1">Not every figure carries equal weight. Each is graded by the authority of its source. The colour key below is reused on the data pages so a glance tells you whether you're reading a regulator's number or a press-reported estimate.</p>
+  <div class="cards">
+    <div class="card rv d1" style="border-left:3px solid var(--cy)">
+      <div class="ct" style="display:flex;align-items:center;gap:10px"><span class="tag stay">High</span> Government · regulator · int'l org</div>
+      <div class="ch">Primary, audited, or official. The hardest numbers in the report. Sources: TMX, OECD, StatCan, Dept of Finance, OSFI, WFE.</div>
+      <div class="numlab" style="margin-top:12px">e.g. <b style="color:var(--ink)">TSX 668 operating companies</b> (TMX, Feb 2026) · <b style="color:var(--ink)">VC/GDP comparator series</b> (OECD 2024) · <b style="color:var(--ink)">82% median free float</b> (OECD growth-markets study).</div>
+    </div>
+    <div class="card rv d2" style="border-left:3px solid var(--violet)">
+      <div class="ct" style="display:flex;align-items:center;gap:10px"><span class="tag risk">Medium</span> Industry · association</div>
+      <div class="ch">Self-reported by well-governed bodies, but not regulatory. Sources: CVCA, NACO, BDC, exchange commentary.</div>
+      <div class="numlab" style="margin-top:12px">e.g. <b style="color:var(--ink)">annual VC deal volume &amp; counts</b> (CVCA) · <b style="color:var(--ink)">angel-investment activity</b> (NACO) · <b style="color:var(--ink)">growth-financing commentary</b> (BDC).</div>
+    </div>
+    <div class="card rv d3" style="border-left:3px solid var(--gold)">
+      <div class="ct" style="display:flex;align-items:center;gap:10px"><span class="tag left">Soft</span> Advocacy · consultancy · aggregator</div>
+      <div class="ch">Useful colour, but advocacy-tinted, modelled, or based on private valuations. Sources: Vector/Deloitte, PitchBook/Crunchbase, press, last-priced rounds.</div>
+      <div class="numlab" style="margin-top:12px">e.g. <b style="color:var(--ink)">AI-talent share figures</b> (Vector/Deloitte) · <b style="color:var(--ink)">private-company valuations</b> (PitchBook/Crunchbase, last-priced) · <b style="color:var(--ink)">round details</b> (press, ⚠️).</div>
+    </div>
+  </div>
+</section>
+
+<section id="caveats">
+  <div class="act-no vi rv"><span class="l">— </span> Key caveats</div>
+  <h2 class="rv d1">Where to be careful.</h2>
+  <p class="lede rv d1">The honest reading of any synthesis is in its caveats. These are the limits a careful reader should hold in mind.</p>
+  <div class="cards">
+    <div class="card rv d1"><div class="ct">Market caps are point-in-time</div><div class="ch">TSX/TSXV as at Feb 2026; CSE end-2025. Several names have moved materially since the snapshot — treat them as a dated cross-section, not live quotes.</div></div>
+    <div class="card rv d2"><div class="ct">Private valuations are last-priced ⚠️</div><div class="ch">Figures for private champions are last-priced or press-reported rounds, flagged with ⚠️. They are not marks, audited values, or current.</div></div>
+    <div class="card rv d3"><div class="ct">Investor-domicile is indicative</div><div class="ch">"US-backed" / "Canadian-backed" tags reflect lead or notable investors, not full cap-table control or board math.</div></div>
+    <div class="card rv d1"><div class="ct">"AI company" is curated</div><div class="ch">The AI cohort is a curated list, not a bottom-up definition. Different definitions would shift counts at the margin.</div></div>
+    <div class="card rv d2"><div class="ct">The financing gap is a computation</div><div class="ch">Canada's VC/GDP vs. the comparator median and the US benchmark — a modelled estimate with a stated range, not an observed figure.</div></div>
+    <div class="card rv d3"><div class="ct">Korea KVIC figures are trade-press</div><div class="ch">The South Korea KVIC numbers are trade-press-sourced and should be read as indicative of scale, not audited.</div></div>
+    <div class="card rv d1"><div class="ct">Case studies are illustrative</div><div class="ch">The ~34 company studies illustrate mechanisms; they are not a statistical sample and don't support frequency claims.</div></div>
+    <div class="card rv d2"><div class="ct">CAD conversions are approximate</div><div class="ch">USD figures converted at ~US$1 = C$1.44. Cross-currency comparisons carry an FX margin.</div></div>
+  </div>
+</section>
+
+<section id="hierarchy">
+  <div class="act-no rv"><span class="l">— </span> Source hierarchy</div>
+  <h2 class="rv d1">The vault's <span class="grad">eight-tier authority hierarchy</span>.</h2>
+  <p class="lede rv d1">Every citation in the vault is ranked on an eight-tier authority scale, from primary official sources down to general web content. Higher tiers override lower ones on points of fact. The principal sources used at each tier:</p>
+  <div class="rank rv d2" style="margin-top:30px">
+    <div class="row"><div class="lab">T1 · Gov / regulator / int'l</div><div class="track"><div class="fill" data-w="100%"></div></div><div class="val">TMX · OECD · StatCan · IMF · OSFI · Dept of Finance</div></div>
+    <div class="row"><div class="lab">T2 · Academic / peer-reviewed</div><div class="track"><div class="fill" data-w="88%"></div></div><div class="val">Wilson · Cumming · Demmou</div></div>
+    <div class="row"><div class="lab">T3 · Industry / standards</div><div class="track"><div class="fill" data-w="76%"></div></div><div class="val">WFE · exchange standards bodies</div></div>
+    <div class="row alt"><div class="lab">T4 · Institutional research</div><div class="track"><div class="fill" data-w="64%"></div></div><div class="val">CVCA · NACO · BDC · RBC · Deloitte</div></div>
+    <div class="row alt"><div class="lab">T5 · Law-firm / legal</div><div class="track"><div class="fill" data-w="52%"></div></div><div class="val">firm commentary &amp; analysis</div></div>
+    <div class="row alt"><div class="lab">T6 · News / trade press</div><div class="track"><div class="fill" data-w="40%"></div></div><div class="val">BetaKit · Globe &amp; Mail · The Logic · Private Capital Journal</div></div>
+    <div class="row alt"><div class="lab">T7 · Think tanks / policy</div><div class="track"><div class="fill" data-w="28%"></div></div><div class="val">policy-institute analysis</div></div>
+    <div class="row alt"><div class="lab">T8 · Blog / opinion / web</div><div class="track"><div class="fill" data-w="16%"></div></div><div class="val">general web content</div></div>
+  </div>
+  <div class="numlab rv">Bar length encodes authority weight, not citation count. Tiers 4 and 6 do the most work in this report's private-market and exit narratives; tier-1 sources anchor every headline figure.</div>
+</section>
+
+<section id="close">
+  <div class="act-no gd rv"><span class="l">— </span> A note on standing</div>
+  <h2 class="rv d1">A research synthesis — not a government report.</h2>
+  <p class="lede rv d1">This is a <em>proof-of-concept research synthesis</em>, assembled from a single validated vault to make the case readable end-to-end. It is not a published government report, a regulatory filing, or audited research. Figures are graded and caveated above; where a number is soft, the report says so. Read it as a structured argument with its sources on the table — not as an official statistic.</p>
+  <div style="margin-top:30px"><a class="navcard" href="#page-overview" data-nav="page-overview" style="max-width:420px"><div class="k">Return · Overview</div><div class="t">← Back to Overview</div><div class="d">Back to the top of the report — the four numbers, the diagnosis, and the through-line from exchanges to companies.</div></a></div>
+</section>
+
+<footer>
+  <div class="ft-h">Appendix · Methodology &amp; Sources</div>
+  <p>Figures throughout this report resolve to the data layers and source hierarchy above. Market caps are point-in-time (TSX/TSXV Feb 28 2026; CSE end-2025); private valuations are last-priced or press-reported (⚠️); the financing gap is a computed estimate with a stated range. CAD conversions at ~US$1 = C$1.44. This is a research synthesis and proof-of-concept, not a published government report.</p>
+  <p style="color:var(--dim);margin-top:14px;font-family:var(--mono);font-size:11px;letter-spacing:.1em">CHAMPIONS_REPORT · 06_METHODOLOGY · v0.1</p>
+</footer>
+
+</div>
+</div>
+
+<script>
+
+var INIT={};
+INIT['page-public-markets']=function(){
+(function(){
+  if(!window.Chart) return;
+  Chart.defaults.color="#9fb0c6";
+  Chart.defaults.font.family="'Inter',system-ui,sans-serif";
+  Chart.defaults.font.size=12;
+  var ctx=document.getElementById("ipoChart");
+  if(ctx){
+    new Chart(ctx,{
+      type:"line",
+      data:{
+        labels:["2021","2022","2023","2024","2025"],
+        datasets:[{
+          label:"Operating-company IPOs (all Cdn exchanges)",
+          data:[171,114,51,25,19],
+          borderColor:"#2fe6cd",
+          backgroundColor:function(c){var a=c.chart.ctx.createLinearGradient(0,0,0,180);a.addColorStop(0,"rgba(47,230,205,.28)");a.addColorStop(1,"rgba(47,230,205,0)");return a;},
+          fill:true,tension:.32,borderWidth:2.5,
+          pointBackgroundColor:"#05070b",pointBorderColor:"#2fe6cd",pointBorderWidth:2,pointRadius:4,pointHoverRadius:6
+        }]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{backgroundColor:"#0c121d",borderColor:"#26303f",borderWidth:1,titleColor:"#eaf4ff",padding:10,callbacks:{label:function(c){return c.parsed.y+" IPOs";}}}},
+        scales:{
+          x:{grid:{color:"rgba(38,48,63,.4)"},ticks:{font:{family:"'JetBrains Mono',monospace"}}},
+          y:{grid:{color:"rgba(38,48,63,.4)"},ticks:{font:{family:"'JetBrains Mono',monospace"}},beginAtZero:true}
+        }
+      }
+    });
+  }
+})();
+};
+INIT['page-financing-gap']=function(){
+(function(){
+  if(!window.Chart) return;
+  Chart.defaults.color="#9fb0c6";
+  Chart.defaults.font.family="'Inter',system-ui,sans-serif";
+  var d=document.getElementById("growthDonut");
+  if(d){
+    new Chart(d,{
+      type:"doughnut",
+      data:{labels:["Foreign-inclusive","Canadian-only"],datasets:[{data:[86.1,13.9],backgroundColor:["#ff5d6c","#2fe6cd"],borderColor:"#0c121d",borderWidth:3,hoverOffset:6}]},
+      options:{cutout:"64%",plugins:{legend:{position:"bottom",labels:{font:{family:"'JetBrains Mono',monospace",size:11},padding:14,boxWidth:12}},tooltip:{backgroundColor:"#0c121d",borderColor:"#26303f",borderWidth:1,callbacks:{label:function(c){return c.label+": "+c.parsed+"% of $50M+ round capital";}}}}}
+    });
+  }
+})();
+};
+INIT['page-what-works']=function(){
+"use strict";
+/* ---------------- comparator dataset ----------------
+   name : {vc (% GDP or null), program, velocity, lesson, ca (Canada flag)} */
+var DATA = [
+  {name:"Israel",        vc:1.81, prog:"Yozma (1993 — 40% gov equity + cheap buyout; privatized by 1998)", vel:"n/a", lesson:"Seeded a VC industry, then got out."},
+  {name:"United States", vc:0.53, prog:"SBIC (2:1 SBA debenture leverage)", vel:"high", lesson:"Deep private capital — the benchmark."},
+  {name:"South Korea",   vc:0.25, prog:"KVIC Mother Fund (₩10.9T, ~3:1; Global Fund requires ≥1× reinvestment into Korea)", vel:"~201%", lesson:"Permanent fund-of-funds + contractual domestic reinvestment + deep retail liquidity."},
+  {name:"United Kingdom",vc:0.18, prog:"Mansion House Accord (voluntary DC-pension pledge + reserve power)", vel:"n/a", lesson:"Voluntary pledges underdeliver — 0.6% achieved vs a 5% goal."},
+  {name:"France",        vc:0.25, prog:"Initiative Tibi (voluntary charter; insurers; €15B+)", vel:"n/a", lesson:"Charter mobilized insurer capital; soft (leaky) domestic capture."},
+  {name:"Sweden",        vc:0.11, prog:"ISK (retail flat-tax account, ~40% of population)", vel:"n/a", lesson:"A retail tax wrapper built a domestic equity base."},
+  {name:"Italy",         vc:null, prog:"STAR segment (designated market-makers + mandated analyst coverage)", vel:"n/a", lesson:"Coverage + market-making is the cleanest causal liquidity fix (spreads −15 to −40%)."},
+  {name:"Taiwan",        vc:null, prog:"Retail-driven turnover (~54% retail)", vel:"~125%", lesson:"Retail-driven turnover (~54% retail)."},
+  {name:"Japan",         vc:null, prog:"NISA (cautionary — flows skewed to foreign index funds)", vel:"~100%", lesson:"A retail wrapper can fail if it funds foreign funds."},
+  {name:"Hong Kong",     vc:null, prog:"Deep retail / secondary liquidity", vel:"~92%", lesson:"Deep retail/secondary liquidity."},
+  {name:"Singapore",     vc:null, prog:"EQDP (state equity demand floor, S$5B+)", vel:"n/a", lesson:"State-anchored demand for listings."},
+  {name:"Australia",     vc:null, prog:"Superannuation (A$4.2T mandatory savings → deep domestic bid)", vel:"~49%", lesson:"Mandatory savings create a standing domestic institutional bid."},
+  {name:"Germany",       vc:null, prog:"WIN (€12B voluntary) + Wachstumsfonds (~€1B FoF)", vel:"n/a", lesson:"Voluntary institutional commitment to domestic VC."},
+  {name:"Canada",        vc:0.20, prog:"The subject", vel:"TSX ~73% / TSXV ~45%", lesson:"The subject — under-invested and under-traded.", ca:true}
+];
+
+/* ---------------- shared fallback rank renderer ---------------- */
+function buildFallback(msg){
+  var wrap=document.getElementById("mapwrap");
+  var svg=document.getElementById("map"); if(svg)svg.style.display="none";
+  var tip=document.getElementById("maptip"); if(tip)tip.style.display="none";
+  var note=document.getElementById("mapnote");
+  /* ranked list of VC/GDP for jurisdictions that have it */
+  var rows=DATA.filter(function(d){return d.vc!=null;})
+               .sort(function(a,b){return b.vc-a.vc;});
+  var max=0; rows.forEach(function(r){ if(r.vc>max)max=r.vc; });
+  var box=document.createElement("div");
+  box.className="rank"; box.style.marginTop="6px";
+  box.setAttribute("role","img"); box.setAttribute("aria-label","Comparator jurisdictions ranked by venture capital as a share of GDP");
+  rows.forEach(function(r){
+    var row=document.createElement("div");
+    row.className="row"+(r.ca?" gd":"");
+    row.innerHTML='<div class="lab">'+r.name+'</div>'+
+      '<div class="track"><div class="fill" data-w="'+(r.vc/max*100).toFixed(1)+'%"></div></div>'+
+      '<div class="val">'+r.vc.toFixed(2)+'%</div>';
+    box.appendChild(row);
+  });
+  wrap.insertBefore(box, note);
+  /* animate the fills (app.js may not catch dynamically-inserted nodes) */
+  requestAnimationFrame(function(){
+    box.querySelectorAll(".fill").forEach(function(f,i){ setTimeout(function(){ f.style.width=f.getAttribute("data-w"); }, 120+i*55); });
+  });
+  /* also surface the program/lesson detail as cards so nothing is lost */
+  var cards=document.createElement("div");
+  cards.className="cards"; cards.style.marginTop="20px";
+  DATA.forEach(function(d){
+    var c=document.createElement("div");
+    c.className="card";
+    if(d.ca)c.style.borderLeft="3px solid var(--gold)";
+    c.innerHTML='<div class="ct">'+d.name+(d.vc!=null?' <span style="font-family:var(--mono);font-size:11px;color:var(--dim)">VC '+d.vc.toFixed(2)+'%</span>':'')+'</div>'+
+      '<div class="ch">'+d.prog+'</div>'+
+      '<div class="numlab" style="margin-top:8px">Velocity: '+d.vel+' · '+d.lesson+'</div>';
+    cards.appendChild(c);
+  });
+  wrap.parentNode.insertBefore(cards, wrap.nextSibling);
+  note.textContent=msg||"Map library offline — showing the ranked comparator list and program detail instead.";
+}
+
+/* ---------------- D3 map with graceful fallback ---------------- */
+(function(){
+  var note=document.getElementById("mapnote");
+  if(typeof d3==="undefined"||typeof topojson==="undefined"){ buildFallback("Map library unavailable — showing ranked comparators and program detail instead."); return; }
+
+  var aliases={
+    "United States":["united states of america","united states","usa"],
+    "South Korea":["south korea","republic of korea","korea","korea, rep.","dem. rep. korea"],
+    "United Kingdom":["united kingdom","england","great britain"],
+    "Hong Kong":["hong kong","hong kong s.a.r."],
+    "Czech Republic":["czechia"]
+  };
+  /* index DATA by lowercase name + aliases */
+  var byName={};
+  DATA.forEach(function(d){
+    var keys=[d.name.toLowerCase()];
+    if(aliases[d.name])keys=keys.concat(aliases[d.name]);
+    keys.forEach(function(k){ byName[k]=d; });
+  });
+  var maxv=0; DATA.forEach(function(d){ if(d.vc!=null && d.vc>maxv)maxv=d.vc; });
+  var color=d3.scaleLinear().domain([0,0.4,maxv]).range(["#11343a","#1a8f86","#2fe6cd"]);
+
+  var svg=d3.select("#map");
+  var path=d3.geoPath(d3.geoNaturalEarth1().scale(178).translate([480,250]));
+  var URL="https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
+  var tip=document.getElementById("maptip");
+  var mapwrap=document.getElementById("mapwrap");
+  var panel=document.getElementById("mappanel");
+  var done=false;
+  var timer=setTimeout(function(){ if(!done){ done=true; buildFallback("Map data timed out — showing ranked comparators and program detail instead."); } },9000);
+
+  function tipHTML(d){
+    return '<div class="tn">'+d.name+(d.ca?' · subject':'')+'</div>'+
+      '<div class="tm">'+(d.vc!=null?'VC/GDP '+d.vc.toFixed(2)+'% · ':'')+'velocity '+d.vel+'</div>'+
+      '<div class="tp">'+d.prog+'</div>'+
+      '<div class="tl">'+d.lesson+'</div>';
+  }
+  function panelHTML(d){
+    return '<div class="pn">'+d.name+(d.ca?' · the subject':'')+'</div>'+
+      '<div class="pm">'+(d.vc!=null?'VC/GDP '+d.vc.toFixed(2)+'% · ':'')+'turnover velocity '+d.vel+'</div>'+
+      '<div class="pp">'+d.prog+'</div>'+
+      '<div class="pl">'+d.lesson+'</div>';
+  }
+
+  d3.json(URL).then(function(world){
+    if(done)return; done=true; clearTimeout(timer);
+    var feats=topojson.feature(world,world.objects.countries).features;
+    var matched=0, selected=null;
+
+    var paths=svg.selectAll("path").data(feats).join("path")
+      .attr("d",path)
+      .attr("class",function(f){
+        var nm=(f.properties&&f.properties.name?f.properties.name:"").toLowerCase();
+        return byName[nm]?"cmp":"land";
+      })
+      .attr("fill",function(f){
+        var nm=(f.properties&&f.properties.name?f.properties.name:"").toLowerCase();
+        var hit=byName[nm];
+        if(!hit)return null;
+        matched++;
+        if(hit.ca)return "#f4b942";          /* gold = subject */
+        if(hit.vc!=null)return color(hit.vc); /* shaded by VC/GDP */
+        return "#2a3647";                      /* program-only, no VC shading */
+      })
+      .style("filter",function(f){
+        var nm=(f.properties&&f.properties.name?f.properties.name:"").toLowerCase();
+        var hit=byName[nm];
+        if(!hit)return null;
+        if(hit.ca)return "drop-shadow(0 0 7px rgba(244,185,66,.9))";
+        return "drop-shadow(0 0 3px rgba(47,230,205,.35))";
+      });
+
+    /* hover tooltip */
+    paths.filter(function(f){ var nm=(f.properties&&f.properties.name?f.properties.name:"").toLowerCase(); return !!byName[nm]; })
+      .on("mousemove",function(ev,f){
+        var nm=(f.properties&&f.properties.name?f.properties.name:"").toLowerCase();
+        var d=byName[nm]; if(!d)return;
+        tip.innerHTML=tipHTML(d);
+        tip.classList.add("show");
+        var r=mapwrap.getBoundingClientRect();
+        var x=ev.clientX-r.left+14, y=ev.clientY-r.top+14;
+        if(x>r.width-300)x=ev.clientX-r.left-300;
+        if(y>r.height-120)y=ev.clientY-r.top-130;
+        tip.style.left=Math.max(6,x)+"px";
+        tip.style.top=Math.max(6,y)+"px";
+      })
+      .on("mouseleave",function(){ tip.classList.remove("show"); })
+      .on("click",function(ev,f){
+        var nm=(f.properties&&f.properties.name?f.properties.name:"").toLowerCase();
+        var d=byName[nm]; if(!d)return;
+        svg.selectAll("path.sel").classed("sel",false);
+        d3.select(this).classed("sel",true);
+        panel.innerHTML=panelHTML(d);
+      });
+
+    var totalWithVc=DATA.filter(function(d){return d.vc!=null;}).length;
+    note.textContent=matched+" of "+DATA.length+" comparators located on the map. Gold = Canada (the subject); cyan shading = VC/GDP intensity; grey = located for program/liquidity model only. Singapore, Taiwan and Hong Kong may be too small to see at this scale — hover near their position or see the toolkit below.";
+  }).catch(function(){
+    if(done)return; done=true; clearTimeout(timer);
+    buildFallback("Map data unavailable — showing ranked comparators and program detail instead.");
+  });
+})();
+};
+(function(){
+  var RM = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var done={};
+  function fmt(v,dec,pre,suf){
+    var n = dec ? v.toFixed(dec) : Math.round(v).toString();
+    var parts = n.split('.'); parts[0]=parts[0].replace(/\B(?=(\d{3})+(?!\d))/g,',');
+    return (pre||'')+parts.join('.')+(suf||'');
+  }
+  function counter(el){
+    if(el.dataset.cdone) return; el.dataset.cdone=1;
+    var target=parseFloat(el.getAttribute('data-count'))||0,
+        dec=parseInt(el.getAttribute('data-dec')||'0',10),
+        pre=el.getAttribute('data-prefix')||'', suf=el.getAttribute('data-suffix')||'';
+    if(RM){ el.textContent=fmt(target,dec,pre,suf); return; }
+    var dur=1200, t0=null;
+    function step(ts){ if(!t0)t0=ts; var p=Math.min((ts-t0)/dur,1);
+      var e=1-Math.pow(1-p,3); el.textContent=fmt(target*e,dec,pre,suf);
+      if(p<1) requestAnimationFrame(step); }
+    requestAnimationFrame(step);
+  }
+  function typeBoot(el){
+    if(el.dataset.bdone) return; el.dataset.bdone=1;
+    var msg=el.getAttribute('data-boot')||'';
+    if(RM){ el.textContent=msg; var c=document.createElement('span'); c.className='cur'; el.appendChild(c); return; }
+    var i=0; el.textContent='';
+    var cur=document.createElement('span'); cur.className='cur'; el.appendChild(cur);
+    (function tick(){ if(i<=msg.length){ cur.insertAdjacentText('beforebegin', msg.charAt(i-1)||''); i++; setTimeout(tick, 26); } })();
+  }
+  function revealPage(p){
+    p.querySelectorAll('.rv').forEach(function(e){ e.classList.add('in'); });
+    p.querySelectorAll('.fill[data-w]').forEach(function(f){ f.style.width=f.getAttribute('data-w'); });
+    p.querySelectorAll('[data-count]').forEach(counter);
+    var b=p.querySelector('.boot[data-boot]'); if(b) typeBoot(b);
+  }
+  function activate(id){
+    var p=document.getElementById(id); if(!p) return;
+    document.querySelectorAll('.page').forEach(function(x){ x.classList.remove('active'); });
+    p.classList.add('active');
+    document.querySelectorAll('.nav .links a[data-nav]').forEach(function(a){
+      a.classList.toggle('on', a.getAttribute('data-nav')===id);
+    });
+    revealPage(p);
+    if(INIT[id] && !done[id]){ done[id]=1; try{ INIT[id](); }catch(e){ console.error(e); } }
+    window.scrollTo(0,0);
+    if(location.hash!=='#'+id){ try{ history.replaceState(null,'','#'+id); }catch(e){} }
+  }
+  document.addEventListener('click', function(e){
+    var a=e.target.closest('[data-nav]'); if(a){ e.preventDefault(); activate(a.getAttribute('data-nav')); }
+  });
+  var prog=document.getElementById('prog');
+  window.addEventListener('scroll', function(){
+    if(!prog) return; var h=document.documentElement;
+    prog.style.width=((h.scrollTop/((h.scrollHeight-h.clientHeight)||1))*100)+'%';
+  }, {passive:true});
+  var start=(location.hash||'').replace('#','');
+  if(!document.getElementById(start)) start='page-overview';
+  activate(start);
+})();
+
+</script>
+</body>
+</html>
